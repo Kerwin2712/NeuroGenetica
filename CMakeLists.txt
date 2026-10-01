@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
-project(NeuroGenetica CXX)
+
+# Compatibilidad con dependencias que usan políticas de CMake anteriores a 3.5 en CMake 4.x
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5 CACHE STRING "" FORCE)
+
+project(NeuroGenetica CXX C)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,7 +13,7 @@ include(FetchContent)
 FetchContent_Declare(
     raylib
     GIT_REPOSITORY https://github.com/raysan5/raylib.git
-    GIT_TAG 5.0
+    GIT_TAG 5.5
     GIT_SHALLOW TRUE
 )
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
