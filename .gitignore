@@ -1,0 +1,44 @@
+# Binaries and build directories
+build/
+bin/
+obj/
+out/
+cmake-build-*/
+.cache/
+
+# IDE and Editor files
+.vscode/
+.vs/
+*.user
+*.suo
+*.userosv
+*.sln.docstates
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Raylib FetchContent cache
+_deps/
