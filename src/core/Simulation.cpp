@@ -17,6 +17,9 @@ Simulation::Simulation(int width, int height, const std::string& title)
     int monitorW = GetMonitorWidth(monitor);
     int monitorH = GetMonitorHeight(monitor);
     SetWindowPosition((monitorW - screenWidth) / 2, (monitorH - screenHeight) / 2 - 30);
+
+    // Calcular lecturas iniciales de los sensores
+    playerCar.CastSensors(track.GetWalls());
 }
 
 Simulation::~Simulation() {
@@ -36,17 +39,28 @@ void Simulation::Update() {
         ToggleFullscreen();
     }
 
-    // Actualización del vehículo
+    // Reiniciar vehículo con tecla 'R'
+    if (IsKeyPressed(KEY_R)) {
+        playerCar.Reset({ 360.0f, 420.0f }, 0.0f);
+    }
+
+    // 1. Actualización de movimiento cinemático manual
     playerCar.UpdateManual();
+
+    // 2. Proyección de sensores y detección geométrica de extremos de la carretera
+    playerCar.CastSensors(track.GetWalls());
+
+    // 3. Verificación de colisión contra los muros
+    playerCar.CheckCollision(track.GetWalls());
 }
 
 void Simulation::Render() {
     BeginDrawing();
 
-    // 1. Dibujar fondo y circuito
+    // 1. Dibujar fondo y circuito con bordes
     track.Draw();
 
-    // 2. Dibujar vehículo y sensores
+    // 2. Dibujar vehículo, rayos sensores y puntos de impacto
     playerCar.Draw();
 
     // 3. Dibujar interfaz / telemetría
