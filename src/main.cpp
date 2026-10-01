@@ -5,17 +5,17 @@
 
 // Estructura simple para el vehículo en Fase 1 (Prototipo con rectángulo)
 struct CarPrototype {
-    Vector2 position = { 200.0f, 380.0f };
-    float angle = 0.0f;       // En grados
+    Vector2 position = { 360.0f, 420.0f }; // En la recta inferior
+    float angle = 0.0f;                    // En grados (0 hacia la derecha)
     float speed = 0.0f;
-    float maxSpeed = 5.0f;
-    float acceleration = 0.15f;
+    float maxSpeed = 4.5f;
+    float acceleration = 0.12f;
     float friction = 0.96f;
-    float turnSpeed = 3.5f;
+    float turnSpeed = 3.2f;
 
     // Dimensiones del rectángulo
-    float width = 36.0f;
-    float height = 18.0f;
+    float width = 30.0f;
+    float height = 15.0f;
     Color color = RED;
 
     void Update() {
@@ -61,11 +61,11 @@ struct CarPrototype {
             position.x + std::cos(rad) * (width / 2.0f) + std::sin(rad) * (height / 3.0f),
             position.y + std::sin(rad) * (width / 2.0f) - std::cos(rad) * (height / 3.0f)
         };
-        DrawCircleV(frontRight, 3.0f, YELLOW);
-        DrawCircleV(frontLeft, 3.0f, YELLOW);
+        DrawCircleV(frontRight, 2.5f, YELLOW);
+        DrawCircleV(frontLeft, 2.5f, YELLOW);
 
         // Simulación visual de 5 rayos sensores (Fase 2 se conectará con el QuadTree)
-        const float sensorLength = 90.0f;
+        const float sensorLength = 75.0f;
         const float sensorAngles[] = { -60.0f, -30.0f, 0.0f, 30.0f, 60.0f };
 
         for (float sAngle : sensorAngles) {
@@ -74,23 +74,36 @@ struct CarPrototype {
                 position.x + std::cos(totalRad) * sensorLength,
                 position.y + std::sin(totalRad) * sensorLength
             };
-            DrawLineV(position, endPoint, Fade(SKYBLUE, 0.5f));
-            DrawCircleV(endPoint, 2.5f, Fade(RED, 0.7f));
+            DrawLineV(position, endPoint, Fade(SKYBLUE, 0.6f));
+            DrawCircleV(endPoint, 2.5f, Fade(RED, 0.8f));
         }
     }
 };
 
 int main() {
-    const int screenWidth = 1024;
-    const int screenHeight = 768;
+    // Dimensiones óptimas para pantallas estándar (1366x768 o superiores)
+    const int screenWidth = 960;
+    const int screenHeight = 540;
 
-    SetConfigFlags(FLAG_MSAA_4X_HINT);
+    // Permitir redimensionar ventana y suavizado de bordes
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "NeuroGenetica - Simulacion Base [Fase 1]");
     SetTargetFPS(60);
+
+    // Centrar la ventana en la pantalla del monitor
+    int monitor = GetCurrentMonitor();
+    int monitorW = GetMonitorWidth(monitor);
+    int monitorH = GetMonitorHeight(monitor);
+    SetWindowPosition((monitorW - screenWidth) / 2, (monitorH - screenHeight) / 2 - 30);
 
     CarPrototype playerCar;
 
     while (!WindowShouldClose()) {
+        // Soporte para alternar pantalla completa con F11 o Alt+Enter
+        if (IsKeyPressed(KEY_F11) || (IsKeyDown(KEY_LEFT_ALT) && IsKeyPressed(KEY_ENTER))) {
+            ToggleFullscreen();
+        }
+
         // --- Actualización ---
         playerCar.Update();
 
@@ -98,28 +111,34 @@ int main() {
         BeginDrawing();
         ClearBackground(Color{ 34, 139, 34, 255 }); // Césped exterior
 
-        // Circuito básico procedural (Fondo de pista)
-        // En fases posteriores se cargará una textura generada o mapa vectorial
-        DrawRing(Vector2{ 340.0f, 384.0f }, 140.0f, 280.0f, 90.0f, 270.0f, 36, DARKGRAY);
-        DrawRing(Vector2{ 684.0f, 384.0f }, 140.0f, 280.0f, 270.0f, 450.0f, 36, DARKGRAY);
-        DrawRectangle(340, 104, 344, 140, DARKGRAY); // Recta superior
-        DrawRectangle(340, 524, 344, 140, DARKGRAY); // Recta inferior
-        DrawRectangle(340, 244, 344, 280, Color{ 34, 139, 34, 255 }); // Césped interior
+        // Circuito centrado para resolución 960x540
+        DrawRing(Vector2{ 300.0f, 270.0f }, 100.0f, 200.0f, 90.0f, 270.0f, 36, DARKGRAY);
+        DrawRing(Vector2{ 660.0f, 270.0f }, 100.0f, 200.0f, 270.0f, 450.0f, 36, DARKGRAY);
+        DrawRectangle(300, 70, 360, 100, DARKGRAY);  // Recta superior
+        DrawRectangle(300, 370, 360, 100, DARKGRAY); // Recta inferior
+        DrawRectangle(300, 170, 360, 200, Color{ 34, 139, 34, 255 }); // Césped interior
+
+        // Bordes de pista blancos (para visualización)
+        DrawLine(300, 70, 660, 70, RAYWHITE);
+        DrawLine(300, 170, 660, 170, RAYWHITE);
+        DrawLine(300, 370, 660, 370, RAYWHITE);
+        DrawLine(300, 470, 660, 470, RAYWHITE);
 
         // Línea de salida / meta
-        DrawRectangle(335, 524, 10, 140, WHITE);
+        DrawRectangle(330, 370, 8, 100, WHITE);
 
         // Dibujar auto de prueba
         playerCar.Draw();
 
         // --- Interfaz / HUD provisional ---
-        DrawRectangle(10, 10, 310, 130, Fade(BLACK, 0.75f));
-        DrawRectangleLines(10, 10, 310, 130, RAYWHITE);
-        DrawText("NeuroGenetica - Fase 1 (Base)", 20, 20, 16, GOLD);
-        DrawText("Controles: WASD o Flechas de direccion", 20, 45, 13, LIGHTGRAY);
-        DrawText(TextFormat("Velocidad: %.2f", playerCar.speed), 20, 68, 14, GREEN);
-        DrawText(TextFormat("Angulo: %.1f deg", playerCar.angle), 20, 88, 14, SKYBLUE);
-        DrawText(TextFormat("FPS: %i", GetFPS()), 20, 108, 14, YELLOW);
+        DrawRectangle(10, 10, 290, 135, Fade(BLACK, 0.75f));
+        DrawRectangleLines(10, 10, 290, 135, RAYWHITE);
+        DrawText("NeuroGenetica - Fase 1 (Base)", 20, 18, 15, GOLD);
+        DrawText("Controles: WASD o Flechas", 20, 38, 12, LIGHTGRAY);
+        DrawText("[F11] Pantalla Completa", 20, 54, 12, SKYBLUE);
+        DrawText(TextFormat("Velocidad: %.2f", playerCar.speed), 20, 74, 13, GREEN);
+        DrawText(TextFormat("Angulo: %.1f deg", playerCar.angle), 20, 92, 13, RAYWHITE);
+        DrawText(TextFormat("FPS: %i", GetFPS()), 20, 112, 13, YELLOW);
 
         EndDrawing();
     }
