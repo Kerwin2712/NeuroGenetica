@@ -143,15 +143,18 @@ Simulación de vehículos autónomos en **C++** que aprenden a conducir en circu
 ## 🗺️ Fases de Desarrollo
 
 ### Fase 1: Prototipo Base y Control Manual
-- [ ] Configurar proyecto C++ con CMake y Raylib.
-- [ ] Crear la ventana, bucle de juego a 60 FPS y fondo básico.
-- [ ] Representar el auto como un rectángulo simple con rotación y aceleración controlable con teclado (WASD / Flechas).
+- [x] Configurar proyecto C++ con CMake y Raylib.
+- [x] Crear la ventana, bucle de juego a 60 FPS y fondo básico.
+- [x] Representar el auto como un rectángulo simple con rotación y aceleración controlable con teclado (WASD / Flechas).
+- [x] Modularizar la arquitectura gráfica en POO (`Track`, `Car`, `HUD`, `Simulation`).
 
 ### Fase 2: Circuito, QuadTree y Sensores
-- [ ] Definir el circuito mediante polígonos/segmentos de línea (bordes interiores y exteriores).
-- [ ] Implementar la estructura **QuadTree** en C++ para indexar los segmentos de la pista.
-- [ ] Implementar el sistema de sensores del auto (rayos que proyectan líneas e intersectan la pista mediante el QuadTree).
-- [ ] Dibujar visualmente los rayos del sensor y marcar el punto de colisión.
+- [x] Definir el circuito mediante polígonos/segmentos de línea (bordes interiores y exteriores).
+- [x] Implementar el sistema de sensores del auto (rayos que proyectan líneas e intersectan los muros).
+- [x] Dibujar visualmente los rayos del sensor y marcar el punto de impacto en los bordes.
+- [x] Detección de colisión con los límites de la pista y detención inmediata del vehículo.
+- [ ] Implementar la estructura **QuadTree** en C++ para indexar los segmentos de la pista y optimizar consultas a $O(\log n)$.
+- [ ] Conectar el raycasting y la detección de colisiones a consultas del **QuadTree**.
 
 ### Fase 3: Red Neuronal y Conducción Automática
 - [ ] Implementar la clase `NeuralNetwork` (capa de entrada, capa oculta, capa de salida).
