@@ -150,11 +150,12 @@ Simulación de vehículos autónomos en **C++** que aprenden a conducir en circu
 
 ### Fase 2: Circuito, QuadTree y Sensores
 - [x] Definir el circuito mediante polígonos/segmentos de línea (bordes interiores y exteriores).
-- [x] Implementar el sistema de sensores del auto (rayos que proyectan líneas e intersectan los muros).
-- [x] Dibujar visualmente los rayos del sensor y marcar el punto de impacto en los bordes.
-- [x] Detección de colisión con los límites de la pista y detención inmediata del vehículo.
-- [ ] Implementar la estructura **QuadTree** en C++ para indexar los segmentos de la pista y optimizar consultas a $O(\log n)$.
-- [ ] Conectar el raycasting y la detección de colisiones a consultas del **QuadTree**.
+- [x] Implementar la estructura **QuadTree** en C++ para indexar los segmentos de la pista y optimizar consultas a $O(\log n)$.
+- [x] Implementar el sistema de sensores del auto (rayos que proyectan líneas e intersectan los muros mediante consultas en el QuadTree).
+- [x] Dibujar visualmente los rayos del sensor y marcar el punto de impacto en los bordes con gradiente de proximidad.
+- [x] Detección de colisión con los límites de la pista y detención inmediata del vehículo acelerada por QuadTree.
+- [x] Modo de depuración visual de los cuadrantes del QuadTree en pantalla (tecla `Q`).
+- [x] Suite de pruebas unitarias del QuadTree e intersecciones geométricas (`tests/test_quadtree.cpp`).
 
 ### Fase 3: Red Neuronal y Conducción Automática
 - [ ] Implementar la clase `NeuralNetwork` (capa de entrada, capa oculta, capa de salida).
@@ -233,9 +234,14 @@ cmake -B build -G "MinGW Makefiles"
 cmake --build build
 ```
 
-### 3. Ejecutar
+### 3. Ejecutar la Simulación
 ```powershell
 ./build/NeuroGenetica.exe
+```
+
+### 4. Ejecutar Pruebas Unitarias
+```powershell
+./build/NeuroGeneticaTests.exe
 ```
 
 ---
