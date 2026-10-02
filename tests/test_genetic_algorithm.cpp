@@ -99,12 +99,32 @@ void TestGeneticAlgorithmPopulationCycle() {
     std::cout << "[PASS] TestGeneticAlgorithmPopulationCycle (Ciclo generativo verificado)\n";
 }
 
+void TestTrackIntegrity() {
+    Track track;
+    assert(!track.GetWalls().empty());
+    assert(!track.GetCheckpoints().empty());
+
+    // El auto en la posición de spawn inicial no debe estar en colisión
+    Car car(track.GetStartPosition(), track.GetStartAngle(), ControlMode::Manual);
+    assert(car.IsAlive());
+    bool collides = car.CheckCollision(track.GetQuadTree());
+    assert(!collides);
+
+    // Los sensores deben castear correctamente contra el QuadTree de la pista
+    car.CastSensors(track.GetQuadTree());
+    const auto& hits = car.GetSensorHits();
+    assert(hits.size() == 5);
+
+    std::cout << "[PASS] TestTrackIntegrity (Geometria del circuito y spawn validados)\n";
+}
+
 int main() {
     std::cout << "=== EJECUTANDO TESTS UNITARIOS: ALGORITMO GENETICO Y MAX-HEAP ===\n";
     TestMaxHeapBasicOperations();
     TestMaxHeapFitnessRanking();
     TestCrossoverGeneInheritance();
     TestGeneticAlgorithmPopulationCycle();
-    std::cout << "=== TODOS LOS TESTS GENETICOS PASARON EXITOSAMENTE (4/4) ===\n";
+    TestTrackIntegrity();
+    std::cout << "=== TODOS LOS TESTS GENETICOS PASARON EXITOSAMENTE (5/5) ===\n";
     return 0;
 }
