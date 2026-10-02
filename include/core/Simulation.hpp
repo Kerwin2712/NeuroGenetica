@@ -25,4 +25,7 @@ private:
     Track track;
     Car playerCar;
     HUD hud;
+
+    // Alternar visualización del QuadTree para depuración y defensas
+    bool showQuadTreeDebug;
 };

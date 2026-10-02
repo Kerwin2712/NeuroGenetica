@@ -13,17 +13,27 @@ Track::Track()
       topStraight{ 300.0f, 70.0f, 360.0f, 100.0f },
       bottomStraight{ 300.0f, 370.0f, 360.0f, 100.0f },
       innerGrass{ 300.0f, 170.0f, 360.0f, 200.0f },
-      finishLine{ 330.0f, 370.0f, 8.0f, 100.0f }
+      finishLine{ 330.0f, 370.0f, 8.0f, 100.0f },
+      quadTree(BoundingBox2D{ 0.0f, 0.0f, 960.0f, 540.0f }, 4, 6)
 {
     BuildTrackBoundaries();
 }
 
 void Track::BuildTrackBoundaries() {
     walls.clear();
+    quadTree.Clear();
+
     const int curveSubdivisions = 24;
+    int currentId = 0;
+
+    auto addWall = [this, &currentId](Vector2 start, Vector2 end) {
+        LineSegment seg = { start, end, currentId++ };
+        walls.push_back(seg);
+        quadTree.Insert(seg);
+    };
 
     // 1. Recta exterior superior (Y = 70)
-    walls.push_back({ { 300.0f, 70.0f }, { 660.0f, 70.0f } });
+    addWall({ 300.0f, 70.0f }, { 660.0f, 70.0f });
 
     // 2. Curva exterior derecha (centro 660, 270 | radio 200 | de -90° a +90°)
     for (int i = 0; i < curveSubdivisions; ++i) {
@@ -31,11 +41,11 @@ void Track::BuildTrackBoundaries() {
         float a2 = (-90.0f + (180.0f / curveSubdivisions) * (i + 1)) * DEG2RAD;
         Vector2 p1 = { rightTurnCenter.x + std::cos(a1) * outerRadius, rightTurnCenter.y + std::sin(a1) * outerRadius };
         Vector2 p2 = { rightTurnCenter.x + std::cos(a2) * outerRadius, rightTurnCenter.y + std::sin(a2) * outerRadius };
-        walls.push_back({ p1, p2 });
+        addWall(p1, p2);
     }
 
     // 3. Recta exterior inferior (Y = 470)
-    walls.push_back({ { 660.0f, 470.0f }, { 300.0f, 470.0f } });
+    addWall({ 660.0f, 470.0f }, { 300.0f, 470.0f });
 
     // 4. Curva exterior izquierda (centro 300, 270 | radio 200 | de +90° a +270°)
     for (int i = 0; i < curveSubdivisions; ++i) {
@@ -43,11 +53,11 @@ void Track::BuildTrackBoundaries() {
         float a2 = (90.0f + (180.0f / curveSubdivisions) * (i + 1)) * DEG2RAD;
         Vector2 p1 = { leftTurnCenter.x + std::cos(a1) * outerRadius, leftTurnCenter.y + std::sin(a1) * outerRadius };
         Vector2 p2 = { leftTurnCenter.x + std::cos(a2) * outerRadius, leftTurnCenter.y + std::sin(a2) * outerRadius };
-        walls.push_back({ p1, p2 });
+        addWall(p1, p2);
     }
 
     // 5. Recta interior superior (Y = 170)
-    walls.push_back({ { 300.0f, 170.0f }, { 660.0f, 170.0f } });
+    addWall({ 300.0f, 170.0f }, { 660.0f, 170.0f });
 
     // 6. Curva interior derecha (centro 660, 270 | radio 100 | de -90° a +90°)
     for (int i = 0; i < curveSubdivisions; ++i) {
@@ -55,11 +65,11 @@ void Track::BuildTrackBoundaries() {
         float a2 = (-90.0f + (180.0f / curveSubdivisions) * (i + 1)) * DEG2RAD;
         Vector2 p1 = { rightTurnCenter.x + std::cos(a1) * innerRadius, rightTurnCenter.y + std::sin(a1) * innerRadius };
         Vector2 p2 = { rightTurnCenter.x + std::cos(a2) * innerRadius, rightTurnCenter.y + std::sin(a2) * innerRadius };
-        walls.push_back({ p1, p2 });
+        addWall(p1, p2);
     }
 
     // 7. Recta interior inferior (Y = 370)
-    walls.push_back({ { 660.0f, 370.0f }, { 300.0f, 370.0f } });
+    addWall({ 660.0f, 370.0f }, { 300.0f, 370.0f });
 
     // 8. Curva interior izquierda (centro 300, 270 | radio 100 | de +90° a +270°)
     for (int i = 0; i < curveSubdivisions; ++i) {
@@ -67,7 +77,7 @@ void Track::BuildTrackBoundaries() {
         float a2 = (90.0f + (180.0f / curveSubdivisions) * (i + 1)) * DEG2RAD;
         Vector2 p1 = { leftTurnCenter.x + std::cos(a1) * innerRadius, leftTurnCenter.y + std::sin(a1) * innerRadius };
         Vector2 p2 = { leftTurnCenter.x + std::cos(a2) * innerRadius, leftTurnCenter.y + std::sin(a2) * innerRadius };
-        walls.push_back({ p1, p2 });
+        addWall(p1, p2);
     }
 }
 
@@ -93,4 +103,8 @@ void Track::Draw() const {
 
     // 6. Línea de salida / meta
     DrawRectangleRec(finishLine, WHITE);
+}
+
+void Track::DrawDebugQuadTree() const {
+    quadTree.DrawDebug();
 }

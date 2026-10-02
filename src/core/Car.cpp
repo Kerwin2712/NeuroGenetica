@@ -27,13 +27,59 @@ std::vector<Vector2> Car::GetCorners() const {
     float hw = width / 2.0f;
     float hh = height / 2.0f;
 
-    // 4 esquinas rotadas relativas al centro
     return {
-        { position.x + ( hw * cosA -  hh * sinA), position.y + ( hw * sinA +  hh * cosA) }, // Delantera derecha
-        { position.x + (-hw * cosA -  hh * sinA), position.y + (-hw * sinA +  hh * cosA) }, // Trasera derecha
-        { position.x + (-hw * cosA - -hh * sinA), position.y + (-hw * sinA + -hh * cosA) }, // Trasera izquierda
-        { position.x + ( hw * cosA - -hh * sinA), position.y + ( hw * sinA + -hh * cosA) }  // Delantera izquierda
+        { position.x + ( hw * cosA -  hh * sinA), position.y + ( hw * sinA +  hh * cosA) },
+        { position.x + (-hw * cosA -  hh * sinA), position.y + (-hw * sinA +  hh * cosA) },
+        { position.x + (-hw * cosA - -hh * sinA), position.y + (-hw * sinA + -hh * cosA) },
+        { position.x + ( hw * cosA - -hh * sinA), position.y + ( hw * sinA + -hh * cosA) }
     };
+}
+
+void Car::CastSensors(const QuadTree& quadTree) {
+    sensorHits.clear();
+
+    for (float sAngle : sensorAngles) {
+        float totalRad = (angle + sAngle) * DEG2RAD;
+        Vector2 rayEnd = {
+            position.x + std::cos(totalRad) * sensorLength,
+            position.y + std::sin(totalRad) * sensorLength
+        };
+
+        SensorHit hit;
+        hit.start = position;
+        hit.angleOffset = sAngle;
+        hit.distance = sensorLength;
+        hit.normalizedDist = 1.0f;
+        hit.hasHit = false;
+        hit.hitPoint = rayEnd;
+
+        // Consulta en QuadTree: recupera únicamente los segmentos candidatos en el área del rayo
+        std::vector<LineSegment> candidateWalls;
+        quadTree.QueryRay(position, rayEnd, candidateWalls);
+
+        float minT = 1.0f;
+        Vector2 closestPoint = rayEnd;
+
+        for (const auto& wall : candidateWalls) {
+            Vector2 currentHit;
+            float currentT;
+            if (CheckLineIntersection(position, rayEnd, wall.start, wall.end, currentHit, currentT)) {
+                if (currentT < minT) {
+                    minT = currentT;
+                    closestPoint = currentHit;
+                    hit.hasHit = true;
+                }
+            }
+        }
+
+        if (hit.hasHit) {
+            hit.hitPoint = closestPoint;
+            hit.distance = minT * sensorLength;
+            hit.normalizedDist = minT;
+        }
+
+        sensorHits.push_back(hit);
+    }
 }
 
 void Car::CastSensors(const std::vector<LineSegment>& walls) {
@@ -57,7 +103,6 @@ void Car::CastSensors(const std::vector<LineSegment>& walls) {
         float minT = 1.0f;
         Vector2 closestPoint = rayEnd;
 
-        // Comprobar intersección del rayo con cada muro de la pista
         for (const auto& wall : walls) {
             Vector2 currentHit;
             float currentT;
@@ -80,12 +125,23 @@ void Car::CastSensors(const std::vector<LineSegment>& walls) {
     }
 }
 
-bool Car::CheckCollision(const std::vector<LineSegment>& walls) {
+bool Car::CheckCollision(const QuadTree& quadTree) {
     if (!isAlive) return true;
 
     std::vector<Vector2> corners = GetCorners();
 
-    // Las 4 aristas del rectángulo del auto
+    // Calcular AABB del auto para consulta en QuadTree
+    float minX = std::min({ corners[0].x, corners[1].x, corners[2].x, corners[3].x });
+    float maxX = std::max({ corners[0].x, corners[1].x, corners[2].x, corners[3].x });
+    float minY = std::min({ corners[0].y, corners[1].y, corners[2].y, corners[3].y });
+    float maxY = std::max({ corners[0].y, corners[1].y, corners[2].y, corners[3].y });
+
+    BoundingBox2D carBox = { minX, minY, maxX - minX, maxY - minY };
+
+    // Recuperar únicamente los segmentos cercanos mediante QuadTree
+    std::vector<LineSegment> candidateWalls;
+    quadTree.QueryBox(carBox, candidateWalls);
+
     LineSegment carEdges[4] = {
         { corners[0], corners[1] },
         { corners[1], corners[2] },
@@ -93,14 +149,40 @@ bool Car::CheckCollision(const std::vector<LineSegment>& walls) {
         { corners[3], corners[0] }
     };
 
-    // Verificar si alguna arista del vehículo corta los muros del circuito
+    for (const auto& edge : carEdges) {
+        for (const auto& wall : candidateWalls) {
+            Vector2 hitPoint;
+            float t;
+            if (CheckLineIntersection(edge.start, edge.end, wall.start, wall.end, hitPoint, t)) {
+                isAlive = false;
+                speed = 0.0f;
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool Car::CheckCollision(const std::vector<LineSegment>& walls) {
+    if (!isAlive) return true;
+
+    std::vector<Vector2> corners = GetCorners();
+
+    LineSegment carEdges[4] = {
+        { corners[0], corners[1] },
+        { corners[1], corners[2] },
+        { corners[2], corners[3] },
+        { corners[3], corners[0] }
+    };
+
     for (const auto& edge : carEdges) {
         for (const auto& wall : walls) {
             Vector2 hitPoint;
             float t;
             if (CheckLineIntersection(edge.start, edge.end, wall.start, wall.end, hitPoint, t)) {
                 isAlive = false;
-                speed = 0.0f; // Detener el auto inmediatamente al chocar
+                speed = 0.0f;
                 return true;
             }
         }
@@ -120,7 +202,6 @@ void Car::Reset(Vector2 startPos, float startAngle) {
 void Car::UpdateManual() {
     if (!isAlive) return;
 
-    // Controles por teclado: W/Up para acelerar, S/Down para frenar o reversa
     if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) {
         speed += acceleration;
         if (speed > maxSpeed) speed = maxSpeed;
@@ -130,17 +211,14 @@ void Car::UpdateManual() {
         if (speed < -maxSpeed * 0.4f) speed = -maxSpeed * 0.4f;
     }
 
-    // Viraje activo cuando hay movimiento
     if (std::abs(speed) > 0.05f) {
         float direction = (speed > 0) ? 1.0f : -1.0f;
         if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))  angle -= turnSpeed * direction;
         if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) angle += turnSpeed * direction;
     }
 
-    // Rozamiento
     speed *= friction;
 
-    // Cinemática 2D
     float rad = angle * DEG2RAD;
     position.x += std::cos(rad) * speed;
     position.y += std::sin(rad) * speed;
@@ -169,7 +247,6 @@ void Car::Draw() const {
     for (const auto& hit : sensorHits) {
         Color rayColor;
         if (hit.hasHit) {
-            // Gradiente según proximidad al borde: rojo (muy cerca), naranja (medio), verde (lejos)
             if (hit.normalizedDist < 0.35f) {
                 rayColor = RED;
             } else if (hit.normalizedDist < 0.70f) {
@@ -178,22 +255,18 @@ void Car::Draw() const {
                 rayColor = GREEN;
             }
 
-            // Línea del sensor hasta el impacto con la pared
             DrawLineEx(hit.start, hit.hitPoint, 1.5f, Fade(rayColor, 0.85f));
-
-            // Indicador gráfico destacado sobre el borde de la pista
             DrawCircleV(hit.hitPoint, 4.5f, rayColor);
             DrawCircleV(hit.hitPoint, 2.0f, YELLOW);
             DrawCircleLines((int)hit.hitPoint.x, (int)hit.hitPoint.y, 6.5f, RAYWHITE);
         } else {
-            // Rayo sin colisión (alcance máximo)
             DrawLineV(hit.start, hit.hitPoint, Fade(SKYBLUE, 0.4f));
             DrawCircleV(hit.hitPoint, 2.0f, Fade(SKYBLUE, 0.6f));
         }
     }
 
     // 2. Chasis del vehículo
-    Color currentColor = isAlive ? bodyColor : Color{ 90, 30, 30, 255 }; // Tono oscuro si colisionó
+    Color currentColor = isAlive ? bodyColor : Color{ 90, 30, 30, 255 };
     Rectangle rect = { position.x, position.y, width, height };
     Vector2 origin = { width / 2.0f, height / 2.0f };
     DrawRectanglePro(rect, origin, angle, currentColor);
@@ -212,7 +285,7 @@ void Car::Draw() const {
     DrawCircleV(frontRight, 2.5f, isAlive ? YELLOW : DARKGRAY);
     DrawCircleV(frontLeft, 2.5f, isAlive ? YELLOW : DARKGRAY);
 
-    // 4. Efecto gráfico destacado si colisionó
+    // 4. Efecto gráfico de colisión
     if (!isAlive) {
         DrawCircleLines((int)position.x, (int)position.y, 22.0f, RED);
         DrawCircleLines((int)position.x, (int)position.y, 28.0f, Fade(ORANGE, 0.7f));

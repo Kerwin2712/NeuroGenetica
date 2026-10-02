@@ -1,6 +1,7 @@
 #pragma once
 #include "raylib.h"
 #include "Geometry.hpp"
+#include "QuadTree.hpp"
 #include <vector>
 
 class Car {
@@ -11,13 +12,17 @@ public:
     // Actualización de física con controles manuales por teclado
     void UpdateManual();
 
-    // Actualización futura guiada por red neuronal
+    // Actualización guiada por red neuronal
     void UpdateAI(float throttleInput, float steerInput);
 
-    // Detección de extremos de la carretera mediante raycasting
-    void CastSensors(const std::vector<LineSegment>& walls);
+    // Raycasting optimizado usando consultas espaciales en QuadTree
+    void CastSensors(const QuadTree& quadTree);
 
-    // Detección de colisión con los muros de la pista
+    // Detección de colisión optimizada con QuadTree
+    bool CheckCollision(const QuadTree& quadTree);
+
+    // Métodos alternativos directos con lista de segmentos
+    void CastSensors(const std::vector<LineSegment>& walls);
     bool CheckCollision(const std::vector<LineSegment>& walls);
 
     // Reiniciar posición y revivir el vehículo
