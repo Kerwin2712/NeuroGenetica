@@ -53,3 +53,19 @@ target_include_directories(NeuralNetworkTests PRIVATE
     include
     include/ai
 )
+
+# Ejecutable para Pruebas Unitarias de Algoritmo Genético y Max-Heap (Fase 4)
+add_executable(GeneticAlgorithmTests 
+    tests/test_genetic_algorithm.cpp 
+    src/ai/GeneticAlgorithm.cpp
+    src/ai/NeuralNetwork.cpp
+    src/core/Car.cpp
+    src/core/Track.cpp
+    src/core/QuadTree.cpp
+)
+target_include_directories(GeneticAlgorithmTests PRIVATE 
+    include
+    include/core
+    include/ai
+)
+target_link_libraries(GeneticAlgorithmTests PRIVATE raylib)
