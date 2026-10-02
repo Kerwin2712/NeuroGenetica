@@ -19,7 +19,7 @@ FetchContent_Declare(
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(raylib)
 
-# Fuentes del proyecto
+# Fuentes del proyecto principal
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 add_executable(NeuroGenetica ${SOURCES})
@@ -32,3 +32,16 @@ target_include_directories(NeuroGenetica PRIVATE
 )
 
 target_link_libraries(NeuroGenetica PRIVATE raylib)
+
+# Ejecutable para Pruebas Unitarias (Programación 3)
+add_executable(NeuroGeneticaTests 
+    tests/test_quadtree.cpp 
+    src/core/QuadTree.cpp
+)
+
+target_include_directories(NeuroGeneticaTests PRIVATE 
+    include
+    include/core
+)
+
+target_link_libraries(NeuroGeneticaTests PRIVATE raylib)
