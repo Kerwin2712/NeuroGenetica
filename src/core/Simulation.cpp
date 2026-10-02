@@ -5,7 +5,7 @@ Simulation::Simulation(int width, int height, const std::string& title)
       screenHeight(height),
       windowTitle(title),
       track(),
-      playerCar({ 360.0f, 420.0f }, 0.0f, ControlMode::Manual),
+      playerCar(track.GetStartPosition(), track.GetStartAngle(), ControlMode::Manual),
       geneticAlgorithm(40, 0.10f, 0.30f),
       hud(),
       isGeneticMode(true), // Iniciar por defecto en entrenamiento masivo de IA
@@ -20,6 +20,9 @@ Simulation::Simulation(int width, int height, const std::string& title)
     int monitorW = GetMonitorWidth(monitor);
     int monitorH = GetMonitorHeight(monitor);
     SetWindowPosition((monitorW - screenWidth) / 2, (monitorH - screenHeight) / 2 - 30);
+
+    geneticAlgorithm.SetSpawnPoint(track.GetStartPosition(), track.GetStartAngle());
+    geneticAlgorithm.ResetPopulation();
 
     playerCar.CastSensors(track.GetQuadTree());
 }
@@ -49,7 +52,7 @@ void Simulation::Update() {
     if (IsKeyPressed(KEY_M)) {
         isGeneticMode = !isGeneticMode;
         if (!isGeneticMode) {
-            playerCar.Reset({ 360.0f, 420.0f }, 0.0f);
+            playerCar.Reset(track.GetStartPosition(), track.GetStartAngle());
             playerCar.SetControlMode(ControlMode::Manual);
         }
     }
@@ -66,7 +69,7 @@ void Simulation::Update() {
         if (isGeneticMode) {
             geneticAlgorithm.EvolveNextGeneration();
         } else {
-            playerCar.Reset({ 360.0f, 420.0f }, 0.0f);
+            playerCar.Reset(track.GetStartPosition(), track.GetStartAngle());
         }
     }
 

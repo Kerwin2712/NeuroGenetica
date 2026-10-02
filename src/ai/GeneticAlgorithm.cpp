@@ -17,7 +17,9 @@ GeneticAlgorithm::GeneticAlgorithm(int popSize, float mutRate, float mutMag)
       mutationMagnitude(mutMag),
       generation(1),
       generationTimer(0.0f),
-      maxGenerationDuration(22.0f),
+      maxGenerationDuration(24.0f),
+      spawnPosition{ 250.0f, 465.0f },
+      spawnAngle{ 0.0f },
       bestFitnessCurrentGen(0.0f),
       bestFitnessAllTime(0.0f),
       bestCarIndex(0),
@@ -26,16 +28,21 @@ GeneticAlgorithm::GeneticAlgorithm(int popSize, float mutRate, float mutMag)
     ResetPopulation();
 }
 
+void GeneticAlgorithm::SetSpawnPoint(Vector2 pos, float angle) {
+    spawnPosition = pos;
+    spawnAngle = angle;
+}
+
 void GeneticAlgorithm::ResetPopulation() {
     population.clear();
     population.reserve(populationSize);
 
     for (int i = 0; i < populationSize; ++i) {
-        Car car({ 360.0f, 420.0f }, 0.0f, ControlMode::Autonomous);
+        Car car(spawnPosition, spawnAngle, ControlMode::Autonomous);
         // Cada cerebro empieza 100% aleatorio (sin entrenar)
         car.GetBrain().RandomizeWeights(-1.5f, 1.5f);
         car.SetCustomColor(Fade(SKYBLUE, 0.45f));
-        car.SetDrawSensors(false); // Ocultar sensores por defecto para no saturar
+        car.SetDrawSensors(false);
         population.push_back(car);
     }
 
@@ -111,7 +118,7 @@ void GeneticAlgorithm::EvolveNextGeneration() {
     }
 
     // 2. Extraer a los mejores individuos (Top Elitismo)
-    int eliteCount = std::max(2, populationSize / 8); // Top ~12.5%
+    int eliteCount = std::max(2, populationSize / 8);
     std::vector<NeuralNetwork> eliteBrains;
     eliteBrains.reserve(eliteCount);
 
@@ -119,7 +126,6 @@ void GeneticAlgorithm::EvolveNextGeneration() {
         FitnessEntry best = maxHeap.PopMax();
         eliteBrains.push_back(population[best.index].GetBrain());
 
-        // Actualizar mejor cerebro histórico
         if (e == 0 && best.fitness > bestFitnessAllTime) {
             bestFitnessAllTime = best.fitness;
             bestBrainAllTime = population[best.index].GetBrain();
@@ -134,12 +140,10 @@ void GeneticAlgorithm::EvolveNextGeneration() {
     std::vector<NeuralNetwork> nextGenerationBrains;
     nextGenerationBrains.reserve(populationSize);
 
-    // Los mejores pasan intactos a la siguiente generación (Elitismo)
     for (int i = 0; i < eliteCount; ++i) {
         nextGenerationBrains.push_back(eliteBrains[i]);
     }
 
-    // El resto se genera mediante cruce de progenitores elite y mutación gaussiana
     while ((int)nextGenerationBrains.size() < populationSize) {
         int parentA = eliteDist(gen);
         int parentB = eliteDist(gen);
@@ -149,9 +153,9 @@ void GeneticAlgorithm::EvolveNextGeneration() {
         nextGenerationBrains.push_back(child);
     }
 
-    // 4. Asignar los nuevos cerebros y reiniciar posición a la línea de salida
+    // 4. Asignar los nuevos cerebros y reiniciar posición a la línea de salida del circuito
     for (int i = 0; i < populationSize; ++i) {
-        population[i].Reset({ 360.0f, 420.0f }, 0.0f);
+        population[i].Reset(spawnPosition, spawnAngle);
         population[i].SetBrain(nextGenerationBrains[i]);
         population[i].SetControlMode(ControlMode::Autonomous);
         population[i].SetCustomColor(Fade(SKYBLUE, 0.40f));
@@ -165,21 +169,18 @@ void GeneticAlgorithm::EvolveNextGeneration() {
 }
 
 void GeneticAlgorithm::Draw() const {
-    // Dibujar autos colisionados primero (en el fondo, muy tenues)
     for (size_t i = 0; i < population.size(); ++i) {
         if (!population[i].IsAlive()) {
             population[i].Draw();
         }
     }
 
-    // Dibujar autos vivos
     for (size_t i = 0; i < population.size(); ++i) {
         if (population[i].IsAlive() && (int)i != bestCarIndex) {
             population[i].Draw();
         }
     }
 
-    // Dibujar auto líder por encima de todos con sus sensores destacados
     if (bestCarIndex >= 0 && bestCarIndex < (int)population.size()) {
         population[bestCarIndex].Draw();
     }

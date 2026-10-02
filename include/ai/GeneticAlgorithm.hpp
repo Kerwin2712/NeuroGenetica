@@ -10,6 +10,9 @@ public:
     GeneticAlgorithm(int popSize = 40, float mutRate = 0.10f, float mutMag = 0.30f);
     ~GeneticAlgorithm() = default;
 
+    // Configurar punto de partida y ángulo de spawn
+    void SetSpawnPoint(Vector2 pos, float angle);
+
     // Actualiza la física, sensores, checkpoints y detección de colisiones de toda la población
     void Update(const Track& track, float dt);
 
@@ -39,6 +42,9 @@ private:
     int generation;
     float generationTimer;
     float maxGenerationDuration;
+
+    Vector2 spawnPosition;
+    float spawnAngle;
 
     float bestFitnessCurrentGen;
     float bestFitnessAllTime;

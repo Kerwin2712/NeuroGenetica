@@ -12,7 +12,7 @@ enum class ControlMode {
 
 class Car {
 public:
-    Car(Vector2 startPos = { 360.0f, 420.0f }, float startAngle = 0.0f, ControlMode mode = ControlMode::Manual);
+    Car(Vector2 startPos = { 250.0f, 465.0f }, float startAngle = 0.0f, ControlMode mode = ControlMode::Manual);
     ~Car() = default;
 
     // Actualización según el modo activo
@@ -41,7 +41,7 @@ public:
     bool CheckCollision(const std::vector<LineSegment>& walls);
 
     // Reiniciar posición y revivir el vehículo
-    void Reset(Vector2 startPos = { 360.0f, 420.0f }, float startAngle = 0.0f);
+    void Reset(Vector2 startPos = { 250.0f, 465.0f }, float startAngle = 0.0f);
 
     // Dibuja el chasis, faros, rayos sensores y telemetría visual
     void Draw() const;
