@@ -150,6 +150,7 @@ Simulación de vehículos autónomos en **C++** que aprenden a conducir en circu
 
 ### Fase 2: Circuito, QuadTree y Sensores
 - [x] Definir el circuito mediante polígonos/segmentos de línea (bordes interiores y exteriores).
+- [x] Trazado de circuito de Gran Premio de alta complejidad con splines Catmull-Rom, pianos bicolores, línea discontinua y 69 checkpoints transversales.
 - [x] Implementar la estructura **QuadTree** en C++ para indexar los segmentos de la pista y optimizar consultas a $O(\log n)$.
 - [x] Implementar el sistema de sensores del auto (rayos que proyectan líneas e intersectan los muros mediante consultas en el QuadTree).
 - [x] Dibujar visualmente los rayos del sensor y marcar el punto de impacto en los bordes con gradiente de proximidad.
@@ -175,8 +176,8 @@ Simulación de vehículos autónomos en **C++** que aprenden a conducir en circu
 
 ### Fase 5: Optimización, UI y Texturas Finales
 - [ ] Integrar sprites de vehículos e imagen de pista (generadas con IA o diseñadas).
-- [ ] Diseñar panel HUD con estadísticas en vivo de la evolución.
-- [ ] Añadir selector de velocidad de simulación (entrenamiento acelerado sin limitar a 60 FPS).
+- [x] Diseñar panel HUD con estadísticas en vivo de la evolución (Generación, Vivos, Fitness, Record, Telemetría, QuadTree y FPS).
+- [x] Añadir selector de velocidad de simulación (entrenamiento acelerado $\times 1, \times 2, \times 5$ con barra espaciadora).
 - [ ] Exportación/importación del mejor modelo genético a archivo `.json` o binario.
 
 ---
