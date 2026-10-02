@@ -5,7 +5,7 @@ Simulation::Simulation(int width, int height, const std::string& title)
       screenHeight(height),
       windowTitle(title),
       track(),
-      playerCar({ 360.0f, 420.0f }, 0.0f),
+      playerCar({ 360.0f, 420.0f }, 0.0f, ControlMode::Manual),
       hud(),
       showQuadTreeDebug(false)
 {
@@ -18,7 +18,7 @@ Simulation::Simulation(int width, int height, const std::string& title)
     int monitorH = GetMonitorHeight(monitor);
     SetWindowPosition((monitorW - screenWidth) / 2, (monitorH - screenHeight) / 2 - 30);
 
-    // Calcular lecturas iniciales de los sensores usando el QuadTree
+    // Lectura inicial de sensores
     playerCar.CastSensors(track.GetQuadTree());
 }
 
@@ -34,46 +34,65 @@ void Simulation::Run() {
 }
 
 void Simulation::Update() {
-    // Alternar pantalla completa con F11 o Alt+Enter
+    // 1. Alternar pantalla completa con F11 o Alt+Enter
     if (IsKeyPressed(KEY_F11) || (IsKeyDown(KEY_LEFT_ALT) && IsKeyPressed(KEY_ENTER))) {
         ToggleFullscreen();
     }
 
-    // Alternar visualización del QuadTree con la tecla 'Q'
+    // 2. Alternar entre Modo Manual y Modo Autónomo (Red Neuronal) con la tecla 'M'
+    if (IsKeyPressed(KEY_M)) {
+        if (playerCar.GetControlMode() == ControlMode::Manual) {
+            playerCar.SetControlMode(ControlMode::Autonomous);
+        } else {
+            playerCar.SetControlMode(ControlMode::Manual);
+        }
+    }
+
+    // 3. Generar una Red Neuronal con pesos aleatorios para experimentar (tecla 'N')
+    if (IsKeyPressed(KEY_N)) {
+        playerCar.GetBrain().RandomizeWeights(-1.5f, 1.5f);
+    }
+
+    // 4. Restaurar Red Neuronal con pesos calibrados de navegación (tecla 'B')
+    if (IsKeyPressed(KEY_B)) {
+        playerCar.GetBrain().InitializeHeuristicWeights();
+    }
+
+    // 5. Alternar visualización del QuadTree con la tecla 'Q'
     if (IsKeyPressed(KEY_Q)) {
         showQuadTreeDebug = !showQuadTreeDebug;
     }
 
-    // Reiniciar vehículo con tecla 'R'
+    // 6. Reiniciar vehículo con tecla 'R'
     if (IsKeyPressed(KEY_R)) {
         playerCar.Reset({ 360.0f, 420.0f }, 0.0f);
     }
 
-    // 1. Cinemática manual
-    playerCar.UpdateManual();
-
-    // 2. Raycasting acelerado mediante consultas en el QuadTree O(log n)
+    // 7. Raycasting acelerado mediante el QuadTree O(log n)
     playerCar.CastSensors(track.GetQuadTree());
 
-    // 3. Verificación de colisión acelerada mediante caja delimitadora en QuadTree
+    // 8. Actualización del vehículo (manual por teclado o autónoma por red neuronal)
+    playerCar.Update();
+
+    // 9. Detección de colisión contra los muros de la pista
     playerCar.CheckCollision(track.GetQuadTree());
 }
 
 void Simulation::Render() {
     BeginDrawing();
 
-    // 1. Dibujar fondo y circuito
+    // 1. Dibujar pista y fondo
     track.Draw();
 
-    // 2. Si está activo el modo debug, dibujar cuadrantes del QuadTree
+    // 2. Modo depuración de cuadrantes del QuadTree
     if (showQuadTreeDebug) {
         track.DrawDebugQuadTree();
     }
 
-    // 3. Dibujar vehículo, rayos sensores y puntos de impacto
+    // 3. Dibujar vehículo y sensores
     playerCar.Draw();
 
-    // 4. Dibujar interfaz / telemetría con métricas del QuadTree
+    // 4. Dibujar telemetría y selector de modo en el HUD
     hud.Draw(playerCar, track, showQuadTreeDebug);
 
     EndDrawing();

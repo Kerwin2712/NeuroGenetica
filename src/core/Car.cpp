@@ -2,7 +2,7 @@
 #include <cmath>
 #include <algorithm>
 
-Car::Car(Vector2 startPos, float startAngle)
+Car::Car(Vector2 startPos, float startAngle, ControlMode mode)
     : position(startPos),
       angle(startAngle),
       speed(0.0f),
@@ -12,8 +12,12 @@ Car::Car(Vector2 startPos, float startAngle)
       turnSpeed(3.2f),
       width(30.0f),
       height(15.0f),
-      bodyColor(RED),
+      manualColor(RED),
+      aiColor(Color{ 0, 130, 230, 255 }), // Azul eléctrico para conducción autónoma
       isAlive(true),
+      controlMode(mode),
+      brain(6, 8, 2),
+      lastAiOutputs{ 0.0f, 0.0f },
       sensorLength(95.0f),
       sensorAngles{ -60.0f, -30.0f, 0.0f, 30.0f, 60.0f }
 {
@@ -35,6 +39,45 @@ std::vector<Vector2> Car::GetCorners() const {
     };
 }
 
+void Car::Update() {
+    if (controlMode == ControlMode::Manual) {
+        UpdateManual();
+    } else {
+        ThinkAndDrive();
+    }
+}
+
+void Car::ThinkAndDrive() {
+    if (!isAlive) return;
+
+    // Recopilar entradas normalizadas para la Red Neuronal:
+    // [0..4]: Lecturas de los 5 sensores de distancia [0.0 = colisión inminente, 1.0 = vía libre]
+    // [5]: Velocidad actual normalizada [0.0, 1.0]
+    std::vector<float> inputs;
+    inputs.reserve(6);
+
+    for (const auto& hit : sensorHits) {
+        inputs.push_back(hit.normalizedDist);
+    }
+    while (inputs.size() < 5) {
+        inputs.push_back(1.0f);
+    }
+
+    inputs.push_back(std::clamp(speed / maxSpeed, 0.0f, 1.0f));
+
+    // Propagación hacia adelante en la red neuronal feedforward
+    lastAiOutputs = brain.FeedForward(inputs);
+
+    // Mapear salidas de la red a los actuadores del auto:
+    // Salida 0: Dirección de giro [-1.0 = izquierda, +1.0 = derecha]
+    float steer = lastAiOutputs[0];
+
+    // Salida 1: Acelerador/Freno [-1.0 = freno/reversa, +1.0 = máxima aceleración]
+    float throttle = lastAiOutputs[1];
+
+    UpdateAI(throttle, steer);
+}
+
 void Car::CastSensors(const QuadTree& quadTree) {
     sensorHits.clear();
 
@@ -53,7 +96,6 @@ void Car::CastSensors(const QuadTree& quadTree) {
         hit.hasHit = false;
         hit.hitPoint = rayEnd;
 
-        // Consulta en QuadTree: recupera únicamente los segmentos candidatos en el área del rayo
         std::vector<LineSegment> candidateWalls;
         quadTree.QueryRay(position, rayEnd, candidateWalls);
 
@@ -130,7 +172,6 @@ bool Car::CheckCollision(const QuadTree& quadTree) {
 
     std::vector<Vector2> corners = GetCorners();
 
-    // Calcular AABB del auto para consulta en QuadTree
     float minX = std::min({ corners[0].x, corners[1].x, corners[2].x, corners[3].x });
     float maxX = std::max({ corners[0].x, corners[1].x, corners[2].x, corners[3].x });
     float minY = std::min({ corners[0].y, corners[1].y, corners[2].y, corners[3].y });
@@ -138,7 +179,6 @@ bool Car::CheckCollision(const QuadTree& quadTree) {
 
     BoundingBox2D carBox = { minX, minY, maxX - minX, maxY - minY };
 
-    // Recuperar únicamente los segmentos cercanos mediante QuadTree
     std::vector<LineSegment> candidateWalls;
     quadTree.QueryBox(carBox, candidateWalls);
 
@@ -197,6 +237,7 @@ void Car::Reset(Vector2 startPos, float startAngle) {
     speed = 0.0f;
     isAlive = true;
     sensorHits.clear();
+    lastAiOutputs = { 0.0f, 0.0f };
 }
 
 void Car::UpdateManual() {
@@ -265,12 +306,14 @@ void Car::Draw() const {
         }
     }
 
-    // 2. Chasis del vehículo
-    Color currentColor = isAlive ? bodyColor : Color{ 90, 30, 30, 255 };
+    // 2. Chasis del vehículo según modo (Rojo = Manual, Azul = IA Autónoma)
+    Color activeColor = (controlMode == ControlMode::Manual) ? manualColor : aiColor;
+    Color currentColor = isAlive ? activeColor : Color{ 70, 30, 30, 255 };
+
     Rectangle rect = { position.x, position.y, width, height };
     Vector2 origin = { width / 2.0f, height / 2.0f };
     DrawRectanglePro(rect, origin, angle, currentColor);
-    DrawRectangleLinesEx(rect, 1.0f, isAlive ? GOLD : RED);
+    DrawRectangleLinesEx(rect, 1.0f, isAlive ? ((controlMode == ControlMode::Manual) ? GOLD : SKYBLUE) : RED);
 
     // 3. Faros delanteros
     float rad = angle * DEG2RAD;
@@ -285,8 +328,12 @@ void Car::Draw() const {
     DrawCircleV(frontRight, 2.5f, isAlive ? YELLOW : DARKGRAY);
     DrawCircleV(frontLeft, 2.5f, isAlive ? YELLOW : DARKGRAY);
 
-    // 4. Efecto gráfico de colisión
-    if (!isAlive) {
+    // 4. Indicador de modo en el auto
+    if (isAlive) {
+        if (controlMode == ControlMode::Autonomous) {
+            DrawText("IA", (int)position.x - 7, (int)position.y - 5, 10, WHITE);
+        }
+    } else {
         DrawCircleLines((int)position.x, (int)position.y, 22.0f, RED);
         DrawCircleLines((int)position.x, (int)position.y, 28.0f, Fade(ORANGE, 0.7f));
         DrawText("!COLISION!", (int)position.x - 38, (int)position.y - 32, 14, RED);
