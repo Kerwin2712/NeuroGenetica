@@ -10,16 +10,19 @@ public:
     // Propagación hacia adelante: recibe entradas normalizadas y calcula salidas [-1, 1]
     std::vector<float> FeedForward(const std::vector<float>& inputs) const;
 
-    // Inicializa la red con pesos calibrados para esquivar muros y navegar el circuito
-    void InitializeHeuristicWeights();
-
-    // Inicializa la red con pesos totalmente aleatorios (para evolución genética)
+    // Inicializa la red con pesos totalmente aleatorios (comportamiento sin entrenar)
     void RandomizeWeights(float minVal = -1.0f, float maxVal = 1.0f);
 
-    // Mutación gaussiana en pesos y sesgos (para Fase 4)
+    // Inicializa la red con pesos calibrados de prueba (opcional)
+    void InitializeHeuristicWeights();
+
+    // Mutación gaussiana en pesos y sesgos con tasa y magnitud
     void Mutate(float mutationRate, float mutationMagnitude);
 
-    // Aplanar todos los pesos y sesgos en un vector continuo (para cruce genético)
+    // Operador de cruce genético (Crossover uniforme entre 2 redes progenitoras)
+    static NeuralNetwork Crossover(const NeuralNetwork& parentA, const NeuralNetwork& parentB);
+
+    // Aplanar y reconstruir genoma completo de la red
     std::vector<float> GetFlatWeights() const;
     void SetFlatWeights(const std::vector<float>& flatWeights);
 

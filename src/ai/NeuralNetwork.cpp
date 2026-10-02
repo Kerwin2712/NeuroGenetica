@@ -15,12 +15,12 @@ NeuralNetwork::NeuralNetwork(int inputs, int hidden, int outputs)
     weightsHiddenOutput.resize(numOutputs, std::vector<float>(numHidden, 0.0f));
     biasesOutput.resize(numOutputs, 0.0f);
 
-    // Por defecto inicializar con pesos heurísticos de evasión de muros
-    InitializeHeuristicWeights();
+    // Por defecto inicializar con pesos 100% aleatorios (red sin entrenar)
+    RandomizeWeights(-1.0f, 1.0f);
 }
 
 float NeuralNetwork::ActivationFunction(float x) {
-    // Función tangente hiperbólica: salida suave en el rango [-1.0, 1.0]
+    // Función tangente hiperbólica: rango suave [-1.0, 1.0]
     return std::tanh(x);
 }
 
@@ -53,39 +53,30 @@ std::vector<float> NeuralNetwork::FeedForward(const std::vector<float>& inputs) 
 }
 
 void NeuralNetwork::InitializeHeuristicWeights() {
-    // Inicializar todo en cero antes de calibrar
     for (auto& row : weightsInputHidden) std::fill(row.begin(), row.end(), 0.0f);
     std::fill(biasesHidden.begin(), biasesHidden.end(), 0.0f);
     for (auto& row : weightsHiddenOutput) std::fill(row.begin(), row.end(), 0.0f);
     std::fill(biasesOutput.begin(), biasesOutput.end(), 0.0f);
 
-    // Neurona oculta 0: Balance lateral (sensores izquierdos vs derechos)
-    // Sensor 0 (-60°), Sensor 1 (-30°), Sensor 3 (+30°), Sensor 4 (+60°)
-    // Si la izquierda está cerca (valor bajo), resta menos -> valor positivo -> gira a la derecha
+    // Balance lateral
     weightsInputHidden[0][0] = -1.2f;
     weightsInputHidden[0][1] = -2.0f;
     weightsInputHidden[0][3] =  2.0f;
     weightsInputHidden[0][4] =  1.2f;
     biasesHidden[0] = 0.0f;
 
-    // Neurona oculta 1: Detección frontal de proximidad (Sensor 2)
+    // Detección frontal
     weightsInputHidden[1][2] = -2.5f;
     biasesHidden[1] = 0.5f;
 
-    // Neurona oculta 2: Sensor de giro pronunciado ante curvas cerradas
-    weightsInputHidden[2][1] = -2.2f;
-    weightsInputHidden[2][3] =  2.2f;
-    biasesHidden[2] = 0.0f;
-
-    // Conexión a Salida 0 (Dirección: Giro [-1 = Izquierda, +1 = Derecha])
-    // Un valor alto en balance lateral produce viraje directo
+    // Conexión a giro
     weightsHiddenOutput[0][0] = 1.8f;
     weightsHiddenOutput[0][2] = 1.5f;
     biasesOutput[0] = 0.0f;
 
-    // Conexión a Salida 1 (Acelerador: Mantener velocidad constante o moderar en curvas)
-    weightsHiddenOutput[1][1] = -0.6f; // Moderar velocidad si hay muro frontal
-    biasesOutput[1] = 0.85f;           // Aceleración constante hacia adelante
+    // Conexión a acelerador
+    weightsHiddenOutput[1][1] = -0.6f;
+    biasesOutput[1] = 0.85f;
 }
 
 void NeuralNetwork::RandomizeWeights(float minVal, float maxVal) {
@@ -117,7 +108,6 @@ void NeuralNetwork::Mutate(float mutationRate, float mutationMagnitude) {
     auto mutateVal = [&](float& val) {
         if (probDis(gen) < mutationRate) {
             val += noiseDis(gen);
-            // Clamping en rango [-3.0, 3.0]
             val = std::clamp(val, -3.0f, 3.0f);
         }
     };
@@ -135,6 +125,26 @@ void NeuralNetwork::Mutate(float mutationRate, float mutationMagnitude) {
         }
         mutateVal(biasesOutput[k]);
     }
+}
+
+NeuralNetwork NeuralNetwork::Crossover(const NeuralNetwork& parentA, const NeuralNetwork& parentB) {
+    NeuralNetwork child(parentA.numInputs, parentA.numHidden, parentA.numOutputs);
+
+    std::vector<float> genomeA = parentA.GetFlatWeights();
+    std::vector<float> genomeB = parentB.GetFlatWeights();
+    std::vector<float> childGenome(genomeA.size());
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> prob(0.0f, 1.0f);
+
+    // Cruce uniforme (50% de probabilidad de heredar cada gen de A o B)
+    for (size_t i = 0; i < genomeA.size(); ++i) {
+        childGenome[i] = (prob(gen) < 0.5f) ? genomeA[i] : genomeB[i];
+    }
+
+    child.SetFlatWeights(childGenome);
+    return child;
 }
 
 std::vector<float> NeuralNetwork::GetFlatWeights() const {
@@ -178,6 +188,5 @@ void NeuralNetwork::SetFlatWeights(const std::vector<float>& flatWeights) {
 }
 
 int NeuralNetwork::GetTotalWeightsCount() const {
-    // (numInputs * numHidden + numHidden) + (numHidden * numOutputs + numOutputs)
     return (numInputs * numHidden + numHidden) + (numHidden * numOutputs + numOutputs);
 }
