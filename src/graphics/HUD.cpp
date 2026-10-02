@@ -1,9 +1,9 @@
 #include "HUD.hpp"
 
 HUD::HUD()
-    : panelBounds{ 10.0f, 10.0f, 335.0f, 225.0f },
-      panelColor{ Fade(BLACK, 0.82f) },
-      borderColor{ RAYWHITE }
+    : panelBounds{ 340.0f, 255.0f, 280.0f, 155.0f },
+      panelColor{ Fade(BLACK, 0.85f) },
+      borderColor{ Fade(RAYWHITE, 0.40f) }
 {
 }
 
@@ -11,49 +11,50 @@ void HUD::Draw(const Car& playerCar, const GeneticAlgorithm& ga, bool isGeneticM
     DrawRectangleRec(panelBounds, panelColor);
     DrawRectangleLinesEx(panelBounds, 1.0f, borderColor);
 
-    DrawText("NeuroGenetica - Neuroevolucion", 20, 16, 15, GOLD);
+    int startX = (int)panelBounds.x + 12;
+    int startY = (int)panelBounds.y + 10;
+
+    DrawText("NeuroGenetica - Neuroevolucion", startX, startY, 13, GOLD);
 
     if (isGeneticMode) {
         // --- Modo Evolución Genética Masiva ---
-        DrawRectangle(20, 36, 295, 20, Fade(LIME, 0.25f));
-        DrawRectangleLines(20, 36, 295, 20, LIME);
-        DrawText("MODO: ENTRENAMIENTO GENETICO", 26, 40, 12, LIME);
+        DrawRectangle(startX, startY + 18, 256, 18, Fade(LIME, 0.25f));
+        DrawRectangleLines(startX, startY + 18, 256, 18, LIME);
+        DrawText("MODO: ENTRENAMIENTO GENETICO", startX + 6, startY + 22, 10, LIME);
 
-        DrawText(TextFormat("Generacion: %i", ga.GetGeneration()), 20, 62, 13, GOLD);
-        DrawText(TextFormat("Autos Vivos: %i / %i", ga.GetAliveCount(), ga.GetPopulationSize()), 160, 62, 13, 
+        DrawText(TextFormat("Gen: %i", ga.GetGeneration()), startX, startY + 42, 12, GOLD);
+        DrawText(TextFormat("Vivos: %i / %i", ga.GetAliveCount(), ga.GetPopulationSize()), startX + 130, startY + 42, 12, 
             ga.GetAliveCount() > 0 ? GREEN : RED);
 
-        DrawText(TextFormat("Mejor Fitness Gen: %.1f", ga.GetBestFitnessCurrentGen()), 20, 80, 12, RAYWHITE);
-        DrawText(TextFormat("Record Historico: %.1f", ga.GetBestFitnessAllTime()), 20, 96, 12, YELLOW);
-        DrawText(TextFormat("Tiempo Gen: %.1f s", ga.GetGenerationTimer()), 20, 112, 12, LIGHTGRAY);
+        DrawText(TextFormat("Fitness Gen: %.1f", ga.GetBestFitnessCurrentGen()), startX, startY + 58, 11, RAYWHITE);
+        DrawText(TextFormat("Record: %.1f", ga.GetBestFitnessAllTime()), startX + 130, startY + 58, 11, YELLOW);
 
-        DrawText(TextFormat("Velocidad: %ix [ESPACIO]", simSpeed), 20, 134, 12, SKYBLUE);
-        DrawText("[M] Modo Manual  [R] Forzar Evolucion", 20, 150, 11, LIGHTGRAY);
-        DrawText("[N] Reiniciar Gen 1   [Q] Ver QuadTree", 20, 166, 11, LIGHTGRAY);
+        DrawText(TextFormat("Tiempo: %.1fs | Vel: %ix [ESPACIO]", ga.GetGenerationTimer(), simSpeed), startX, startY + 74, 11, SKYBLUE);
+
+        DrawText("[M] Modo  [R] Evolucionar  [N] Gen 1", startX, startY + 92, 10, LIGHTGRAY);
+        DrawText("[Q] QuadTree  [F11] Pantalla Completa", startX, startY + 106, 10, LIGHTGRAY);
     } else {
         // --- Modo Manual Individual ---
-        DrawRectangle(20, 36, 295, 20, Fade(ORANGE, 0.25f));
-        DrawRectangleLines(20, 36, 295, 20, ORANGE);
-        DrawText("MODO: MANUAL (1 AUTO - WASD)", 26, 40, 12, ORANGE);
-
-        DrawText("[M] Activar Entrenamiento Masivo (IA)", 20, 62, 11, SKYBLUE);
-        DrawText("[R] Reiniciar Auto  [Q] Ver QuadTree", 20, 78, 11, LIGHTGRAY);
+        DrawRectangle(startX, startY + 18, 256, 18, Fade(ORANGE, 0.25f));
+        DrawRectangleLines(startX, startY + 18, 256, 18, ORANGE);
+        DrawText("MODO: MANUAL (1 AUTO - WASD)", startX + 6, startY + 22, 10, ORANGE);
 
         if (playerCar.IsAlive()) {
-            DrawText("Estado: EN PISTA", 20, 102, 12, GREEN);
+            DrawText("Estado: EN PISTA", startX, startY + 42, 12, GREEN);
         } else {
-            DrawText("Estado: !COLISIONADO! (Pulsa [R])", 20, 102, 12, RED);
+            DrawText("Estado: !COLISIONADO! [R]", startX, startY + 42, 12, RED);
         }
 
-        DrawText(TextFormat("Velocidad: %.2f", playerCar.GetSpeed()), 20, 122, 12, GREEN);
-        DrawText(TextFormat("Angulo: %.1f deg", playerCar.GetAngle()), 20, 140, 12, RAYWHITE);
-        DrawText(TextFormat("Checkpoints: %i", playerCar.GetCurrentCheckpoint()), 20, 158, 12, GOLD);
+        DrawText(TextFormat("Velocidad: %.2f | Checkpoints: %i", playerCar.GetSpeed(), playerCar.GetCurrentCheckpoint()), startX, startY + 58, 11, RAYWHITE);
+        DrawText(TextFormat("Angulo: %.1f deg", playerCar.GetAngle()), startX, startY + 74, 11, GOLD);
+
+        DrawText("[M] Activar IA Masiva  [R] Reiniciar", startX, startY + 92, 10, LIGHTGRAY);
+        DrawText("[WASD/Flechas] Conducir  [Q] QuadTree", startX, startY + 106, 10, LIGHTGRAY);
     }
 
-    // Métricas del QuadTree (Programación 3)
+    // Métricas del QuadTree y rendimiento
     Color qtColor = showQuadTree ? GOLD : GRAY;
-    DrawText(TextFormat("QuadTree: %s (%i nodos)", 
-        showQuadTree ? "VISIBLE [Q]" : "ACTIVO O(log n)",
-        track.GetQuadTree().GetTotalNodes()), 20, 195, 11, qtColor);
-    DrawText(TextFormat("FPS: %i", GetFPS()), 250, 195, 11, YELLOW);
+    DrawText(TextFormat("QuadTree: %s (%i) | FPS: %i", 
+        showQuadTree ? "VISIBLE [Q]" : "O(log n)",
+        track.GetQuadTree().GetTotalNodes(), GetFPS()), startX, startY + 128, 10, qtColor);
 }
