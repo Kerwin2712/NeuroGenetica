@@ -166,10 +166,12 @@ Simulación de vehículos autónomos en **C++** que aprenden a conducir en circu
 - [x] Suite de pruebas unitarias de la Red Neuronal (`tests/test_neural_network.cpp`).
 
 ### Fase 4: Neuroevolución y Checkpoints (Algoritmo Genético)
-- [ ] Implementar checkpoints en la pista para medir progreso real en el circuito.
-- [ ] Crear la población de $N$ autos simultáneos con cerebros independientes.
-- [ ] Calcular la función de fitness (checkpoints superados + distancia).
-- [ ] Implementar el ciclo generativo: evaluar generación $\to$ seleccionar mejores con **Max-Heap** $\to$ crossover $\to$ mutación $\to$ reiniciar posición.
+- [x] Implementar checkpoints en la pista para medir progreso real en el circuito.
+- [x] Crear la población de $N$ autos simultáneos con cerebros independientes y 100% aleatorios.
+- [x] Calcular la función de fitness (checkpoints superados + distancia sin trampas).
+- [x] Implementar el ciclo generativo: evaluar generación $\to$ seleccionar mejores con **Max-Heap** en $O(k \log n)$ $\to$ crossover $\to$ mutación $\to$ reiniciar posición.
+- [x] Aceleración de simulación con barra espaciadora ($\times 1, \times 2, \times 5$).
+- [x] Suite de pruebas unitarias de Algoritmo Genético y Max-Heap (`tests/test_genetic_algorithm.cpp`).
 
 ### Fase 5: Optimización, UI y Texturas Finales
 - [ ] Integrar sprites de vehículos e imagen de pista (generadas con IA o diseñadas).
@@ -248,6 +250,9 @@ cmake --build build
 
 # Pruebas de la Red Neuronal y Activaciones
 ./build/NeuralNetworkTests.exe
+
+# Pruebas de Algoritmo Genético y Max-Heap
+./build/GeneticAlgorithmTests.exe
 ```
 
 ---
