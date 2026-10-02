@@ -3,6 +3,7 @@
 #include "Track.hpp"
 #include "Car.hpp"
 #include "HUD.hpp"
+#include "GeneticAlgorithm.hpp"
 #include <string>
 
 class Simulation {
@@ -24,8 +25,11 @@ private:
     // Componentes del simulador
     Track track;
     Car playerCar;
+    GeneticAlgorithm geneticAlgorithm;
     HUD hud;
 
-    // Alternar visualización del QuadTree para depuración y defensas
+    // Modos y configuración de ejecución
+    bool isGeneticMode;
     bool showQuadTreeDebug;
+    int simSpeed; // 1x, 2x, 5x
 };
