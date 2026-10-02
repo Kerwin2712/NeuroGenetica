@@ -97,7 +97,7 @@ Simulación de vehículos autónomos en **C++** que aprenden a conducir en circu
 
 ---
 
-### 👤 Integrante 2: Red Neuronal y Algoritmo Genético
+### 👤 Kerwin Quintero: Red Neuronal y Algoritmo Genético
 - **Módulos a desarrollar**:
   - Red Neuronal Feedforward (`NeuralNetwork`): capas, matrices de pesos, sesgos y función de activación (ReLU/Tanh).
   - Algoritmo Genético (`GeneticAlgorithm`): población de cerebros, cruce (crossover) y mutación gaussiana.
