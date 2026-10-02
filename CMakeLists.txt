@@ -33,15 +33,23 @@ target_include_directories(NeuroGenetica PRIVATE
 
 target_link_libraries(NeuroGenetica PRIVATE raylib)
 
-# Ejecutable para Pruebas Unitarias (Programación 3)
-add_executable(NeuroGeneticaTests 
+# Ejecutable para Pruebas Unitarias de QuadTree y Geometría
+add_executable(QuadTreeTests 
     tests/test_quadtree.cpp 
     src/core/QuadTree.cpp
 )
-
-target_include_directories(NeuroGeneticaTests PRIVATE 
+target_include_directories(QuadTreeTests PRIVATE 
     include
     include/core
 )
+target_link_libraries(QuadTreeTests PRIVATE raylib)
 
-target_link_libraries(NeuroGeneticaTests PRIVATE raylib)
+# Ejecutable para Pruebas Unitarias de Red Neuronal (Fase 3)
+add_executable(NeuralNetworkTests 
+    tests/test_neural_network.cpp 
+    src/ai/NeuralNetwork.cpp
+)
+target_include_directories(NeuralNetworkTests PRIVATE 
+    include
+    include/ai
+)
