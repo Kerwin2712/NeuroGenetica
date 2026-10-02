@@ -158,10 +158,12 @@ Simulación de vehículos autónomos en **C++** que aprenden a conducir en circu
 - [x] Suite de pruebas unitarias del QuadTree e intersecciones geométricas (`tests/test_quadtree.cpp`).
 
 ### Fase 3: Red Neuronal y Conducción Automática
-- [ ] Implementar la clase `NeuralNetwork` (capa de entrada, capa oculta, capa de salida).
-- [ ] Conectar las lecturas de los sensores como inputs de la red.
-- [ ] Mapear los outputs de la red neuronal a los controles del auto (girar y acelerar).
-- [ ] Probar la propagación hacia adelante con un auto individual y pesos aleatorios.
+- [x] Implementar la clase `NeuralNetwork` (capa de entrada, capa oculta, capa de salida con activación Tanh).
+- [x] Conectar las lecturas de los sensores como inputs de la red (5 distancias + velocidad).
+- [x] Mapear los outputs de la red neuronal a los controles del auto (girar y acelerar).
+- [x] Probar la propagación hacia adelante con un auto individual y pesos aleatorios/calibrados.
+- [x] Selector de modo dinámico en tiempo real (Manual [WASD] vs Autónomo [IA] con tecla `M`).
+- [x] Suite de pruebas unitarias de la Red Neuronal (`tests/test_neural_network.cpp`).
 
 ### Fase 4: Neuroevolución y Checkpoints (Algoritmo Genético)
 - [ ] Implementar checkpoints en la pista para medir progreso real en el circuito.
@@ -241,7 +243,11 @@ cmake --build build
 
 ### 4. Ejecutar Pruebas Unitarias
 ```powershell
-./build/NeuroGeneticaTests.exe
+# Pruebas del QuadTree y Geometría
+./build/QuadTreeTests.exe
+
+# Pruebas de la Red Neuronal y Activaciones
+./build/NeuralNetworkTests.exe
 ```
 
 ---
