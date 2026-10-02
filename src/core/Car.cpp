@@ -13,8 +13,16 @@ Car::Car(Vector2 startPos, float startAngle, ControlMode mode)
       width(30.0f),
       height(15.0f),
       manualColor(RED),
-      aiColor(Color{ 0, 130, 230, 255 }), // Azul eléctrico para conducción autónoma
+      aiColor(Color{ 0, 130, 230, 255 }),
+      customColor(WHITE),
+      useCustomColor(false),
       isAlive(true),
+      drawSensors(true),
+      fitness(0.0f),
+      currentCheckpoint(0),
+      distanceTraveled(0.0f),
+      timeAlive(0.0f),
+      timeSinceLastCheckpoint(0.0f),
       controlMode(mode),
       brain(6, 8, 2),
       lastAiOutputs{ 0.0f, 0.0f },
@@ -50,9 +58,6 @@ void Car::Update() {
 void Car::ThinkAndDrive() {
     if (!isAlive) return;
 
-    // Recopilar entradas normalizadas para la Red Neuronal:
-    // [0..4]: Lecturas de los 5 sensores de distancia [0.0 = colisión inminente, 1.0 = vía libre]
-    // [5]: Velocidad actual normalizada [0.0, 1.0]
     std::vector<float> inputs;
     inputs.reserve(6);
 
@@ -65,17 +70,50 @@ void Car::ThinkAndDrive() {
 
     inputs.push_back(std::clamp(speed / maxSpeed, 0.0f, 1.0f));
 
-    // Propagación hacia adelante en la red neuronal feedforward
     lastAiOutputs = brain.FeedForward(inputs);
 
-    // Mapear salidas de la red a los actuadores del auto:
-    // Salida 0: Dirección de giro [-1.0 = izquierda, +1.0 = derecha]
     float steer = lastAiOutputs[0];
-
-    // Salida 1: Acelerador/Freno [-1.0 = freno/reversa, +1.0 = máxima aceleración]
     float throttle = lastAiOutputs[1];
 
     UpdateAI(throttle, steer);
+}
+
+void Car::CheckCheckpoints(const std::vector<LineSegment>& checkpoints, float dt) {
+    if (!isAlive || checkpoints.empty()) return;
+
+    timeAlive += dt;
+    timeSinceLastCheckpoint += dt;
+    distanceTraveled += std::abs(speed);
+
+    // Si pasa más de 3.0 segundos sin alcanzar el siguiente checkpoint consecutivo, descartar
+    if (timeSinceLastCheckpoint > 3.0f) {
+        isAlive = false;
+        speed = 0.0f;
+        return;
+    }
+
+    int targetIdx = currentCheckpoint % checkpoints.size();
+    const LineSegment& cp = checkpoints[targetIdx];
+
+    std::vector<Vector2> corners = GetCorners();
+    LineSegment carEdges[4] = {
+        { corners[0], corners[1] },
+        { corners[1], corners[2] },
+        { corners[2], corners[3] },
+        { corners[3], corners[0] }
+    };
+
+    for (const auto& edge : carEdges) {
+        Vector2 hit;
+        float t;
+        if (CheckLineIntersection(edge.start, edge.end, cp.start, cp.end, hit, t)) {
+            currentCheckpoint++;
+            timeSinceLastCheckpoint = 0.0f;
+            break;
+        }
+    }
+
+    fitness = (currentCheckpoint * 300.0f) + (distanceTraveled * 0.2f);
 }
 
 void Car::CastSensors(const QuadTree& quadTree) {
@@ -236,6 +274,11 @@ void Car::Reset(Vector2 startPos, float startAngle) {
     angle = startAngle;
     speed = 0.0f;
     isAlive = true;
+    fitness = 0.0f;
+    currentCheckpoint = 0;
+    distanceTraveled = 0.0f;
+    timeAlive = 0.0f;
+    timeSinceLastCheckpoint = 0.0f;
     sensorHits.clear();
     lastAiOutputs = { 0.0f, 0.0f };
 }
@@ -284,58 +327,58 @@ void Car::UpdateAI(float throttleInput, float steerInput) {
 }
 
 void Car::Draw() const {
-    // 1. Rayos sensores con detección visual de extremos de la carretera
-    for (const auto& hit : sensorHits) {
-        Color rayColor;
-        if (hit.hasHit) {
-            if (hit.normalizedDist < 0.35f) {
-                rayColor = RED;
-            } else if (hit.normalizedDist < 0.70f) {
-                rayColor = ORANGE;
-            } else {
-                rayColor = GREEN;
-            }
+    // 1. Rayos sensores (solo si drawSensors está activo para no saturar pantalla en poblaciones)
+    if (drawSensors && isAlive) {
+        for (const auto& hit : sensorHits) {
+            Color rayColor;
+            if (hit.hasHit) {
+                if (hit.normalizedDist < 0.35f) {
+                    rayColor = RED;
+                } else if (hit.normalizedDist < 0.70f) {
+                    rayColor = ORANGE;
+                } else {
+                    rayColor = GREEN;
+                }
 
-            DrawLineEx(hit.start, hit.hitPoint, 1.5f, Fade(rayColor, 0.85f));
-            DrawCircleV(hit.hitPoint, 4.5f, rayColor);
-            DrawCircleV(hit.hitPoint, 2.0f, YELLOW);
-            DrawCircleLines((int)hit.hitPoint.x, (int)hit.hitPoint.y, 6.5f, RAYWHITE);
-        } else {
-            DrawLineV(hit.start, hit.hitPoint, Fade(SKYBLUE, 0.4f));
-            DrawCircleV(hit.hitPoint, 2.0f, Fade(SKYBLUE, 0.6f));
+                DrawLineEx(hit.start, hit.hitPoint, 1.5f, Fade(rayColor, 0.85f));
+                DrawCircleV(hit.hitPoint, 4.0f, rayColor);
+                DrawCircleV(hit.hitPoint, 2.0f, YELLOW);
+                DrawCircleLines((int)hit.hitPoint.x, (int)hit.hitPoint.y, 6.0f, RAYWHITE);
+            } else {
+                DrawLineV(hit.start, hit.hitPoint, Fade(SKYBLUE, 0.3f));
+                DrawCircleV(hit.hitPoint, 2.0f, Fade(SKYBLUE, 0.5f));
+            }
         }
     }
 
-    // 2. Chasis del vehículo según modo (Rojo = Manual, Azul = IA Autónoma)
-    Color activeColor = (controlMode == ControlMode::Manual) ? manualColor : aiColor;
-    Color currentColor = isAlive ? activeColor : Color{ 70, 30, 30, 255 };
+    // 2. Chasis del vehículo
+    Color baseColor;
+    if (useCustomColor) {
+        baseColor = customColor;
+    } else {
+        baseColor = (controlMode == ControlMode::Manual) ? manualColor : aiColor;
+    }
+
+    Color currentColor = isAlive ? baseColor : Fade(DARKGRAY, 0.25f);
 
     Rectangle rect = { position.x, position.y, width, height };
     Vector2 origin = { width / 2.0f, height / 2.0f };
     DrawRectanglePro(rect, origin, angle, currentColor);
-    DrawRectangleLinesEx(rect, 1.0f, isAlive ? ((controlMode == ControlMode::Manual) ? GOLD : SKYBLUE) : RED);
 
-    // 3. Faros delanteros
-    float rad = angle * DEG2RAD;
-    Vector2 frontRight = {
-        position.x + std::cos(rad) * (width / 2.0f) - std::sin(rad) * (height / 3.0f),
-        position.y + std::sin(rad) * (width / 2.0f) + std::cos(rad) * (height / 3.0f)
-    };
-    Vector2 frontLeft = {
-        position.x + std::cos(rad) * (width / 2.0f) + std::sin(rad) * (height / 3.0f),
-        position.y + std::sin(rad) * (width / 2.0f) - std::cos(rad) * (height / 3.0f)
-    };
-    DrawCircleV(frontRight, 2.5f, isAlive ? YELLOW : DARKGRAY);
-    DrawCircleV(frontLeft, 2.5f, isAlive ? YELLOW : DARKGRAY);
-
-    // 4. Indicador de modo en el auto
     if (isAlive) {
-        if (controlMode == ControlMode::Autonomous) {
-            DrawText("IA", (int)position.x - 7, (int)position.y - 5, 10, WHITE);
-        }
-    } else {
-        DrawCircleLines((int)position.x, (int)position.y, 22.0f, RED);
-        DrawCircleLines((int)position.x, (int)position.y, 28.0f, Fade(ORANGE, 0.7f));
-        DrawText("!COLISION!", (int)position.x - 38, (int)position.y - 32, 14, RED);
+        DrawRectangleLinesEx(rect, 1.0f, (controlMode == ControlMode::Manual) ? GOLD : SKYBLUE);
+
+        // Faros delanteros
+        float rad = angle * DEG2RAD;
+        Vector2 frontRight = {
+            position.x + std::cos(rad) * (width / 2.0f) - std::sin(rad) * (height / 3.0f),
+            position.y + std::sin(rad) * (width / 2.0f) + std::cos(rad) * (height / 3.0f)
+        };
+        Vector2 frontLeft = {
+            position.x + std::cos(rad) * (width / 2.0f) + std::sin(rad) * (height / 3.0f),
+            position.y + std::sin(rad) * (width / 2.0f) - std::cos(rad) * (height / 3.0f)
+        };
+        DrawCircleV(frontRight, 2.5f, YELLOW);
+        DrawCircleV(frontLeft, 2.5f, YELLOW);
     }
 }

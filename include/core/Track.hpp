@@ -15,14 +15,21 @@ public:
     // Dibuja la estructura espacial del QuadTree para depuración visual y defensas
     void DrawDebugQuadTree() const;
 
+    // Dibuja los checkpoints guía del circuito
+    void DrawCheckpoints(bool visible = true) const;
+
     // Retorna todos los segmentos de línea que conforman las paredes exteriores e interiores
     const std::vector<LineSegment>& GetWalls() const { return walls; }
+
+    // Retorna la secuencia ordenada de checkpoints para medir fitness
+    const std::vector<LineSegment>& GetCheckpoints() const { return checkpoints; }
 
     // Retorna el QuadTree que indexa espacialmente las paredes de la pista
     const QuadTree& GetQuadTree() const { return quadTree; }
 
 private:
     void BuildTrackBoundaries();
+    void BuildCheckpoints();
 
     Color grassColor;
     Color roadColor;
@@ -40,6 +47,9 @@ private:
 
     // Colección de segmentos de colisión y raycasting
     std::vector<LineSegment> walls;
+
+    // Secuencia de checkpoints para progreso de fitness
+    std::vector<LineSegment> checkpoints;
 
     // Árbol de partición espacial 2D
     QuadTree quadTree;

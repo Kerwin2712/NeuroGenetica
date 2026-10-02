@@ -15,17 +15,20 @@ public:
     Car(Vector2 startPos = { 360.0f, 420.0f }, float startAngle = 0.0f, ControlMode mode = ControlMode::Manual);
     ~Car() = default;
 
-    // Actualización según el modo activo (Manual o Autónomo por Red Neuronal)
+    // Actualización según el modo activo
     void Update();
 
     // Actualización manual por teclado
     void UpdateManual();
 
-    // Actualización autónoma: la red neuronal procesa sensores y decide dirección/aceleración
+    // Actualización autónoma procesada por la red neuronal
     void ThinkAndDrive();
 
     // Control directo por valores de aceleración [-1, 1] y viraje [-1, 1]
     void UpdateAI(float throttleInput, float steerInput);
+
+    // Verificación de checkpoints para avance de fitness y descarte por inactividad
+    void CheckCheckpoints(const std::vector<LineSegment>& checkpoints, float dt);
 
     // Raycasting optimizado usando consultas espaciales en QuadTree
     void CastSensors(const QuadTree& quadTree);
@@ -49,6 +52,8 @@ public:
     float GetSpeed() const { return speed; }
     bool IsAlive() const { return isAlive; }
     ControlMode GetControlMode() const { return controlMode; }
+    float GetFitness() const { return fitness; }
+    int GetCurrentCheckpoint() const { return currentCheckpoint; }
     const std::vector<SensorHit>& GetSensorHits() const { return sensorHits; }
     const std::vector<float>& GetLastAiOutputs() const { return lastAiOutputs; }
     NeuralNetwork& GetBrain() { return brain; }
@@ -59,6 +64,9 @@ public:
     void SetAngle(float newAngle) { angle = newAngle; }
     void SetAlive(bool alive) { isAlive = alive; }
     void SetControlMode(ControlMode mode) { controlMode = mode; }
+    void SetBrain(const NeuralNetwork& newBrain) { brain = newBrain; }
+    void SetCustomColor(Color col) { customColor = col; useCustomColor = true; }
+    void SetDrawSensors(bool draw) { drawSensors = draw; }
 
 private:
     std::vector<Vector2> GetCorners() const;
@@ -75,7 +83,17 @@ private:
     float height;
     Color manualColor;
     Color aiColor;
+    Color customColor;
+    bool useCustomColor;
     bool isAlive;
+    bool drawSensors;
+
+    // Métricas para Algoritmo Genético (Neuroevolución)
+    float fitness;
+    int currentCheckpoint;
+    float distanceTraveled;
+    float timeAlive;
+    float timeSinceLastCheckpoint;
 
     // Modo de control: Manual o Autónomo
     ControlMode controlMode;
