@@ -77,7 +77,7 @@ Simulación de vehículos autónomos en **C++** que aprenden a conducir en circu
 
 ---
 
-### 👤 Integrante 1: Física, Sensores y Estructuras Espaciales (Árboles)
+### 👤 Javier Olivieri: Física, Sensores y Estructuras Espaciales (Árboles)
 - **Módulos a desarrollar**:
   - Cinemática del auto (`Car`): posición, ángulo, aceleración, fricción y viraje.
   - Estructura de datos **QuadTree**: partición espacial 2D recursiva para los segmentos del circuito.
