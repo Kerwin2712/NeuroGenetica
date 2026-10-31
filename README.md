@@ -1,18 +1,36 @@
 # NeuroGenetica 🏎️🧠
 
-Simulación de vehículos autónomos en **C++** que aprenden a conducir en circuitos mediante **Redes Neuronales** y **Algoritmos Genéticos (Neuroevolución)**, optimizados con **estructuras de datos avanzadas (Árboles / QuadTrees y Heaps)** para la materia *Programación 3*.
+Simulación de vehículos autónomos en **C++17** que aprenden a conducir en circuitos de carreras mediante **Redes Neuronales Feedforward** y **Algoritmos Genéticos (Neuroevolución)**, optimizados con estructuras de datos avanzadas (**QuadTree** para partición espacial y **Max-Heap** para selección elitista). Proyecto desarrollado para la materia *Programación 3*.
 
 ---
 
-## 🎯 Objetivos del Proyecto (Programación 3)
+## 🎯 Resumen y Objetivos del Proyecto
+
+El objetivo de **NeuroGenetica** es aplicar conceptos avanzados de programación orientada a objetos, optimización algorítmica y estructuras de datos para resolver un problema de aprendizaje autónomo en tiempo real:
 
 - **Estructuras de Datos Avanzadas**:
-  - **QuadTree (Árbol de partición espacial 2D)**: Almacena los segmentos y límites de la pista para optimizar el cálculo de colisiones y el raycasting de sensores en tiempo $O(\log n)$ en lugar de $O(n \times m)$.
-  - **Max-Heap / Cola de Prioridad**: Ordenamiento y selección eficiente del top de individuos por fitness para elitismo y cruce genético en tiempo $O(k \log n)$.
-- **Programación Orientada a Objetos (POO)**: Arquitectura limpia, modular y desacoplada en C++ moderno (C++17/20).
-- **Pruebas Unitarias Obligatorias**: Validación rigurosa de cada estructura de datos y módulo lógico mediante tests unitarios antes de integrarlos a la simulación visual.
-- **Flujo de Trabajo Git con Commits Atómicos**: Cada commit debe ser pequeño, autocontenido, funcional y explicar claramente qué cambia, evitando commits masivos o desordenados.
-- **Optimización y Rendimiento**: Capacidad de simular decenas o cientos de vehículos en paralelo a altos FPS o en modo acelerado.
+  - **QuadTree (Árbol de partición espacial 2D)**: Indexa los segmentos y muros del circuito para optimizar el cálculo de colisiones y el raycasting de sensores en tiempo $O(\log n)$ en lugar del costo ingenuo $O(n \times m)$.
+  - **Max-Heap (Cola de Prioridad)**: Realiza el ranking y la selección del top de individuos más aptos para elitismo y cruce genético en tiempo $O(k \log n)$.
+- **Neuroevolución (IA sin Backpropagation)**:
+  - Cada vehículo posee un "cerebro" (Red Neuronal Feedforward).
+  - La población evoluciona mediante selección por torneo/elitismo, cruce uniforme de pesos y mutación gaussiana continua.
+- **Validación con Pruebas Unitarias**:
+  - Cobertura completa de tests unitarios independientes para el QuadTree, la Red Neuronal y el Algoritmo Genético, integrados con **CTest**.
+- **Flujo de Trabajo Profesional**:
+  - Commits atómicos descriptivos bajo estándar *Conventional Commits* y flujo de ramas estructurado.
+
+---
+
+## 🎮 Controles de la Simulación
+
+| Tecla / Control | Acción | Descripción |
+| :--- | :---: | :--- |
+| **`W` / `A` / `S` / `D`** o **`Flechas`** | Conducir vehículo | Permite acelerar, frenar y virar manualmente en Modo Manual. |
+| **`M`** | Alternar Modo IA / Manual | Cambia entre conducción manual del usuario y la simulación genética autónoma. |
+| **`Espacio`** | Velocidad de simulación | Alterna la velocidad entre **$\times 1$**, **$\times 2$** y **$\times 5$** para acelerar el entrenamiento. |
+| **`Q`** | Depuración de QuadTree | Activa/desactiva la visualización en pantalla de las subdivisiones del árbol espacial. |
+| **`R`** | Forzar nueva generación | Reinicia inmediatamente la generación actual para descartar individuos estancados. |
+| **`ESC`** | Salir | Cierra la ventana y finaliza la simulación. |
 
 ---
 
@@ -42,188 +60,89 @@ Simulación de vehículos autónomos en **C++** que aprenden a conducir en circu
 
 ### Componentes Clave
 
-1. **`Car` (Vehículo)**:
-   - Estado físico: posición $(x, y)$, ángulo de rotación $\theta$, velocidad lineal y angular.
-   - Detección: 5 a 7 rayos de sensores (raycasting) que miden la distancia normalizada $[0, 1]$ a los bordes.
-   - Estado de vida: activo o colisionado.
-2. **`NeuralNetwork` (Cerebro)**:
-   - Arquitectura Feedforward:
-     - **Entradas**: Distancias de sensores (5–7) + Velocidad actual.
-     - **Capa Oculta**: 6–8 neuronas con función de activación ReLU o Tanh.
-     - **Salidas**: 2 valores (Dirección: izquierda/derecha, Aceleración: acelerar/frenar).
-3. **`GeneticAlgorithm` (Evolución)**:
-   - Población de $N$ agentes (ej. 50–100 autos).
-   - **Función de Fitness**: Basada en checkpoints alcanzados + distancia recorrida - penalizaciones por tiempo detenido o colisión prematura.
-   - **Operadores Genéticos**: Selección por torneo/elitismo (usando Max-Heap), Cruce (Crossover uniforme/aritmético) y Mutación Gaussiana en pesos y sesgos.
-4. **`QuadTree` (Estructura de Árbol Espacial)**:
-   - Subdivide el espacio 2D en cuadrantes recursivos.
-   - Almacena los segmentos de línea de las paredes de la pista.
-   - Provee consultas rápidas `queryRange()` para encontrar únicamente los segmentos cercanos a cada rayo del sensor.
-5. **`Track` (Pista y Checkpoints)**:
-   - Define los bordes internos y externos del circuito.
-   - Secuencia ordenada de checkpoints invisibles para guiar y calcular el fitness sin premiar giros en círculos.
-6. **`Renderer` (Visualización)**:
-   - Basado en **Raylib** (o librería gráfica C++ seleccionada).
-   - Renderizado en dos etapas: inicial con primitivas geométricas (rectángulos y líneas de rayos) y posterior con texturas/sprites.
+1. **`Car` (Vehículo)**: Cinemática 2D con aceleración, fricción y viraje angular. Proyecta 5 rayos de sensores normalizados $[0, 1]$ hacia los límites del circuito.
+2. **`NeuralNetwork` (Red Neuronal)**: Arquitectura Feedforward con capas densas y activación no lineal Tanh. Entradas: distancias de sensores + velocidad. Salidas: ángulo de giro y aceleración/freno.
+3. **`GeneticAlgorithm` (Neuroevolución)**: Administra la población de agentes, evalúa el fitness mediante avance ordenado por checkpoints y genera nuevas generaciones usando selección elitista por Max-Heap, crossover y mutación gaussiana.
+4. **`QuadTree` (Árbol Espacial 2D)**: Subdivide espacialmente el plano para reducir drásticamente el espacio de búsqueda en las intersecciones de rayos y colisiones.
+5. **`Track` (Pista y Checkpoints)**: Trazado de alta complejidad con splines Catmull-Rom, pianos bicolores y una secuencia estricta de 69 checkpoints anti-trampas.
+6. **`HUD` (Telemetría e Interfaz)**: Métricas en vivo (generación actual, autos vivos, mejor fitness histórico, telemetría y FPS).
 
 ---
 
-## 👥 Distribución del Equipo (3 Integrantes)
+## 📋 Requerimientos Previos (Requirements)
+
+Antes de compilar, asegúrese de contar con los siguientes programas instalados en su sistema operativo.
+
+### Requisitos Mínimos Generales
+- **Compilador de C++**: Compatible con **C++17** o superior (GCC 9+, Clang 10+ o MSVC 2019+).
+- **CMake**: Versión **3.15** o superior.
+- **Git**: Para clonar el repositorio y descargar automáticamente las dependencias.
+- **Conexión a Internet**: En la primera compilación, CMake descargará automáticamente la librería gráfica [Raylib 5.5](https://www.raylib.com/) mediante `FetchContent`.
+
+---
+
+### 🪟 Instalación de Requerimientos en Windows
+
+Puede instalar todas las herramientas en Windows de dos formas:
+
+#### Opción A: Vía Windows Package Manager (`winget` - Recomendada)
+Abra una terminal de **PowerShell** como Administrador y ejecute:
+
+```powershell
+# Instalar Git y CMake
+winget install --id Git.Git -e
+winget install --id Kitware.CMake -e
+
+# Instalar MinGW-w64 (GCC/G++ y Make) mediante MSYS2
+winget install --id MSYS2.MSYS2 -e
+```
+
+Una vez instalado MSYS2, abra la consola **MSYS2 UCRT64** y ejecute:
+```bash
+pacman -S --needed base-devel mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-ninja
+```
+*Asegúrese de agregar `C:\msys64\ucrt64\bin` a las Variables de Entorno del sistema (`PATH`).*
+
+#### Opción B: Con Visual Studio (MSVC)
+Si prefiere el entorno de Microsoft:
+1. Descargue [Visual Studio Community](https://visualstudio.microsoft.com/es/vs/community/).
+2. En el instalador, marque la casilla **"Desarrollo para el escritorio con C++"** (incluye compilador MSVC, CMake y Ninja).
+
+---
+
+### 🐧 Instalación de Requerimientos en Linux
 
 > [!IMPORTANT]
-> **Normas Obligatorias para los 3 Integrantes**:
-> 1. **Commits Atómicos**: Cada integrante DEBE realizar commits pequeños, independientes y con mensajes descriptivos bajo estándar Conventional Commits (`feat: ...`, `fix: ...`, `test: ...`). **Prohibido hacer commits masivos** con días de trabajo acumulados o subir código que no compile.
-> 2. **Tests Unitarios Obligatorios**: Todo algoritmo, estructura de datos y módulo lógico desarrollado por cada integrante **DEBE incluir sus pruebas unitarias en `tests/`** antes de conectarse al simulador gráfico.
+> En distribuciones Linux, la librería gráfica **Raylib** compila directamente desde el código fuente y requiere las cabeceras de desarrollo de X11, OpenGL y ALSA. Debe instalarlas previamente según su distribución:
 
----
-
-### 👤 Javier Olivieri: Física, Sensores y Estructuras Espaciales (Árboles)
-- **Módulos a desarrollar**:
-  - Cinemática del auto (`Car`): posición, ángulo, aceleración, fricción y viraje.
-  - Estructura de datos **QuadTree**: partición espacial 2D recursiva para los segmentos del circuito.
-  - Sistema de **Raycasting** (`SensorSystem`): proyección de rayos de distancia usando el QuadTree para consultas rápidas $O(\log n)$.
-  - Detección de colisiones de los autos contra los muros de la pista.
-- **🧪 Tests Unitarios que DEBE entregar (en `tests/`)**:
-  - `test_quadtree`: Inserción de límites, partición en 4 cuadrantes y consultas `queryRange()` precisas.
-  - `test_raycasting`: Intersección matemática correcta entre rayos y segmentos de pared.
-  - `test_car_physics`: Verificación de límites de aceleración, fricción y rotación.
-- **📦 Ejemplos de Commits Atómicos esperados**:
-  - `feat(car): implementar cinemática básica y rotación de vehículo`
-  - `test(car): añadir pruebas unitarias de movimiento y fricción`
-  - `feat(quadtree): implementar estructura nodo y división espacial 2D`
-  - `feat(quadtree): agregar inserción de segmentos y consulta de rango`
-  - `test(quadtree): añadir tests unitarios de partición e intersección`
-  - `feat(sensors): integrar raycasting conectado al quadtree`
-
----
-
-### 👤 Kerwin Quintero: Red Neuronal y Algoritmo Genético
-- **Módulos a desarrollar**:
-  - Red Neuronal Feedforward (`NeuralNetwork`): capas, matrices de pesos, sesgos y función de activación (ReLU/Tanh).
-  - Algoritmo Genético (`GeneticAlgorithm`): población de cerebros, cruce (crossover) y mutación gaussiana.
-  - Estructura de datos **Max-Heap** (`PriorityQueue`): ranking y selección eficiente de individuos por fitness.
-  - Serialización: guardar y cargar en archivo el mejor cerebro entrenado.
-- **🧪 Tests Unitarios que DEBE entregar (en `tests/`)**:
-  - `test_neural_network`: Propagación hacia adelante (*forward pass*), dimensiones de salidas y consistencia matemática.
-  - `test_max_heap`: Operaciones `push`, `popMax` y garantía de orden de prioridad por fitness.
-  - `test_genetic_operators`: Verificación de rangos válidos tras mutación y herencia de pesos en cruce.
-- **📦 Ejemplos de Commits Atómicos esperados**:
-  - `feat(nn): estructurar capas, matrices de pesos y sesgos iniciales`
-  - `feat(nn): implementar propagación hacia adelante con activación`
-  - `test(nn): añadir tests unitarios de forward pass y consistencia`
-  - `feat(heap): implementar max-heap para ordenamiento de fitness`
-  - `test(heap): añadir tests unitarios para extracción de mejores individuos`
-  - `feat(ga): implementar operadores de mutación y cruce genético`
-  - `feat(io): implementar serialización del mejor modelo a archivo`
-
----
-
-### 👤 Integrante 3: Motor Gráfico, Circuito e Interfaz (HUD)
-- **Módulos a desarrollar**:
-  - Ciclo principal y ventana con **Raylib**.
-  - Circuito y Checkpoints (`Track`): trazado de muros y secuencia de checkpoints para guiar a los autos.
-  - Función de Fitness: cálculo de puntaje según checkpoints alcanzados y tiempo/distancia.
-  - Interfaz gráfica (`HUD`): métricas en tiempo real (generación, vivos/muertos, mejor fitness, FPS).
-  - Controles de simulación: pausa, reinicio de generación y avance rápido ($\times 2, \times 5, \times 10$).
-  - Transición visual: soporte para reemplazar figuras geométricas por texturas/sprites.
-- **🧪 Tests Unitarios que DEBE entregar (en `tests/`)**:
-  - `test_checkpoints`: Validación de que los checkpoints solo se registren en orden secuencial (sistema anti-trampas).
-  - `test_fitness_calc`: Verificación matemática del puntaje asignado según avance y penalizaciones.
-- **📦 Ejemplos de Commits Atómicos esperados**:
-  - `feat(engine): configurar ventana y game loop a 60 fps con raylib`
-  - `feat(track): definir bordes geométricos y secuencia de checkpoints`
-  - `test(track): añadir tests unitarios para validación secuencial de checkpoints`
-  - `feat(fitness): implementar algoritmo de cálculo de puntaje`
-  - `test(fitness): añadir tests unitarios del sistema de fitness`
-  - `feat(hud): agregar panel con métricas de la generación en vivo`
-  - `feat(assets): integrar soporte para sprites de vehículos y fondo de pista`
-
----
-
-## 🗺️ Fases de Desarrollo
-
-### Fase 1: Prototipo Base y Control Manual
-- [x] Configurar proyecto C++ con CMake y Raylib.
-- [x] Crear la ventana, bucle de juego a 60 FPS y fondo básico.
-- [x] Representar el auto como un rectángulo simple con rotación y aceleración controlable con teclado (WASD / Flechas).
-- [x] Modularizar la arquitectura gráfica en POO (`Track`, `Car`, `HUD`, `Simulation`).
-
-### Fase 2: Circuito, QuadTree y Sensores
-- [x] Definir el circuito mediante polígonos/segmentos de línea (bordes interiores y exteriores).
-- [x] Trazado de circuito de Gran Premio de alta complejidad con splines Catmull-Rom, pianos bicolores, línea discontinua y 69 checkpoints transversales.
-- [x] Implementar la estructura **QuadTree** en C++ para indexar los segmentos de la pista y optimizar consultas a $O(\log n)$.
-- [x] Implementar el sistema de sensores del auto (rayos que proyectan líneas e intersectan los muros mediante consultas en el QuadTree).
-- [x] Dibujar visualmente los rayos del sensor y marcar el punto de impacto en los bordes con gradiente de proximidad.
-- [x] Detección de colisión con los límites de la pista y detención inmediata del vehículo acelerada por QuadTree.
-- [x] Modo de depuración visual de los cuadrantes del QuadTree en pantalla (tecla `Q`).
-- [x] Suite de pruebas unitarias del QuadTree e intersecciones geométricas (`tests/test_quadtree.cpp`).
-
-### Fase 3: Red Neuronal y Conducción Automática
-- [x] Implementar la clase `NeuralNetwork` (capa de entrada, capa oculta, capa de salida con activación Tanh).
-- [x] Conectar las lecturas de los sensores como inputs de la red (5 distancias + velocidad).
-- [x] Mapear los outputs de la red neuronal a los controles del auto (girar y acelerar).
-- [x] Probar la propagación hacia adelante con un auto individual y pesos aleatorios/calibrados.
-- [x] Selector de modo dinámico en tiempo real (Manual [WASD] vs Autónomo [IA] con tecla `M`).
-- [x] Suite de pruebas unitarias de la Red Neuronal (`tests/test_neural_network.cpp`).
-
-### Fase 4: Neuroevolución y Checkpoints (Algoritmo Genético)
-- [x] Implementar checkpoints en la pista para medir progreso real en el circuito.
-- [x] Crear la población de $N$ autos simultáneos con cerebros independientes y 100% aleatorios.
-- [x] Calcular la función de fitness (checkpoints superados + distancia sin trampas).
-- [x] Implementar el ciclo generativo: evaluar generación $\to$ seleccionar mejores con **Max-Heap** en $O(k \log n)$ $\to$ crossover $\to$ mutación $\to$ reiniciar posición.
-- [x] Aceleración de simulación con barra espaciadora ($\times 1, \times 2, \times 5$).
-- [x] Suite de pruebas unitarias de Algoritmo Genético y Max-Heap (`tests/test_genetic_algorithm.cpp`).
-
-### Fase 5: Optimización, UI y Texturas Finales
-- [ ] Integrar sprites de vehículos e imagen de pista (generadas con IA o diseñadas).
-- [x] Diseñar panel HUD con estadísticas en vivo de la evolución (Generación, Vivos, Fitness, Record, Telemetría, QuadTree y FPS).
-- [x] Añadir selector de velocidad de simulación (entrenamiento acelerado $\times 1, \times 2, \times 5$ con barra espaciadora).
-- [ ] Exportación/importación del mejor modelo genético a archivo `.json` o binario.
-
----
-
-## 📂 Estructura del Repositorio
-
+#### Debian / Ubuntu / Linux Mint
+Abra una terminal y ejecute:
+```bash
+sudo apt update
+sudo apt install -y build-essential cmake git \
+    libasound2-dev libx11-dev libxrandr-dev libxi-dev \
+    libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev \
+    libxinerama-dev libwayland-dev libxkbcommon-dev
 ```
-NeuroGenetica/
-├── CMakeLists.txt              # Configuración de compilación CMake
-├── README.md                   # Documentación principal del proyecto
-├── assets/                     # Sprites, texturas y fuentes
-│   ├── cars/                   # Texturas de vehículos
-│   └── tracks/                 # Fondos y circuitos
-├── include/                    # Archivos de cabecera (.hpp / .h)
-│   ├── core/
-│   │   ├── Car.hpp             # Clase auto y cinemática
-│   │   ├── SensorSystem.hpp    # Sensores y rayos
-│   │   ├── Track.hpp           # Pista y checkpoints
-│   │   └── QuadTree.hpp        # Estructura de árbol de partición espacial
-│   ├── ai/
-│   │   ├── NeuralNetwork.hpp   # Red neuronal feedforward
-│   │   ├── GeneticAlgorithm.hpp# Lógica genética (cruce, mutación)
-│   │   └── PriorityQueue.hpp   # Heap para selección de fitness
-│   └── graphics/
-│       ├── Renderer.hpp        # Métodos de dibujo y cámara
-│       └── HUD.hpp             # Interfaz con métricas y gráficas
-├── src/                        # Implementación (.cpp)
-│   ├── core/
-│   ├── ai/
-│   ├── graphics/
-│   └── main.cpp                # Punto de entrada
-└── tests/                      # Pruebas unitarias (QuadTree, Red Neuronal, etc.)
+
+#### Fedora / RHEL
+```bash
+sudo dnf install -y gcc-c++ cmake git \
+    mesa-libGL-devel libX11-devel libXrandr-devel libXi-devel \
+    libXcursor-devel libXinerama-devel alsa-lib-devel
+```
+
+#### Arch Linux / Manjaro
+```bash
+sudo pacman -S --needed base-devel cmake git \
+    libx11 libxrandr libxi libxcursor libxinerama mesa alsa-lib
 ```
 
 ---
 
-## 🛠️ Tecnologías y Dependencias
+## 🔨 Compilación desde la Fuente (Building from Source)
 
-- **Lenguaje**: C++17 o superior.
-- **Compilador recomendado**: MinGW-w64 (GCC 11+) / MSVC / Clang.
-- **Sistema de compilación**: CMake 3.15+.
-- **Librería gráfica**: [Raylib](https://www.raylib.com/) (ligera, ideal para C++, sin dependencias pesadas y fácil integración con CMake `FetchContent`).
-
----
-
-## 🚀 Compilación y Ejecución
+Siga estos pasos desde su terminal (PowerShell en Windows o Bash en Linux):
 
 ### 1. Clonar el repositorio
 ```bash
@@ -231,35 +150,145 @@ git clone https://github.com/Kerwin2712/NeuroGenetica.git
 cd NeuroGenetica
 ```
 
-### 2. Configurar y compilar con CMake
+### 2. Configurar el proyecto con CMake
+Crea la carpeta `build/` y genera los archivos de construcción correspondientes:
 
-**En Windows (MinGW / PowerShell):**
-```powershell
-cmake -B build -G "MinGW Makefiles"
-cmake --build build
-```
+- **En Windows (con MinGW Makefiles)**:
+  ```powershell
+  cmake -B build -G "MinGW Makefiles"
+  ```
+- **En Windows (con Visual Studio / MSVC)**:
+  ```powershell
+  cmake -B build
+  ```
+- **En Linux**:
+  ```bash
+  cmake -B build
+  ```
 
-### 3. Ejecutar la Simulación
-```powershell
-./build/NeuroGenetica.exe
-```
+### 3. Compilar el proyecto
+Construye el ejecutable principal y las suites de pruebas unitarias:
 
-### 4. Ejecutar Pruebas Unitarias
-```powershell
-# Pruebas del QuadTree y Geometría
-./build/QuadTreeTests.exe
-
-# Pruebas de la Red Neuronal y Activaciones
-./build/NeuralNetworkTests.exe
-
-# Pruebas de Algoritmo Genético y Max-Heap
-./build/GeneticAlgorithmTests.exe
-```
+- **En Windows**:
+  ```powershell
+  cmake --build build
+  ```
+- **En Linux (compilación en paralelo)**:
+  ```bash
+  cmake --build build --parallel
+  ```
 
 ---
 
-## 🧪 Puntos Clave de Evaluación (Docente / Exposición)
+## 🚀 Ejecución
 
-1. **¿Por qué un QuadTree?** Reduce la complejidad temporal de verificar cada sensor contra cada segmento de la pista de $O(S \times P)$ a $O(S \times \log P)$, permitiendo simular 100+ autos simultáneos sin caídas de rendimiento.
-2. **¿Cómo aprende el auto?** No usa backpropagation clásico; utiliza Neuroevolución. La red neuronal toma decisiones en tiempo real y el algoritmo genético premia a las redes que completan más sectores de la pista.
-3. **Control anti-trampas en Fitness**: El sistema de checkpoints impide que los autos den vueltas en círculos o retrocedan para acumular puntos falsos.
+### Ejecutar la Simulación Principal
+
+- **En Windows**:
+  ```powershell
+  .\build\NeuroGenetica.exe
+  ```
+- **En Linux**:
+  ```bash
+  ./build/NeuroGenetica
+  ```
+
+---
+
+## 🧪 Ejecución de Pruebas Unitarias (Tests)
+
+El proyecto cuenta con suites de pruebas unitarias exhaustivas que validan la correctitud algorítmica y matemática antes del renderizado.
+
+### Método 1: Automatizado vía CTest (Recomendado)
+Desde la raíz del repositorio, ejecute:
+
+```bash
+ctest --test-dir build --output-on-failure
+```
+*Salida esperada:*
+```
+1/3 Test #1: QuadTreeTests ....................   Passed
+2/3 Test #2: NeuralNetworkTests ...............   Passed
+3/3 Test #3: GeneticAlgorithmTests ............   Passed
+100% tests passed out of 3
+```
+
+### Método 2: Ejecución individual por módulo
+
+- **En Windows**:
+  ```powershell
+  # 1. Pruebas de partición espacial 2D e intersecciones
+  .\build\QuadTreeTests.exe
+
+  # 2. Pruebas de Feedforward, activaciones y mutación
+  .\build\NeuralNetworkTests.exe
+
+  # 3. Pruebas de Max-Heap, elitismo y ciclo generativo
+  .\build\GeneticAlgorithmTests.exe
+  ```
+
+- **En Linux**:
+  ```bash
+  ./build/QuadTreeTests
+  ./build/NeuralNetworkTests
+  ./build/GeneticAlgorithmTests
+  ```
+
+---
+
+## 👥 Equipo de Desarrollo y Créditos
+
+Proyecto desarrollado para la materia **Programación 3**:
+
+### 🏎️ Integrantes del Equipo
+- **Javier Olivieri**:
+  - Cinemática del vehículo (`Car`), física y dinámica de viraje.
+  - Estructura de partición espacial **QuadTree** 2D y consultas optimizadas.
+  - Sistema de sensores por **Raycasting** e intersecciones geométricas.
+  - Suite de pruebas: `test_quadtree.cpp`.
+- **Kerwin Quintero**:
+  - Red Neuronal Feedforward (`NeuralNetwork`), capas densas y activación Tanh.
+  - Estructura de datos **Max-Heap** para selección elitista de fitness en $O(k \log n)$.
+  - **Algoritmo Genético**: operadores de cruce uniforme y mutación continua.
+  - Suites de pruebas: `test_neural_network.cpp` y `test_genetic_algorithm.cpp`.
+- **Rafael Hernandez**:
+  - Motor gráfico y ventana interactiva con **Raylib**.
+  - Trazado de circuito de Gran Premio con splines Catmull-Rom, pianos bicolores y checkpoints secuenciales anti-trampas.
+  - Interfaz de telemetría y HUD en tiempo real con estadísticas y modos de simulación.
+
+### 🎓 Reconocimientos Académicos
+- **Docente**: Prof. Alejandro Mujica
+- **Preparadores**: Jesús León y Sarai Rojas
+
+---
+
+## 🌿 Flujo de Trabajo en Git
+
+El desarrollo del proyecto se rige bajo la convención de ramas:
+
+```
+feature/nueva-funcionalidad  ──► (merge) ──┐
+                                           ▼
+                                      development ──► (merge cuando es estable) ──► main (versión final)
+```
+
+1. **`main`**: Rama protegida que contiene únicamente versiones estables, compilables y listas para entrega o release. No se realizan commits directos sobre ella.
+2. **`development`**: Rama integradora donde convergen todas las características probadas.
+3. **`feature/*`**: Ramas de trabajo individuales para cada componente o corrección antes de ser integradas a `development`.
+
+---
+
+## 📦 Generación de Release (Opcional)
+
+Para generar una entrega empaquetada lista para distribuir a usuarios sin requerir compilación:
+
+1. Compilar el proyecto en modo optimizado:
+   ```bash
+   cmake -B build -DCMAKE_BUILD_TYPE=Release
+   cmake --build build --config Release
+   ```
+2. Crear un archivo comprimido (`.zip` o `.tar.gz`) con:
+   - El ejecutable `NeuroGenetica.exe` (o binario `NeuroGenetica`).
+   - La carpeta `assets/` (si contiene texturas/fuentes externas).
+   - El archivo `README.md`.
+3. En GitHub, navegar a **Releases** $\to$ **Draft a new release**, asignar la etiqueta `v1.0.0` y adjuntar el archivo comprimido.
