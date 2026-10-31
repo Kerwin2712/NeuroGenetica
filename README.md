@@ -67,6 +67,12 @@ El objetivo de **NeuroGenetica** es aplicar conceptos avanzados de programación
 5. **`Track` (Pista y Checkpoints)**: Trazado de alta complejidad con splines Catmull-Rom, pianos bicolores y una secuencia estricta de 69 checkpoints anti-trampas.
 6. **`HUD` (Telemetría e Interfaz)**: Métricas en vivo (generación actual, autos vivos, mejor fitness histórico, telemetría y FPS).
 
+> [!NOTE]
+> Para una descripción exhaustiva de cada archivo del proyecto, diagramas de módulos y análisis formal de complejidades asintóticas para la materia *Programación 3*, consulte la carpeta de **[Documentación Técnica en docs/](docs/README.md)**:
+> - 🏛️ **[Arquitectura y Organización de Archivos](docs/ARCHITECTURE.md)**
+> - 🌳 **[Estructuras de Datos Avanzadas (QuadTree y Max-Heap)](docs/DATA_STRUCTURES.md)**
+> - 🧠 **[Física, Redes Neuronales y Neuroevolución](docs/AI_AND_PHYSICS.md)**
+
 ---
 
 ## 📋 Requerimientos Previos (Requirements)
