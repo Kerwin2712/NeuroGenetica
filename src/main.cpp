@@ -2,7 +2,7 @@
 
 int main() {
     // Inicialización del simulador con dimensiones y título
-    Simulation app(960, 540, "NeuroGenetica - Simulacion Base [Fase 1]");
+    Simulation app(960, 540, "NeuroGenetica");
     
     // Ejecución del bucle principal
     app.Run();

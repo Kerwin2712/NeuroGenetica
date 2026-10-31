@@ -69,3 +69,10 @@ target_include_directories(GeneticAlgorithmTests PRIVATE
     include/ai
 )
 target_link_libraries(GeneticAlgorithmTests PRIVATE raylib)
+
+# Integración con CTest para ejecución automatizada de pruebas unitarias
+enable_testing()
+add_test(NAME QuadTreeTests COMMAND QuadTreeTests)
+add_test(NAME NeuralNetworkTests COMMAND NeuralNetworkTests)
+add_test(NAME GeneticAlgorithmTests COMMAND GeneticAlgorithmTests)
+
