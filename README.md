@@ -3,8 +3,9 @@
 **Videojuego de Carreras en C++ con Rivales de Inteligencia Artificial Adaptativa**, desarrollado en **C++17** con la biblioteca gráfica **Raylib**, optimizado con estructuras de datos avanzadas (**QuadTree** para aceleración espacial y **Max-Heap** para selección elitista). Proyecto desarrollado para la materia *Programación 3*.
 
 > [!TIP]
-> 🎬 **Visualizador Dinámico & Modo Presentación para Video**:  
-> Abre el archivo **[`docs/showcase.html`](docs/showcase.html)** en tu navegador web para acceder a las diapositivas interactivas con guion para video, el simulador de QuadTree en Canvas 2D en tiempo real, el visualizador animado de la Red Neuronal y el árbol binario de Max-Heap.
+> 🎬 **Recursos para Exposición y Grabación de Video**:  
+> - 🖥️ **Visualizador Dinámico**: Abre **[`docs/showcase.html`](docs/showcase.html)** en tu navegador web para proyectar diapositivas limpias en 1080p, el simulador de QuadTree en Canvas 2D en tiempo real, el visualizador animado de la Red Neuronal y el árbol de Max-Heap.
+> - 📄 **Guion Narrativo para Video**: Consulta **[`docs/GUION_VIDEO.md`](docs/GUION_VIDEO.md)** en tu móvil o pantalla secundaria con las intervenciones cronometradas por integrante (Rafael, Javier y Kerwin).
 
 ---
 
@@ -77,6 +78,7 @@
 > [!NOTE]
 > Para una descripción exhaustiva de cada archivo del proyecto, diagramas de módulos y análisis formal de complejidades asintóticas para la materia *Programación 3*, consulte la carpeta de **[Documentación Técnica en docs/](docs/README.md)**:
 > - 🎬 **[Showcase Dinámico (HTML)](docs/showcase.html)**
+> - 📄 **[Guion de Video por Integrante](docs/GUION_VIDEO.md)**
 > - 🏛️ **[Arquitectura y Organización de Archivos](docs/ARCHITECTURE.md)**
 > - 🌳 **[Estructuras de Datos Avanzadas (QuadTree y Max-Heap)](docs/DATA_STRUCTURES.md)**
 > - 🧠 **[Física, Redes Neuronales y Neuroevolución](docs/AI_AND_PHYSICS.md)**
