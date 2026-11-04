@@ -4,16 +4,13 @@ Bienvenido al centro de documentación técnica y arquitectónica de **NeuroGene
 
 ---
 
-## 🎬 Visualizador Dinámico para Exposición y Video
+## 🎬 Recursos para Exposición y Grabación de Video
 
 > [!TIP]
 > **¿Deseas presentar el proyecto de forma interactiva en video?**  
-> Abre el archivo **[`docs/showcase.html`](showcase.html)** en cualquier navegador web moderno (doble clic en Windows o mediante navegador). Incluye:
-> - 🎙️ **Modo Presentación / Diapositivas**: Guion narrativo sincronizado y cronómetro para grabación con OBS o Loom.
-> - 🔲 **Simulador de QuadTree en Canvas 2D**: Visualización en tiempo real del podado espacial y comparativa de rendimiento ($O(\log n)$ vs $O(n \times m)$).
-> - 🧠 **Diagrama Interactivo de Red Neuronal**: Impulsos animados entre capas (6 → 8 → 2) y sliders de control de sensores.
-> - 🏔️ **Árbol Binario de Max-Heap**: Extracción animada `PopMax()` del top-$k$ de coches élite en $O(k \log n)$.
-> - 🎮 **Visualizador de Modos de Juego**: Tarjetas interactivas de Modo Copa, Carrera Única y Carretera Vertical.
+> Para grabar tu presentación con OBS Studio o Loom de forma profesional:
+> - 🖥️ **Visualizador Dinámico en Pantalla Completa**: Abre **[`docs/showcase.html`](showcase.html)** en tu navegador web y pulsa <kbd>F11</kbd>. Presenta diapositivas limpias (1080p sin texto distractor), simulador de QuadTree en Canvas 2D, red neuronal con sliders y árbol animado de Max-Heap.
+> - 📄 **Guion Narrativo Separado (Teleprompter / Script)**: Consulta **[`docs/GUION_VIDEO.md`](GUION_VIDEO.md)** en tu teléfono, tablet o segundo monitor con las intervenciones sugeridas por integrante (Rafael, Javier y Kerwin), tiempos cronometrados y acciones paso a paso.
 
 ---
 
@@ -21,7 +18,8 @@ Bienvenido al centro de documentación técnica y arquitectónica de **NeuroGene
 
 | Documento | Descripción | Temas Clave |
 | :--- | :--- | :--- |
-| **[Showcase Dinámico (HTML)](showcase.html)** | Interfaz web interactiva y diapositivas de apoyo para grabación de video. | Simulador Canvas de QuadTree, Red Neuronal, Max-Heap y guion de video. |
+| **[Showcase Dinámico (HTML)](showcase.html)** | Interfaz web interactiva en 1080p para captura de video y demostración en vivo. | Canvas QuadTree $O(\log n)$, Red Neuronal animada y Max-Heap $O(k \log n)$. |
+| **[Guion de Video (Markdown)](GUION_VIDEO.md)** | Guion técnico y narrativo detallado por integrantes para grabar el video. | Tiempos cronometrados, locución exacta por integrante y consejos OBS. |
 | **[Arquitectura de Software y Archivos](ARCHITECTURE.md)** | Visión integral de capas, componentes y árbol del repositorio. | Módulos Core, AI, Graphics, ciclo de vida del frame, flujo de datos. |
 | **[Estructuras de Datos Avanzadas](DATA_STRUCTURES.md)** | Análisis teórico y práctico de los árboles y colas de prioridad. | QuadTree 2D, Max-Heap genérico, podado espacial, análisis de complejidad $O$. |
 | **[Física, Red Neuronal y Neuroevolución](AI_AND_PHYSICS.md)** | Fundamentos matemáticos del simulador y del aprendizaje autónomo. | Cinemática 2D, Raycasting, ANN Feedforward, función de fitness, cruce y mutación. |
