@@ -1,23 +1,30 @@
 # NeuroGenetica 🏎️🧠
 
-Simulación de vehículos autónomos en **C++17** que aprenden a conducir en circuitos de carreras mediante **Redes Neuronales Feedforward** y **Algoritmos Genéticos (Neuroevolución)**, optimizados con estructuras de datos avanzadas (**QuadTree** para partición espacial y **Max-Heap** para selección elitista). Proyecto desarrollado para la materia *Programación 3*.
+**Videojuego de Carreras en C++ con Rivales de Inteligencia Artificial Adaptativa**, desarrollado en **C++17** con la biblioteca gráfica **Raylib**, optimizado con estructuras de datos avanzadas (**QuadTree** para aceleración espacial y **Max-Heap** para selección elitista). Proyecto desarrollado para la materia *Programación 3*.
+
+> [!TIP]
+> 🎬 **Visualizador Dinámico & Modo Presentación para Video**:  
+> Abre el archivo **[`docs/showcase.html`](docs/showcase.html)** en tu navegador web para acceder a las diapositivas interactivas con guion para video, el simulador de QuadTree en Canvas 2D en tiempo real, el visualizador animado de la Red Neuronal y el árbol binario de Max-Heap.
 
 ---
 
-## 🎯 Resumen y Objetivos del Proyecto
+## 🎯 Objetivos del Proyecto (Propuesta Programación 3)
 
-El objetivo de **NeuroGenetica** es aplicar conceptos avanzados de programación orientada a objetos, optimización algorítmica y estructuras de datos para resolver un problema de aprendizaje autónomo en tiempo real:
-
-- **Estructuras de Datos Avanzadas**:
-  - **QuadTree (Árbol de partición espacial 2D)**: Indexa los segmentos y muros del circuito para optimizar el cálculo de colisiones y el raycasting de sensores en tiempo $O(\log n)$ en lugar del costo ingenuo $O(n \times m)$.
-  - **Max-Heap (Cola de Prioridad)**: Realiza el ranking y la selección del top de individuos más aptos para elitismo y cruce genético en tiempo $O(k \log n)$.
-- **Neuroevolución (IA sin Backpropagation)**:
-  - Cada vehículo posee un "cerebro" (Red Neuronal Feedforward).
-  - La población evoluciona mediante selección por torneo/elitismo, cruce uniforme de pesos y mutación gaussiana continua.
-- **Validación con Pruebas Unitarias**:
-  - Cobertura completa de tests unitarios independientes para el QuadTree, la Red Neuronal y el Algoritmo Genético, integrados con **CTest**.
-- **Flujo de Trabajo Profesional**:
-  - Commits atómicos descriptivos bajo estándar *Conventional Commits* y flujo de ramas estructurado.
+1. **Experiencia de Juego de Carreras (Objetivo Principal)**:
+   - Desarrollar un videojuego interactivo de carreras en circuitos cerrados donde el jugador humano compita en tiempo real contra múltiples rivales controlados por IA, garantizando jugabilidad fluida, competitiva y desafiante a 60 FPS.
+2. **Modos de Juego (Gamificación)**:
+   - Control manual del vehículo para enfrentarse en uno o más escenarios contra modelos de IA diferenciables por color o junto a otro jugador en cooperativo/1v1 local.
+   - Soporte de modalidades:
+     - 🏆 **Modo Copa**: Torneo multironda en circuitos cerrados con rivales que refinan sus genomas tras cada carrera.
+     - 🏁 **Carrera Única**: Competencia rápida contra la mejor IA entrenada históricamente o rivales pre-calibrados.
+     - 🛣️ **Carretera Vertical (Endless)**: Supervivencia en autopista con tráfico reactivo y rivales adaptativos.
+3. **Evolución de Rivales (IA Adaptativa)**:
+   - Dotar a los vehículos enemigos de la capacidad de aprender a trazar curvas y conducir dinámicamente mediante Redes Neuronales Feedforward y Algoritmos Genéticos continuos sin atajos precalculados ni trampas.
+4. **Optimización de Físicas y Rendimiento (Estructuras de Datos Avanzadas)**:
+   - **QuadTree (Árbol de partición espacial 2D)**: Almacena los segmentos y límites de la pista para optimizar el cálculo de colisiones y el raycasting de sensores en tiempo **$O(\log n)$** en lugar de iteraciones exhaustivas $O(n \times m)$.
+   - **Max-Heap (Cola de Prioridad)**: Ordenamiento y selección extremadamente veloz del top de competidores por fitness para cruce y elitismo en **$O(k \log n)$** sin pausar los FPS del juego.
+5. **Arquitectura de Software (POO)**:
+   - Diseño modular, desacoplado y limpio en C++17, separando la lógica del juego, el motor físico y el renderizado visual con pruebas unitarias (**CTest**).
 
 ---
 
@@ -69,6 +76,7 @@ El objetivo de **NeuroGenetica** es aplicar conceptos avanzados de programación
 
 > [!NOTE]
 > Para una descripción exhaustiva de cada archivo del proyecto, diagramas de módulos y análisis formal de complejidades asintóticas para la materia *Programación 3*, consulte la carpeta de **[Documentación Técnica en docs/](docs/README.md)**:
+> - 🎬 **[Showcase Dinámico (HTML)](docs/showcase.html)**
 > - 🏛️ **[Arquitectura y Organización de Archivos](docs/ARCHITECTURE.md)**
 > - 🌳 **[Estructuras de Datos Avanzadas (QuadTree y Max-Heap)](docs/DATA_STRUCTURES.md)**
 > - 🧠 **[Física, Redes Neuronales y Neuroevolución](docs/AI_AND_PHYSICS.md)**
