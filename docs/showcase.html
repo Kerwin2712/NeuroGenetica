@@ -16,6 +16,7 @@
       backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
+    /* Custom scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
     ::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.5); border-radius: 3px; }
@@ -38,86 +39,77 @@
       </div>
     </div>
 
-    <!-- TAB SELECTORS -->
-    <nav class="flex items-center gap-1.5 bg-slate-950/80 p-1.5 rounded-xl border border-slate-800 text-xs font-medium">
-      <button onclick="setTab('pitch')" id="btn-tab-pitch" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all bg-blue-600 text-white font-semibold shadow-sm">
-        🎬 Diapositivas Video
-      </button>
-      <button onclick="setTab('quadtree')" id="btn-tab-quadtree" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
-        🔲 QuadTree en Vivo
-      </button>
-      <button onclick="setTab('nn')" id="btn-tab-nn" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
-        🧠 Red Neuronal
-      </button>
-      <button onclick="setTab('heap')" id="btn-tab-heap" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
-        🏔️ Max-Heap
-      </button>
-      <button onclick="setTab('modes')" id="btn-tab-modes" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
-        🎮 Modos de Juego
-      </button>
-      <button onclick="setTab('arch')" id="btn-tab-arch" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
-        🏛️ Arquitectura POO
-      </button>
-    </nav>
+    <!-- TAB SELECTORS & ACTIONS -->
+    <div class="flex items-center gap-3">
+      <a href="GUION_VIDEO.md" target="_blank" class="text-xs text-slate-400 hover:text-blue-400 bg-slate-950 border border-slate-800 hover:border-slate-700 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+        <span>📄</span> Guion de Video (Markdown)
+      </a>
+
+      <nav class="flex items-center gap-1 bg-slate-950/80 p-1.5 rounded-xl border border-slate-800 text-xs font-medium">
+        <button onclick="setTab('pitch')" id="btn-tab-pitch" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all bg-blue-600 text-white font-semibold shadow-sm">
+          🎬 Diapositivas Video
+        </button>
+        <button onclick="setTab('quadtree')" id="btn-tab-quadtree" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
+          🔲 QuadTree en Vivo
+        </button>
+        <button onclick="setTab('nn')" id="btn-tab-nn" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
+          🧠 Red Neuronal
+        </button>
+        <button onclick="setTab('heap')" id="btn-tab-heap" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
+          🏔️ Max-Heap
+        </button>
+        <button onclick="setTab('modes')" id="btn-tab-modes" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
+          🎮 Modos de Juego
+        </button>
+        <button onclick="setTab('arch')" id="btn-tab-arch" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
+          🏛️ Arquitectura POO
+        </button>
+      </nav>
+    </div>
   </header>
 
   <!-- MAIN CONTENT CONTAINER -->
   <main class="flex-1 p-6 max-w-7xl w-full mx-auto">
 
     <!-- ========================================== -->
-    <!-- TAB 1: PRESENTADOR DE DIAPOSITIVAS PARA VIDEO -->
+    <!-- TAB 1: PRESENTADOR DE DIAPOSITIVAS PARA VIDEO (CLEAN FULL VIEW) -->
     <!-- ========================================== -->
     <section id="tab-pitch" class="tab-content space-y-6">
       <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-4 rounded-xl">
-        <div>
-          <span class="text-xs uppercase tracking-wider text-blue-400 font-bold">Modo Presentación de Video</span>
-          <h2 class="text-xl font-bold text-white">Guion de Exposición & Puntos Clave</h2>
+        <div class="flex items-center gap-3">
+          <div>
+            <span class="text-xs uppercase tracking-wider text-blue-400 font-bold">Modo Presentación de Video</span>
+            <h2 class="text-xl font-bold text-white">Diapositivas de Exposición (1080p Clean View)</h2>
+          </div>
+          <span class="hidden md:inline-flex text-xs bg-slate-950 text-slate-400 border border-slate-800 px-3 py-1 rounded-lg">
+            Guion separado en: <code class="text-blue-400 font-mono ml-1">docs/GUION_VIDEO.md</code>
+          </span>
         </div>
         <div class="flex items-center gap-3">
+          <button onclick="toggleFullscreen()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold rounded-lg transition border border-slate-700 text-slate-300 flex items-center gap-1.5" title="Pantalla Completa">
+            ⛶ Pantalla Completa
+          </button>
           <button onclick="prevSlide()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-sm font-semibold rounded-lg transition border border-slate-700 flex items-center gap-1.5">
             ◀ Anterior
           </button>
-          <span id="slide-indicator" class="text-xs font-mono font-bold bg-slate-950 px-3 py-1.5 rounded border border-slate-800 text-blue-400">1 / 5</span>
+          <span id="slide-indicator" class="text-xs font-mono font-bold bg-slate-950 px-3.5 py-2 rounded-lg border border-slate-800 text-blue-400">1 / 5</span>
           <button onclick="nextSlide()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-sm font-semibold rounded-lg transition shadow-md shadow-blue-600/30 flex items-center gap-1.5">
             Siguiente ▶
           </button>
         </div>
       </div>
 
-      <!-- SLIDE CONTAINER -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Main Slide Card (2 cols) -->
-        <div class="lg:col-span-2 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-8 shadow-2xl relative min-h-[480px] flex flex-col justify-between overflow-hidden">
-          <div class="absolute -right-20 -top-20 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <!-- SLIDE CONTAINER: CLEAN FULL WIDTH FOR 1080p RECORDING -->
+      <div class="w-full bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-10 shadow-2xl relative min-h-[520px] flex flex-col justify-between overflow-hidden">
+        <div class="absolute -right-20 -top-20 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
-          <div id="slide-body">
-            <!-- Dynamic slide injected by JS -->
-          </div>
-
-          <div class="pt-6 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-            <span>Usa las teclas <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300">←</kbd> y <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300">→</kbd> para navegar</span>
-            <span class="text-emerald-400 font-medium">✓ Optimizado para grabación con OBS / Loom</span>
-          </div>
+        <div id="slide-body" class="max-w-4xl mx-auto w-full">
+          <!-- Dynamic slide injected by JS -->
         </div>
 
-        <!-- Teleprompter / Speaker Notes (1 col) -->
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 flex flex-col">
-          <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-              <h3 class="text-sm font-bold text-white uppercase tracking-wider">🎙️ Guion para el Video</h3>
-            </div>
-            <div class="flex items-center gap-1.5 text-xs text-slate-400 font-mono">
-              <span id="timer-display">00:00</span>
-              <button onclick="toggleTimer()" id="timer-btn" class="p-1 hover:text-blue-400 text-slate-400">⏱️</button>
-            </div>
-          </div>
-          <div id="speaker-notes" class="text-sm text-slate-300 leading-relaxed space-y-3 overflow-y-auto flex-1 pr-1 font-normal">
-            <!-- Dynamic notes injected by JS -->
-          </div>
-          <div class="mt-4 pt-3 border-t border-slate-800 text-xs text-slate-400 italic">
-            Consejo: Lee con naturalidad y proyecta la pestaña correspondiente durante cada tema.
-          </div>
+        <div class="pt-6 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+          <span>Usa las teclas <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300">←</kbd> y <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300">→</kbd> para navegar</span>
+          <span class="text-emerald-400 font-medium">✓ Vista limpia sin elementos distractores para captura de video</span>
         </div>
       </div>
     </section>
@@ -549,8 +541,16 @@
       if (tabId === 'heap') drawHeapVisualizer();
     }
 
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
     // ==========================================
-    // SLIDE DATA & PRESENTATION SYSTEM
+    // SLIDE DATA & PRESENTATION SYSTEM (CLEAN FOR VIDEO)
     // ==========================================
     const slides = [
       {
@@ -558,54 +558,49 @@
         title: "Videojuego de Carreras con Rivales IA Adaptativa",
         subtitle: "Programación 3 · Universidad de Los Andes",
         content: `
-          <div class="space-y-4 my-6">
-            <p class="text-slate-300 text-base leading-relaxed">
-              <strong>NeuroGenetica</strong> es un videojuego interactivo de carreras desarrollado en <strong>C++17</strong> con <strong>Raylib</strong>, donde el jugador compite directamente en circuitos cerrados contra una parrilla de coches controlados por <strong>Inteligencia Artificial Adaptativa</strong>.
+          <div class="space-y-6 my-8">
+            <p class="text-slate-200 text-lg leading-relaxed">
+              <strong>NeuroGenetica</strong> es un videojuego interactivo de carreras desarrollado en <strong>C++17</strong> con la biblioteca <strong>Raylib</strong>, donde el usuario compite en tiempo real en circuitos cerrados contra una parrilla de coches controlados por <strong>Inteligencia Artificial Adaptativa</strong>.
             </p>
-            <div class="grid grid-cols-2 gap-4 pt-2">
-              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
-                <span class="text-xs uppercase text-blue-400 font-bold block mb-1">🎮 Objetivo Jugable</span>
-                <p class="text-xs text-slate-300">Experiencia de carreras competitiva, con modos Copa, Carrera Única y Carretera Vertical.</p>
+            <div class="grid grid-cols-2 gap-6 pt-2">
+              <div class="p-5 bg-slate-950 rounded-xl border border-slate-800">
+                <span class="text-xs uppercase text-blue-400 font-bold block mb-2">🎮 Objetivo Jugable</span>
+                <p class="text-sm text-slate-300 leading-relaxed">Experiencia competitiva con modos Copa, Carrera Única y Carretera Vertical. Soporte de diferenciación visual de rivales por color y juego local.</p>
               </div>
-              <div class="p-4 bg-slate-950 rounded-xl border border-emerald-400 font-bold block mb-1">⚡ Motor Técnico</span>
-                <p class="text-xs text-slate-300">Estructuras de datos avanzadas (<strong>QuadTree</strong> y <strong>Max-Heap</strong>) para física y selección a 60 FPS.</p>
+              <div class="p-5 bg-slate-950 rounded-xl border border-slate-800">
+                <span class="text-xs uppercase text-emerald-400 font-bold block mb-2">⚡ Motor Técnico</span>
+                <p class="text-sm text-slate-300 leading-relaxed">Estructuras de datos avanzadas (<strong>QuadTree</strong> y <strong>Max-Heap</strong>) para física, raycasting y selección elitista a 60 FPS estables.</p>
               </div>
             </div>
           </div>
-        `,
-        notes: `
-          <strong>Guion para video (Slide 1):</strong><br>
-          "Hola a todos. Hoy presentamos <em>NeuroGenetica</em>, nuestro proyecto final para Programación 3. Es un videojuego de carreras desarrollado en C++17 moderno con Raylib, donde el jugador toma el control de un auto y compite contra rivales con redes neuronales que aprenden a conducir y mejorar vuelta tras vuelta mediante algoritmos genéticos."
         `
       },
       {
         badge: "Estructuras de Datos Avanzadas #1",
         title: "¿Por qué un QuadTree? Aceleración de O(n·m) a O(log n)",
-        subtitle: "Partición Espacial 2D para Raycasting y Colisiones",
+        subtitle: "Partición Espacial 2D para Raycasting y Colisiones en Tiempo Real",
         content: `
-          <div class="space-y-4 my-6">
-            <p class="text-slate-300 text-sm leading-relaxed">
-              Cada vehículo proyecta 5 rayos sensores hacia los bordes de la pista. Sin partición espacial, verificar 40 vehículos contra 300 segmentos exige más de <strong>60,000 pruebas por cuadro</strong>.
+          <div class="space-y-6 my-8">
+            <p class="text-slate-200 text-base leading-relaxed">
+              Cada vehículo proyecta 5 rayos sensores hacia los bordes de la pista. Sin partición espacial, verificar 40 vehículos contra 300 segmentos exige más de <strong>60,000 pruebas trigonométricas por cuadro</strong>.
             </p>
-            <div class="p-4 bg-slate-950 rounded-xl border border-blue-500/30 flex items-center justify-between">
-              <div>
-                <span class="text-xs text-slate-400 block">Complejidad sin optimización:</span>
-                <span class="text-red-400 font-mono font-bold text-lg">O(N × S × W)</span>
+            <div class="p-6 bg-slate-950 rounded-xl border border-blue-500/30 flex items-center justify-around">
+              <div class="text-center">
+                <span class="text-xs text-slate-400 uppercase tracking-wider block mb-1">Complejidad Ingenua</span>
+                <span class="text-red-400 font-mono font-bold text-2xl">O(N × S × W)</span>
+                <span class="text-xs text-slate-500 block mt-1">Fuerza Bruta Pesada</span>
               </div>
-              <span class="text-2xl font-bold text-slate-600">➔</span>
-              <div>
-                <span class="text-xs text-slate-400 block">Con QuadTree recursivo:</span>
-                <span class="text-emerald-400 font-mono font-bold text-lg">O(N × S × log W)</span>
+              <span class="text-3xl font-bold text-slate-600">➔</span>
+              <div class="text-center">
+                <span class="text-xs text-emerald-400 uppercase tracking-wider block mb-1">Con QuadTree 2D</span>
+                <span class="text-emerald-400 font-mono font-bold text-2xl">O(N × S × log W)</span>
+                <span class="text-xs text-emerald-500 block mt-1">Podado Espacial Logarítmico</span>
               </div>
             </div>
-            <p class="text-xs text-slate-400">
-              El QuadTree subdivide el plano en cuadrantes (NW, NE, SW, SE) con capacidad máxima de 4 segmentos, podando todas las regiones lejanas.
+            <p class="text-sm text-slate-300 leading-relaxed">
+              El QuadTree subdivide el plano en cuadrantes (NW, NE, SW, SE) con capacidad máxima de 4 segmentos, descartando de inmediato las regiones lejanas mediante pruebas rápidas de cajas envolventes (AABB).
             </p>
           </div>
-        `,
-        notes: `
-          <strong>Guion para video (Slide 2):</strong><br>
-          "El mayor desafío técnico en un juego con tantos autos y sensores es el rendimiento. Si comparáramos cada rayo contra todos los muros de la pista en cada cuadro, el juego caería a pocos fotogramas por segundo. Gracias al QuadTree que implementamos, dividimos el espacio 2D en cuadrantes recursivos y podamos las búsquedas a tiempo logarítmico O(log n), manteniendo 60 FPS estables."
         `
       },
       {
@@ -613,90 +608,81 @@
         title: "Max-Heap: Selección de Élite en O(k log n)",
         subtitle: "Cola de Prioridad Genérica con Templates en C++",
         content: `
-          <div class="space-y-4 my-6">
-            <p class="text-slate-300 text-sm leading-relaxed">
-              Al finalizar cada ronda de entrenamiento, se debe seleccionar a los mejores competidores para aplicar elitismo y cruce genético sin congelar la simulación.
+          <div class="space-y-6 my-8">
+            <p class="text-slate-200 text-base leading-relaxed">
+              Al culminar cada generación, el algoritmo genético debe seleccionar a los mejores competidores para aplicar elitismo y cruce sin congelar el juego.
             </p>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                <span class="text-xs text-slate-400">Ordenamiento Completo (std::sort):</span>
-                <span class="text-slate-200 font-mono font-bold block text-base mt-1">O(n log n)</span>
-                <span class="text-[11px] text-slate-500">Innecesario cuando solo queremos el Top-2.</span>
+            <div class="grid grid-cols-2 gap-6">
+              <div class="p-5 bg-slate-950 rounded-xl border border-slate-800">
+                <span class="text-xs text-slate-400 uppercase tracking-wider block mb-1">std::sort (Ordenamiento Completo)</span>
+                <span class="text-slate-200 font-mono font-bold text-xl block mt-1">O(n log n)</span>
+                <p class="text-xs text-slate-400 mt-2">Innecesario y costoso cuando solo necesitamos extraer a los mejores k = 2 individuos de la población.</p>
               </div>
-              <div class="p-3 bg-slate-950 rounded-xl border border-amber-500/30">
-                <span class="text-xs text-amber-400">Max-Heap SiftUp / SiftDown:</span>
-                <span class="text-emerald-400 font-mono font-bold block text-base mt-1">O(k log n)</span>
-                <span class="text-[11px] text-emerald-400">Extrae al líder en tiempo constante y reestructura en log(n).</span>
+              <div class="p-5 bg-slate-950 rounded-xl border border-amber-500/30">
+                <span class="text-xs text-amber-400 uppercase tracking-wider block mb-1">MaxHeap SiftUp / SiftDown</span>
+                <span class="text-emerald-400 font-mono font-bold text-xl block mt-1">O(k log n)</span>
+                <p class="text-xs text-emerald-400 mt-2">La raíz siempre conserva al líder. La extracción y reestructuración se ejecuta en tiempo logarítmico estricto.</p>
               </div>
             </div>
           </div>
-        `,
-        notes: `
-          <strong>Guion para video (Slide 3):</strong><br>
-          "Para la neuroevolución, necesitamos identificar rápidamente a los autos más hábiles según su fitness. En vez de un ordenamiento completo, desarrollamos una clase de plantilla MaxHeap en C++. Gracias a las operaciones SiftUp y SiftDown, extraemos el top k de individuos para elitismo en tiempo O(k log n)."
         `
       },
       {
         badge: "Inteligencia Artificial",
-        title: "Redes Neuronales y Neuroevolución",
+        title: "Redes Neuronales y Neuroevolución Continua",
         subtitle: "Cerebro Feedforward 6 → 8 → 2 con Activación Tanh",
         content: `
-          <div class="space-y-4 my-6">
-            <p class="text-slate-300 text-sm leading-relaxed">
-              Cada auto posee una red neuronal de 74 parámetros flotantes (pesos y sesgos). Las 5 distancias de sensores más la velocidad se procesan para decidir el ángulo de giro y la aceleración en tiempo real.
+          <div class="space-y-6 my-8">
+            <p class="text-slate-200 text-base leading-relaxed">
+              Cada vehículo posee un cerebro artificial feedforward con 74 parámetros flotantes (pesos y sesgos). Procesa las 5 distancias de sensores y la velocidad actual para determinar el ángulo de giro y la aceleración en tiempo real.
             </p>
-            <div class="p-4 bg-slate-950 rounded-xl border border-indigo-500/30 space-y-2 text-xs">
-              <div class="flex justify-between text-slate-300">
-                <span>Función de Fitness:</span>
-                <span class="text-indigo-400 font-mono">Progreso Checkpoints - Penalización Inactividad</span>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="p-4 bg-slate-950 rounded-xl border border-indigo-500/30 text-center">
+                <span class="text-xs text-slate-400 block mb-1">Función de Fitness</span>
+                <span class="text-indigo-400 font-bold text-sm block">Checkpoints Guiados</span>
+                <span class="text-xs text-slate-500">Anti-trampas secuencial</span>
               </div>
-              <div class="flex justify-between text-slate-300">
-                <span>Cruce Genético:</span>
-                <span class="text-indigo-400 font-mono">Uniform Crossover (50% de cada progenitor)</span>
+              <div class="p-4 bg-slate-950 rounded-xl border border-indigo-500/30 text-center">
+                <span class="text-xs text-slate-400 block mb-1">Cruce Genético</span>
+                <span class="text-indigo-400 font-bold text-sm block">Uniform Crossover</span>
+                <span class="text-xs text-slate-500">50% genes de cada progenitor</span>
               </div>
-              <div class="flex justify-between text-slate-300">
-                <span>Mutación Continua:</span>
-                <span class="text-indigo-400 font-mono">Gaussiana (10% tasa, 0.30 magnitud)</span>
+              <div class="p-4 bg-slate-950 rounded-xl border border-indigo-500/30 text-center">
+                <span class="text-xs text-slate-400 block mb-1">Mutación Continua</span>
+                <span class="text-indigo-400 font-bold text-sm block">Perturbación Gaussiana</span>
+                <span class="text-xs text-slate-500">10% tasa, 0.30 magnitud</span>
               </div>
             </div>
           </div>
-        `,
-        notes: `
-          <strong>Guion para video (Slide 4):</strong><br>
-          "Los vehículos no usan rutas precalculadas ni trampas. Cada uno toma decisiones en tiempo real con una red neuronal de 6 entradas y 2 salidas. A través de 69 checkpoints invisibles evaluamos su progreso y los mejores cruzan sus genes para engendrar la siguiente generación."
         `
       },
       {
         badge: "Arquitectura & Verificación",
         title: "POO en C++17, CTest y Control de Versiones",
-        subtitle: "Diseño Limpio, Pruebas Unitarias al 100% y Git Flow",
+        subtitle: "Diseño Limpio, Pruebas Unitarias al 100% y Git Flow Profesional",
         content: `
-          <div class="space-y-4 my-6">
-            <div class="grid grid-cols-3 gap-3">
-              <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-center">
-                <span class="text-2xl block mb-1">🧩</span>
-                <span class="font-bold text-white text-xs block">POO Modular</span>
-                <span class="text-[11px] text-slate-400">Car, Track, HUD, QuadTree, MaxHeap</span>
+          <div class="space-y-6 my-8">
+            <div class="grid grid-cols-3 gap-5">
+              <div class="p-5 bg-slate-950 rounded-xl border border-slate-800 text-center">
+                <span class="text-3xl block mb-2">🧩</span>
+                <span class="font-bold text-white text-sm block">POO Modular</span>
+                <span class="text-xs text-slate-400 mt-1 block">Separación estricta en capas Core, AI y Graphics</span>
               </div>
-              <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-center">
-                <span class="text-2xl block mb-1">🧪</span>
-                <span class="font-bold text-emerald-400 text-xs block">100% CTest</span>
-                <span class="text-[11px] text-slate-400">Suites unitarias independientes</span>
+              <div class="p-5 bg-slate-950 rounded-xl border border-slate-800 text-center">
+                <span class="text-3xl block mb-2">🧪</span>
+                <span class="font-bold text-emerald-400 text-sm block">100% CTest</span>
+                <span class="text-xs text-slate-400 mt-1 block">Pruebas unitarias de QuadTree, NN y MaxHeap</span>
               </div>
-              <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-center">
-                <span class="text-2xl block mb-1">🌿</span>
-                <span class="font-bold text-blue-400 text-xs block">Git Flow</span>
-                <span class="text-[11px] text-slate-400">main ← development ← feature</span>
+              <div class="p-5 bg-slate-950 rounded-xl border border-slate-800 text-center">
+                <span class="text-3xl block mb-2">🌿</span>
+                <span class="font-bold text-blue-400 text-sm block">Git Flow</span>
+                <span class="text-xs text-slate-400 mt-1 block">main ← development ← feature con commits atómicos</span>
               </div>
             </div>
-            <p class="text-xs text-slate-300 leading-relaxed text-center pt-2">
-              Diseño profesional listo para compilar en Windows y Linux con CMake y Raylib vía FetchContent.
+            <p class="text-sm text-slate-300 leading-relaxed text-center pt-2">
+              Compilación nativa desde fuente en Windows y Linux con CMake y Raylib vía FetchContent.
             </p>
           </div>
-        `,
-        notes: `
-          <strong>Guion para video (Slide 5):</strong><br>
-          "Para concluir, el proyecto cuenta con arquitectura modular desacoplada en C++17, suite de pruebas unitarias integradas con CTest que verifican cada estructura antes del renderizado, y un flujo estricto de Git con ramas de desarrollo y commits atómicos. ¡Muchas gracias!"
         `
       }
     ];
@@ -706,17 +692,15 @@
     function renderSlide(index) {
       const slide = slides[index];
       const body = document.getElementById('slide-body');
-      const notes = document.getElementById('speaker-notes');
       const ind = document.getElementById('slide-indicator');
 
       body.innerHTML = `
-        <span class="text-xs uppercase tracking-wider text-blue-400 font-bold bg-blue-500/10 px-2.5 py-1 rounded-full border border-blue-500/20">${slide.badge}</span>
-        <h2 class="text-2xl font-bold text-white mt-3">${slide.title}</h2>
-        <p class="text-xs text-slate-400 font-medium">${slide.subtitle}</p>
+        <span class="text-xs uppercase tracking-wider text-blue-400 font-bold bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">${slide.badge}</span>
+        <h2 class="text-3xl font-bold text-white mt-4 tracking-tight">${slide.title}</h2>
+        <p class="text-sm text-slate-400 font-medium mt-1">${slide.subtitle}</p>
         ${slide.content}
       `;
 
-      notes.innerHTML = slide.notes;
       ind.innerText = `${index + 1} / ${slides.length}`;
     }
 
@@ -739,25 +723,6 @@
       if (e.key === 'ArrowRight') nextSlide();
       if (e.key === 'ArrowLeft') prevSlide();
     });
-
-    // Timer for video rehearsal
-    let timerSec = 0;
-    let timerRunning = false;
-    let timerInterval = null;
-
-    function toggleTimer() {
-      timerRunning = !timerRunning;
-      if (timerRunning) {
-        timerInterval = setInterval(() => {
-          timerSec++;
-          const m = String(Math.floor(timerSec / 60)).padStart(2, '0');
-          const s = String(timerSec % 60).padStart(2, '0');
-          document.getElementById('timer-display').innerText = `${m}:${s}`;
-        }, 1000);
-      } else {
-        clearInterval(timerInterval);
-      }
-    }
 
     // ==========================================
     // QUADTREE SIMULATION ON CANVAS
