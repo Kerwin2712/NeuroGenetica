@@ -1,512 +1,405 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NeuroGenetica - Showcase Dinámico & Presentación</title>
+  <title>NeuroGenetica · NeuroSystems</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
-    @keyframes pulseGlow {
-      0%, 100% { opacity: 0.6; filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5)); }
-      50% { opacity: 1; filter: drop-shadow(0 0 16px rgba(59, 130, 246, 0.9)); }
+    /* Bloqueo estricto de scroll para formato de diapositiva y presentación */
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      user-select: none;
     }
-    .glow-pulse { animation: pulseGlow 2.5s infinite; }
-    .glass-panel {
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    /* Custom scrollbar */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
-    ::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.5); border-radius: 3px; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-blue-600 selection:text-white">
+<body class="bg-slate-950 text-slate-100 flex flex-col h-full font-sans antialiased selection:bg-blue-600 selection:text-white">
 
-  <!-- TOP NAVIGATION HEADER -->
-  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-emerald-400 flex items-center justify-center text-xl shadow-lg shadow-blue-500/20">
+  <!-- BARRA SUPERIOR SLIM (SOLO BRANDING Y SELECTOR DE PESTAÑAS) -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur px-6 py-2.5 flex items-center justify-between shrink-0">
+    <!-- BRANDING LIMPIO -->
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-emerald-400 flex items-center justify-center text-base shadow-sm">
         🏎️
       </div>
-      <div>
-        <div class="flex items-center gap-2">
-          <h1 class="font-bold text-lg text-white tracking-wide">NeuroGenetica</h1>
-          <span class="text-xs bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded-full font-semibold">Video Showcase & Docs</span>
-        </div>
-        <p class="text-xs text-slate-400">Videojuego de Carreras C++17 · Rivales IA Adaptativos · Programación 3</p>
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-sm text-white tracking-wide">NeuroSystems</span>
+        <span class="text-slate-600 text-xs">/</span>
+        <span class="text-xs font-semibold text-blue-400">NeuroGenetica</span>
       </div>
     </div>
 
-    <!-- TAB SELECTORS & ACTIONS -->
-    <div class="flex items-center gap-3">
-      <a href="GUION_VIDEO.md" target="_blank" class="text-xs text-slate-400 hover:text-blue-400 bg-slate-950 border border-slate-800 hover:border-slate-700 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
-        <span>📄</span> Guion de Video (Markdown)
-      </a>
+    <!-- PESTAÑAS DIRECTAS -->
+    <nav class="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-medium">
+      <button onclick="setTab('diapos')" id="btn-tab-diapos" class="tab-btn px-3 py-1.5 rounded-lg transition-all bg-blue-600 text-white font-semibold">
+        Diapositivas
+      </button>
+      <button onclick="setTab('quadtree')" id="btn-tab-quadtree" class="tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
+        QuadTree en Vivo
+      </button>
+      <button onclick="setTab('nn')" id="btn-tab-nn" class="tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
+        Red Neuronal
+      </button>
+      <button onclick="setTab('heap')" id="btn-tab-heap" class="tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
+        Max-Heap
+      </button>
+      <button onclick="setTab('modes')" id="btn-tab-modes" class="tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
+        Modos de Juego
+      </button>
+      <button onclick="setTab('poo')" id="btn-tab-poo" class="tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
+        Programación Orientada a Objetos
+      </button>
+    </nav>
 
-      <nav class="flex items-center gap-1 bg-slate-950/80 p-1.5 rounded-xl border border-slate-800 text-xs font-medium">
-        <button onclick="setTab('pitch')" id="btn-tab-pitch" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all bg-blue-600 text-white font-semibold shadow-sm">
-          🎬 Diapositivas Video
-        </button>
-        <button onclick="setTab('quadtree')" id="btn-tab-quadtree" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
-          🔲 QuadTree en Vivo
-        </button>
-        <button onclick="setTab('nn')" id="btn-tab-nn" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
-          🧠 Red Neuronal
-        </button>
-        <button onclick="setTab('heap')" id="btn-tab-heap" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
-          🏔️ Max-Heap
-        </button>
-        <button onclick="setTab('modes')" id="btn-tab-modes" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
-          🎮 Modos de Juego
-        </button>
-        <button onclick="setTab('arch')" id="btn-tab-arch" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
-          🏛️ Arquitectura POO
-        </button>
-      </nav>
+    <!-- INDICADOR DE LÁMINA (SOLO VISIBLE EN DIAPOSITIVAS) -->
+    <div id="slide-indicator-badge" class="flex items-center gap-2">
+      <span id="slide-indicator" class="text-xs font-mono font-bold bg-slate-950 px-3 py-1 rounded-md border border-slate-800 text-blue-400">1 / 6</span>
     </div>
   </header>
 
-  <!-- MAIN CONTENT CONTAINER -->
-  <main class="flex-1 p-6 max-w-7xl w-full mx-auto">
+  <!-- CONTENEDOR PRINCIPAL (100% PANTALLA COMPLETA SIN SCROLL) -->
+  <main class="flex-1 p-5 flex flex-col justify-center items-center overflow-hidden max-w-7xl w-full mx-auto">
 
     <!-- ========================================== -->
-    <!-- TAB 1: PRESENTADOR DE DIAPOSITIVAS PARA VIDEO (CLEAN FULL VIEW) -->
+    <!-- PESTAÑA 1: DIAPOSITIVAS LIMPIAS (FLECHAS DEL TECLADO) -->
     <!-- ========================================== -->
-    <section id="tab-pitch" class="tab-content space-y-6">
-      <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-4 rounded-xl">
-        <div class="flex items-center gap-3">
-          <div>
-            <span class="text-xs uppercase tracking-wider text-blue-400 font-bold">Modo Presentación de Video</span>
-            <h2 class="text-xl font-bold text-white">Diapositivas de Exposición (1080p Clean View)</h2>
-          </div>
-          <span class="hidden md:inline-flex text-xs bg-slate-950 text-slate-400 border border-slate-800 px-3 py-1 rounded-lg">
-            Guion separado en: <code class="text-blue-400 font-mono ml-1">docs/GUION_VIDEO.md</code>
-          </span>
-        </div>
-        <div class="flex items-center gap-3">
-          <button onclick="toggleFullscreen()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold rounded-lg transition border border-slate-700 text-slate-300 flex items-center gap-1.5" title="Pantalla Completa">
-            ⛶ Pantalla Completa
-          </button>
-          <button onclick="prevSlide()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-sm font-semibold rounded-lg transition border border-slate-700 flex items-center gap-1.5">
-            ◀ Anterior
-          </button>
-          <span id="slide-indicator" class="text-xs font-mono font-bold bg-slate-950 px-3.5 py-2 rounded-lg border border-slate-800 text-blue-400">1 / 5</span>
-          <button onclick="nextSlide()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-sm font-semibold rounded-lg transition shadow-md shadow-blue-600/30 flex items-center gap-1.5">
-            Siguiente ▶
-          </button>
-        </div>
-      </div>
-
-      <!-- SLIDE CONTAINER: CLEAN FULL WIDTH FOR 1080p RECORDING -->
-      <div class="w-full bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-10 shadow-2xl relative min-h-[520px] flex flex-col justify-between overflow-hidden">
+    <section id="tab-diapos" class="tab-content w-full h-full flex flex-col justify-center items-center">
+      <div class="w-full max-w-4xl max-h-[82vh] bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-8 shadow-2xl relative flex flex-col justify-between overflow-hidden aspect-[16/9]">
         <div class="absolute -right-20 -top-20 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div id="slide-body" class="max-w-4xl mx-auto w-full">
-          <!-- Dynamic slide injected by JS -->
+        <div id="slide-content-area" class="w-full flex-1 flex flex-col justify-center">
+          <!-- Contenido inyectado dinámicamente por JavaScript -->
         </div>
 
-        <div class="pt-6 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-          <span>Usa las teclas <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300">←</kbd> y <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300">→</kbd> para navegar</span>
-          <span class="text-emerald-400 font-medium">✓ Vista limpia sin elementos distractores para captura de video</span>
+        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
+          <span>Grupo NeuroSystems</span>
+          <span>Programación 3 · Universidad de Los Andes</span>
         </div>
       </div>
     </section>
 
     <!-- ========================================== -->
-    <!-- TAB 2: QUADTREE INTERACTIVO EN TIEMPO REAL -->
+    <!-- PESTAÑA 2: QUADTREE EN VIVO (SENSORES Y PISTA FLUIDA) -->
     <!-- ========================================== -->
-    <section id="tab-quadtree" class="tab-content hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Interactive Canvas (2 cols) -->
-        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col">
-          <div class="flex items-center justify-between mb-3">
+    <section id="tab-quadtree" class="tab-content hidden w-full h-full flex items-center justify-center gap-6">
+      <!-- Canvas de la Pista (Izquierda) -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center shrink-0">
+        <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+          <canvas id="quadTreeCanvas" width="740" height="440" class="block"></canvas>
+          <div class="absolute bottom-3 left-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-xs flex gap-4 text-slate-300">
+            <div><span class="inline-block w-2 h-2 bg-cyan-400 rounded-full mr-1.5"></span>5 Rayos de Visión</div>
+            <div><span class="inline-block w-2 h-2 bg-amber-400 rounded-full mr-1.5"></span>Cuadrante Cercano (QuadTree)</div>
+            <div><span class="inline-block w-2 h-2 bg-red-500 rounded-full mr-1.5"></span>Límites de la Pista</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel Lateral (Derecha) -->
+      <div class="w-80 flex flex-col justify-between h-[470px] bg-slate-900 border border-slate-800 rounded-2xl p-5 shrink-0">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-blue-400 block mb-1">Visión del Auto</span>
+          <h3 class="font-bold text-white text-base mb-3">Detección de Muros (QuadTree)</h3>
+
+          <div class="space-y-3.5 text-xs">
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <span class="text-slate-400 block mb-1">Muros revisados con QuadTree:</span>
+              <span id="stat-qt-checks" class="text-emerald-400 font-mono font-bold text-lg">8 muros</span>
+              <span class="text-[11px] text-slate-500 block mt-0.5">Solo consulta el cuadrante cercano</span>
+            </div>
+
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <span class="text-slate-400 block mb-1">Sin optimización (Toda la pista):</span>
+              <span id="stat-naive-checks" class="text-red-400 font-mono font-bold text-lg">96 muros</span>
+              <span class="text-[11px] text-slate-500 block mt-0.5">Revisaría muros lejanos e innecesarios</span>
+            </div>
+
+            <div class="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-300">
+              ⚡ <strong><span id="stat-speedup">12.0x</span> más rápido:</strong> Permite tener 40 coches en pista corriendo a 60 FPS sin ralentizaciones.
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-3 pt-3 border-t border-slate-800">
+          <div class="flex items-center justify-between text-xs text-slate-400 font-mono">
+            <span>Velocidad: <strong id="car-speed-val" class="text-white">0.0</strong> px/s</span>
+            <span>Manejo: <strong class="text-blue-400 font-bold">WASD</strong></span>
+          </div>
+          <button onclick="resetQuadTreeSim()" class="w-full text-xs py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium rounded-lg border border-slate-700 transition">
+            Centrar Vehículo
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 3: RED NEURONAL (CEREBRO DEL RIVAL) -->
+    <!-- ========================================== -->
+    <section id="tab-nn" class="tab-content hidden w-full h-full flex items-center justify-center gap-6">
+      <!-- Canvas de la Red (Izquierda) -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center shrink-0">
+        <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+          <canvas id="neuralCanvas" width="740" height="440" class="block"></canvas>
+        </div>
+      </div>
+
+      <!-- Deslizadores y Respuestas (Derecha) -->
+      <div class="w-80 flex flex-col justify-between h-[470px] bg-slate-900 border border-slate-800 rounded-2xl p-5 shrink-0">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo-400 block mb-1">Cerebro Conductor</span>
+          <h3 class="font-bold text-white text-base mb-3">Red Neuronal en Vivo</h3>
+
+          <!-- Sliders de Sensores -->
+          <div class="space-y-2.5 text-xs">
             <div>
-              <h3 class="font-bold text-white text-base flex items-center gap-2">
-                🔲 Visualizador de Partición Espacial 2D
-                <span class="text-xs font-mono bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded border border-blue-500/30">O(log n)</span>
-              </h3>
-              <p class="text-xs text-slate-400">Observa cómo solo se consultan los cuadrantes que atraviesan los rayos del auto.</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <button onclick="resetQuadTreeSim()" class="text-xs px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition">
-                Reiniciar Posición
-              </button>
-            </div>
-          </div>
-
-          <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800 aspect-[16/10] flex items-center justify-center">
-            <canvas id="quadTreeCanvas" width="800" height="500" class="w-full h-full cursor-crosshair"></canvas>
-            <div class="absolute bottom-3 left-3 bg-slate-900/90 backdrop-blur px-3 py-2 rounded-lg border border-slate-800 text-xs flex gap-4 text-slate-300">
-              <div><span class="inline-block w-2.5 h-2.5 bg-cyan-400 rounded-full mr-1.5"></span>Rayos Sensores</div>
-              <div><span class="inline-block w-2.5 h-2.5 bg-amber-400 rounded-full mr-1.5"></span>Cuadrantes Activos</div>
-              <div><span class="inline-block w-2.5 h-2.5 bg-red-500 rounded-full mr-1.5"></span>Muros Pista</div>
-            </div>
-          </div>
-
-          <div class="mt-4 flex items-center justify-between text-xs text-slate-400">
-            <span>Usa <strong class="text-white">W/A/S/D</strong> o las <strong class="text-white">Flechas</strong> para mover el vehículo de prueba en el canvas.</span>
-            <span>Mueve el cursor dentro del canvas para apuntar el vehículo hacia el mouse.</span>
-          </div>
-        </div>
-
-        <!-- Telemetry & Complexity Comparison (1 col) -->
-        <div class="space-y-4">
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-blue-400 mb-3">⚡ Eficiencia Algorítmica en Vivo</h4>
-
-            <div class="space-y-4">
-              <div>
-                <div class="flex justify-between text-xs mb-1">
-                  <span class="text-slate-400">Comprobaciones con QuadTree:</span>
-                  <span id="stat-qt-checks" class="font-mono font-bold text-emerald-400">8 segmentos</span>
-                </div>
-                <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
-                  <div id="bar-qt" class="bg-emerald-500 h-full w-[12%] transition-all"></div>
-                </div>
+              <div class="flex justify-between mb-0.5 text-slate-300">
+                <span>Sensor Izq Lejano (-60°):</span>
+                <span id="val-s0" class="font-mono text-cyan-400">0.80</span>
               </div>
-
-              <div>
-                <div class="flex justify-between text-xs mb-1">
-                  <span class="text-slate-400">Comprobaciones Fuerza Bruta:</span>
-                  <span id="stat-naive-checks" class="font-mono font-bold text-red-400">96 segmentos</span>
-                </div>
-                <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
-                  <div class="bg-red-500 h-full w-full"></div>
-                </div>
-              </div>
-
-              <div class="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-300">
-                🚀 <strong>Aceleración:</strong> <span id="stat-speedup" class="font-bold">12.0x</span> menos cálculos por cuadro. Permite simular 40+ autos a 60 FPS sin tirones.
-              </div>
+              <input type="range" id="slider-s0" min="0" max="1" step="0.05" value="0.80" oninput="updateNeuralFromSliders()" class="w-full h-1 bg-slate-800 rounded-lg accent-cyan-400 cursor-pointer">
             </div>
-          </div>
 
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-xs space-y-3">
-            <h4 class="font-bold text-white text-sm">¿Cómo explicarlo en el video?</h4>
-            <p class="text-slate-300 leading-relaxed">
-              "En lugar de que cada uno de los 5 sensores recorra todos los muros de la pista en cada fotograma (<code class="text-red-400">O(n × m)</code>), el <strong>QuadTree</strong> descarta inmediatamente cuadrantes lejanos mediante pruebas rápidas de cajas (<code class="text-emerald-400">AABB</code>)."
-            </p>
-            <p class="text-slate-300 leading-relaxed">
-              "Esto reduce la complejidad a <code class="text-blue-400 font-bold">O(log n)</code>, manteniendo el juego a 60 FPS incluso cuando aceleramos la simulación a 5x."
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================== -->
-    <!-- TAB 3: RED NEURONAL INTERACTIVA -->
-    <!-- ========================================== -->
-    <section id="tab-nn" class="tab-content hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Neural Net Visualizer (2 cols) -->
-        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col">
-          <div class="flex items-center justify-between mb-3">
             <div>
-              <h3 class="font-bold text-white text-base flex items-center gap-2">
-                🧠 Topología Feedforward Densa
-                <span class="text-xs bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded border border-indigo-500/30">6 → 8 → 2 (74 Pesos)</span>
-              </h3>
-              <p class="text-xs text-slate-400">Mueve los sliders de sensores a la derecha para ver cómo fluyen los impulsos hacia las decisiones motoras.</p>
+              <div class="flex justify-between mb-0.5 text-slate-300">
+                <span>Sensor Izq Frontal (-30°):</span>
+                <span id="val-s1" class="font-mono text-cyan-400">0.90</span>
+              </div>
+              <input type="range" id="slider-s1" min="0" max="1" step="0.05" value="0.90" oninput="updateNeuralFromSliders()" class="w-full h-1 bg-slate-800 rounded-lg accent-cyan-400 cursor-pointer">
             </div>
-            <button onclick="randomizeNeuralWeights()" class="text-xs px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg transition shadow-sm">
-              🎲 Mutar Pesos
-            </button>
-          </div>
 
-          <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800 aspect-[16/10] flex items-center justify-center p-2">
-            <canvas id="neuralCanvas" width="800" height="480" class="w-full h-full"></canvas>
-          </div>
-
-          <div class="mt-4 grid grid-cols-2 gap-4 text-xs">
-            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
-              <span class="text-slate-400 block mb-1">Salida 1: Ángulo de Viraje</span>
-              <div class="flex items-center justify-between font-mono font-bold">
-                <span id="nn-out-steer-label" class="text-blue-400">Centro (0.00)</span>
-                <span id="nn-out-steer-val" class="text-slate-500">0.00</span>
-              </div>
-            </div>
-            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
-              <span class="text-slate-400 block mb-1">Salida 2: Aceleración / Freno</span>
-              <div class="flex items-center justify-between font-mono font-bold">
-                <span id="nn-out-accel-label" class="text-emerald-400">Acelerar (+0.85)</span>
-                <span id="nn-out-accel-val" class="text-slate-500">+0.85</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Inputs Controls & Explanation (1 col) -->
-        <div class="space-y-4">
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-xs">
-            <h4 class="font-bold text-white text-sm mb-3">🎛️ Simular Sensores del Coche</h4>
-            <div class="space-y-3">
-              <div>
-                <div class="flex justify-between mb-1 text-slate-300">
-                  <span>Sensor -60° (Izq Lejano):</span>
-                  <span id="val-s0" class="font-mono text-cyan-400">0.80</span>
-                </div>
-                <input type="range" id="slider-s0" min="0" max="1" step="0.05" value="0.80" oninput="updateNeuralFromSliders()" class="w-full accent-cyan-400">
-              </div>
-              <div>
-                <div class="flex justify-between mb-1 text-slate-300">
-                  <span>Sensor -30° (Izq Frontal):</span>
-                  <span id="val-s1" class="font-mono text-cyan-400">0.90</span>
-                </div>
-                <input type="range" id="slider-s1" min="0" max="1" step="0.05" value="0.90" oninput="updateNeuralFromSliders()" class="w-full accent-cyan-400">
-              </div>
-              <div>
-                <div class="flex justify-between mb-1 text-slate-300">
-                  <span>Sensor 0° (Frente):</span>
-                  <span id="val-s2" class="font-mono text-cyan-400">0.45</span>
-                </div>
-                <input type="range" id="slider-s2" min="0" max="1" step="0.05" value="0.45" oninput="updateNeuralFromSliders()" class="w-full accent-cyan-400">
-              </div>
-              <div>
-                <div class="flex justify-between mb-1 text-slate-300">
-                  <span>Sensor +30° (Der Frontal):</span>
-                  <span id="val-s3" class="font-mono text-cyan-400">0.70</span>
-                </div>
-                <input type="range" id="slider-s3" min="0" max="1" step="0.05" value="0.70" oninput="updateNeuralFromSliders()" class="w-full accent-cyan-400">
-              </div>
-              <div>
-                <div class="flex justify-between mb-1 text-slate-300">
-                  <span>Sensor +60° (Der Lejano):</span>
-                  <span id="val-s4" class="font-mono text-cyan-400">0.85</span>
-                </div>
-                <input type="range" id="slider-s4" min="0" max="1" step="0.05" value="0.85" oninput="updateNeuralFromSliders()" class="w-full accent-cyan-400">
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-xs space-y-3">
-            <h4 class="font-bold text-white text-sm">Puntos clave para el video</h4>
-            <p class="text-slate-300 leading-relaxed">
-              "No usamos backpropagation porque los coches no tienen un maestro que les diga el ángulo exacto en cada instante. Usamos <strong>Neuroevolución</strong>: las redes con mejor aptitud transmiten sus pesos a la siguiente generación mediante cruce y mutación."
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================== -->
-    <!-- TAB 4: MAX-HEAP INTERACTIVO -->
-    <!-- ========================================== -->
-    <section id="tab-heap" class="tab-content hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Heap Tree Visualization (2 cols) -->
-        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col">
-          <div class="flex items-center justify-between mb-3">
             <div>
-              <h3 class="font-bold text-white text-base flex items-center gap-2">
-                🏔️ Montículo Máximo (Max-Heap) en Memoria
-                <span class="text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded border border-amber-500/30">Extracción O(log n)</span>
-              </h3>
-              <p class="text-xs text-slate-400">La raíz siempre conserva al auto con mayor fitness. Permite extraer el Top-k sin ordenar todo el arreglo.</p>
+              <div class="flex justify-between mb-0.5 text-slate-300">
+                <span>Sensor Frontal (0°):</span>
+                <span id="val-s2" class="font-mono text-cyan-400">0.45</span>
+              </div>
+              <input type="range" id="slider-s2" min="0" max="1" step="0.05" value="0.45" oninput="updateNeuralFromSliders()" class="w-full h-1 bg-slate-800 rounded-lg accent-cyan-400 cursor-pointer">
             </div>
-            <div class="flex gap-2">
-              <button onclick="heapPopMaxAnimated()" class="text-xs px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-lg transition shadow-sm">
-                PopMax() [Extraer Líder]
-              </button>
-              <button onclick="heapResetRandom()" class="text-xs px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition">
-                Nueva Población
-              </button>
+
+            <div>
+              <div class="flex justify-between mb-0.5 text-slate-300">
+                <span>Sensor Der Frontal (+30°):</span>
+                <span id="val-s3" class="font-mono text-cyan-400">0.70</span>
+              </div>
+              <input type="range" id="slider-s3" min="0" max="1" step="0.05" value="0.70" oninput="updateNeuralFromSliders()" class="w-full h-1 bg-slate-800 rounded-lg accent-cyan-400 cursor-pointer">
             </div>
-          </div>
 
-          <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800 aspect-[16/10] flex items-center justify-center p-3">
-            <canvas id="heapCanvas" width="800" height="480" class="w-full h-full"></canvas>
-          </div>
-
-          <div class="mt-4 p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs flex items-center justify-between">
-            <span class="text-slate-400">Vector Subyacente en C++: <code id="heap-array-repr" class="text-amber-400 font-mono ml-2">[ ... ]</code></span>
-            <span class="text-emerald-400 font-mono">Invariante heap[parent] ≥ heap[child] ✓</span>
+            <div>
+              <div class="flex justify-between mb-0.5 text-slate-300">
+                <span>Sensor Der Lejano (+60°):</span>
+                <span id="val-s4" class="font-mono text-cyan-400">0.85</span>
+              </div>
+              <input type="range" id="slider-s4" min="0" max="1" step="0.05" value="0.85" oninput="updateNeuralFromSliders()" class="w-full h-1 bg-slate-800 rounded-lg accent-cyan-400 cursor-pointer">
+            </div>
           </div>
         </div>
 
-        <!-- Heap Ranking Table (1 col) -->
-        <div class="space-y-4">
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-xs flex flex-col max-h-[360px]">
-            <h4 class="font-bold text-white text-sm mb-2 flex items-center justify-between">
-              🏆 Top Élite Seleccionado
-              <span class="text-xs text-slate-400 font-normal">Para Elitismo</span>
-            </h4>
-            <div id="heap-extracted-list" class="space-y-2 overflow-y-auto flex-1 pr-1">
-              <!-- Dynamically populated by JS -->
+        <div class="space-y-3 pt-3 border-t border-slate-800">
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
+              <span class="text-slate-500 block text-[11px]">Giro del Volante</span>
+              <strong id="nn-out-steer-label" class="text-blue-400 block text-xs truncate">0.00</strong>
+            </div>
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
+              <span class="text-slate-500 block text-[11px]">Pedal de Conducción</span>
+              <strong id="nn-out-accel-label" class="text-emerald-400 block text-xs truncate">+0.85</strong>
             </div>
           </div>
 
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-xs space-y-3">
-            <h4 class="font-bold text-white text-sm">¿Por qué evaluarlo en Programación 3?</h4>
-            <p class="text-slate-300 leading-relaxed">
-              Ordenar 40 o 100 coches con <code class="text-blue-400">std::sort</code> toma <code class="text-slate-400">O(n log n)</code>.
-              Con un <strong>Max-Heap</strong> genérico basado en templates (<code class="text-amber-400">MaxHeap&lt;T, Compare&gt;</code>), solo extraemos los <code class="text-white">k = 2</code> mejores en <code class="text-emerald-400 font-bold">O(k log n)</code>.
-            </p>
-          </div>
+          <button onclick="randomizeNeuralWeights()" class="w-full text-xs py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg transition shadow-sm">
+            🎲 Probar Otra IA (Mutar Cerebro)
+          </button>
         </div>
       </div>
     </section>
 
     <!-- ========================================== -->
-    <!-- TAB 5: MODOS DE JUEGO & GAMIFICACIÓN -->
+    <!-- PESTAÑA 4: MAX-HEAP (PODIO DE GANADORES) -->
     <!-- ========================================== -->
-    <section id="tab-modes" class="tab-content hidden space-y-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-        <span class="text-xs uppercase tracking-wider text-blue-400 font-bold">Actualización de la Propuesta</span>
-        <h2 class="text-xl font-bold text-white mt-1">Videojuego de Carreras con Rivales IA Adaptativos</h2>
-        <p class="text-sm text-slate-300 mt-2 max-w-3xl leading-relaxed">
-          La propuesta evoluciona de un simple laboratorio de simulación hacia una **experiencia de juego interactiva completa** donde el jugador humano compite en tiempo real contra rivales controlados por modelos de IA adaptativa.
-        </p>
+    <section id="tab-heap" class="tab-content hidden w-full h-full flex items-center justify-center gap-6">
+      <!-- Árbol de Heap (Izquierda) -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center shrink-0">
+        <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+          <canvas id="heapCanvas" width="740" height="440" class="block"></canvas>
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Mode Card 1 -->
-        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 hover:border-blue-500/50 transition-all rounded-2xl p-6 flex flex-col justify-between group">
+      <!-- Podio de Selección (Derecha) -->
+      <div class="w-80 flex flex-col justify-between h-[470px] bg-slate-900 border border-slate-800 rounded-2xl p-5 shrink-0">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-400 block mb-1">Clasificación Rápida</span>
+          <h3 class="font-bold text-white text-base mb-2">Podio con Max-Heap</h3>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+            La raíz conserva al coche con mayor puntuación. Se extrae al ganador al instante sin necesidad de ordenar toda la lista.
+          </p>
+
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-slate-300 block">🏆 Podio de Clasificados:</span>
+            <div id="heap-extracted-list" class="space-y-2 text-xs">
+              <!-- Inyectado por JS -->
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2.5 pt-3 border-t border-slate-800">
+          <button onclick="heapPopMaxAnimated()" class="w-full text-xs py-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-lg transition shadow-sm">
+            🏆 PopMax() [Extraer Líder]
+          </button>
+          <button onclick="heapResetRandom()" class="w-full text-xs py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition">
+            🔄 Nueva Parrilla de Carrera
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 5: MODOS DE JUEGO -->
+    <!-- ========================================== -->
+    <section id="tab-modes" class="tab-content hidden w-full h-full flex flex-col justify-center items-center max-w-5xl">
+      <!-- 3 TARJETAS PRINCIPALES -->
+      <div class="grid grid-cols-3 gap-6 w-full mb-5">
+        <!-- Modo Copa -->
+        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
           <div>
-            <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+            <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center text-2xl mb-3">
               🏆
             </div>
-            <h3 class="font-bold text-white text-lg mb-2">Modo Copa</h3>
-            <p class="text-xs text-slate-300 leading-relaxed mb-4">
-              Torneo multironda en una serie de circuitos cerrados. Los rivales de IA acumulan puntos y refinan sus genomas tras cada carrera, aumentando progresivamente su nivel de dificultad.
+            <h3 class="font-bold text-white text-base mb-2">Modo Copa</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Torneo multironda en varios circuitos. Los coches rivales de IA acumulan puntos y refinan sus cerebros entre carreras, aumentando su dificultad.
             </p>
           </div>
-          <div class="pt-4 border-t border-slate-800 text-xs text-blue-400 font-semibold flex items-center gap-1.5">
-            <span>Formato: Usuario vs N Rivales Evolutivos</span>
+          <div class="pt-4 border-t border-slate-800 text-xs text-blue-400 font-semibold">
+            Usuario vs N Rivales Evolutivos
           </div>
         </div>
 
-        <!-- Mode Card 2 -->
-        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 hover:border-emerald-500/50 transition-all rounded-2xl p-6 flex flex-col justify-between group">
+        <!-- Carrera Única -->
+        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
           <div>
-            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-2xl mb-3">
               🏁
             </div>
-            <h3 class="font-bold text-white text-lg mb-2">Carrera Única</h3>
-            <p class="text-xs text-slate-300 leading-relaxed mb-4">
-              Partida rápida contra la mejor IA entrenada históricamente. El jugador puede elegir la pista, el número de vueltas y cargar cerebros pre-entrenados con comportamientos agresivos o defensivos.
+            <h3 class="font-bold text-white text-base mb-2">Carrera Única</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Partida rápida y directa contra la mejor IA entrenada históricamente. El jugador elige el circuito y compite por marcar el récord de vuelta.
             </p>
           </div>
-          <div class="pt-4 border-t border-slate-800 text-xs text-emerald-400 font-semibold flex items-center gap-1.5">
-            <span>Formato: Prueba Rápida de Habilidad</span>
+          <div class="pt-4 border-t border-slate-800 text-xs text-emerald-400 font-semibold">
+            Desafío Rápido al Mejor Tiempo
           </div>
         </div>
 
-        <!-- Mode Card 3 -->
-        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 hover:border-purple-500/50 transition-all rounded-2xl p-6 flex flex-col justify-between group">
+        <!-- Carretera Vertical -->
+        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
           <div>
-            <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+            <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center text-2xl mb-3">
               🛣️
             </div>
-            <h3 class="font-bold text-white text-lg mb-2">Carretera Vertical (Endless)</h3>
-            <p class="text-xs text-slate-300 leading-relaxed mb-4">
-              Modalidad de tráfico o autopista infinita donde el jugador esquiva obstáculos y compite contra oleadas de vehículos IA que aprenden a bloquear o adelantar limpiamente.
+            <h3 class="font-bold text-white text-base mb-2">Carretera Vertical</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Modalidad de autopista infinita. El jugador esquiva tráfico dinámico y compite contra oleadas de vehículos IA que aprenden a adelantar limpiamente.
             </p>
           </div>
-          <div class="pt-4 border-t border-slate-800 text-xs text-purple-400 font-semibold flex items-center gap-1.5">
-            <span>Formato: Supervivencia & Tráfico Adaptativo</span>
+          <div class="pt-4 border-t border-slate-800 text-xs text-purple-400 font-semibold">
+            Supervivencia & Tráfico Reactivo
           </div>
         </div>
       </div>
 
-      <!-- Feature Highlights -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-xs space-y-3">
-          <h4 class="font-bold text-white text-sm flex items-center gap-2">
-            🎨 Rivales Diferenciables por Color
-          </h4>
-          <p class="text-slate-300 leading-relaxed">
-            Cada vehículo en pista porta un color distintivo según su categoría:
-          </p>
-          <ul class="space-y-2 text-slate-300">
-            <li class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-blue-500 inline-block"></span> <strong>Azul Neón:</strong> Vehículo del Jugador Humano (control WASD/Flechas).</li>
-            <li class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-emerald-500 inline-block"></span> <strong>Verde / Oro:</strong> Coche Líder Histórico (Élite del Max-Heap).</li>
-            <li class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-purple-500 inline-block"></span> <strong>Púrpura / Naranja:</strong> Rivales IA de la generación activa en aprendizaje.</li>
-          </ul>
+      <!-- BARRAS INFERIORES: COLORES Y 2 JUGADORES -->
+      <div class="grid grid-cols-2 gap-6 w-full">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between text-xs">
+          <span class="font-bold text-white">🎨 Rivales por Color:</span>
+          <div class="flex items-center gap-4">
+            <span class="flex items-center gap-1.5"><strong class="w-3 h-3 rounded bg-blue-500 inline-block"></strong> Jugador</span>
+            <span class="flex items-center gap-1.5"><strong class="w-3 h-3 rounded bg-amber-400 inline-block"></strong> Campeón Élite</span>
+            <span class="flex items-center gap-1.5"><strong class="w-3 h-3 rounded bg-purple-500 inline-block"></strong> En Aprendizaje</span>
+          </div>
         </div>
 
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-xs space-y-3">
-          <h4 class="font-bold text-white text-sm flex items-center gap-2">
-            👥 Soporte Local 1v1 / Cooperativo
-          </h4>
-          <p class="text-slate-300 leading-relaxed">
-            La arquitectura de entrada permite habilitar un segundo jugador en el mismo teclado (WASD para Jugador 1 y Flechas para Jugador 2), compitiendo ambos juntos o contra la parrilla de IA adaptativa.
-          </p>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between text-xs">
+          <span class="font-bold text-white">👥 Modo Multijugador:</span>
+          <span class="text-slate-300">Soporte local en un mismo teclado (WASD vs Flechas)</span>
         </div>
       </div>
     </section>
 
     <!-- ========================================== -->
-    <!-- TAB 6: ARQUITECTURA POO -->
+    <!-- PESTAÑA 6: PROGRAMACIÓN ORIENTADA A OBJETOS -->
     <!-- ========================================== -->
-    <section id="tab-arch" class="tab-content hidden space-y-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-        <span class="text-xs uppercase tracking-wider text-blue-400 font-bold">Diseño de Software en C++17</span>
-        <h2 class="text-xl font-bold text-white mt-1">Diagrama Modular de Clases</h2>
-        <p class="text-sm text-slate-300 mt-2 max-w-3xl leading-relaxed">
-          Diseño orientado a objetos limpio y desacoplado, separando la física del mundo, el motor de inteligencia artificial y la capa visual en Raylib.
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Module Core -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-          <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
-            <span class="text-lg">⚙️</span>
-            <h3 class="font-bold text-white text-sm">Capa Core (Física & Pista)</h3>
+    <section id="tab-poo" class="tab-content hidden w-full h-full flex flex-col justify-center items-center max-w-5xl">
+      <div class="grid grid-cols-3 gap-6 w-full">
+        <!-- Físicas y Pista -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+            <span class="text-2xl">🏎️</span>
+            <div>
+              <h3 class="font-bold text-white text-sm">Física y Circuito (Core)</h3>
+              <span class="text-[11px] text-slate-500">Mundo de simulación</span>
+            </div>
           </div>
-          <ul class="text-xs space-y-2 text-slate-300">
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
-              <strong class="text-blue-400 font-mono">Simulation:</strong> Game loop a 60 FPS, control de entradas y velocidad temporal (1x, 2x, 5x).
+          <ul class="text-xs space-y-3 text-slate-300">
+            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <strong class="text-blue-400 font-mono block mb-1">Car:</strong>
+              Control del vehículo, aceleración, frenado y 5 rayos de visión.
             </li>
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
-              <strong class="text-blue-400 font-mono">Car:</strong> Cinemática 2D, raycasting de 5 sensores y colisiones.
+            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <strong class="text-blue-400 font-mono block mb-1">Track:</strong>
+              Circuito cerrado, pianos bicolores y 69 checkpoints anti-trampas.
             </li>
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
-              <strong class="text-blue-400 font-mono">Track:</strong> Trazado con splines Catmull-Rom, pianos y 69 checkpoints anti-trampas.
-            </li>
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
-              <strong class="text-blue-400 font-mono">QuadTree:</strong> Árbol de partición espacial 2D en <code class="text-emerald-400 font-semibold">O(log n)</code>.
+            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <strong class="text-blue-400 font-mono block mb-1">QuadTree:</strong>
+              Partición del circuito para comprobar solo los muros cercanos.
             </li>
           </ul>
         </div>
 
-        <!-- Module AI -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-          <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
-            <span class="text-lg">🧠</span>
-            <h3 class="font-bold text-white text-sm">Capa AI (Neuroevolución)</h3>
+        <!-- Cerebro e IA -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+            <span class="text-2xl">🧠</span>
+            <div>
+              <h3 class="font-bold text-white text-sm">Rivales Autónomos (AI)</h3>
+              <span class="text-[11px] text-slate-500">Neuroevolución</span>
+            </div>
           </div>
-          <ul class="text-xs space-y-2 text-slate-300">
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
-              <strong class="text-indigo-400 font-mono">NeuralNetwork:</strong> Feedforward densa (6→8→2) con activación Tanh.
+          <ul class="text-xs space-y-3 text-slate-300">
+            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <strong class="text-indigo-400 font-mono block mb-1">NeuralNetwork:</strong>
+              Cerebro que evalúa sensores y decide dirección y velocidad.
             </li>
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
-              <strong class="text-indigo-400 font-mono">GeneticAlgorithm:</strong> Población de 40 agentes, cruce uniforme y mutación gaussiana.
+            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <strong class="text-indigo-400 font-mono block mb-1">GeneticAlgorithm:</strong>
+              Población de rivales que evolucionan mediante cruce y mutación.
             </li>
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
-              <strong class="text-indigo-400 font-mono">MaxHeap&lt;T&gt;:</strong> Cola de prioridad genérica para selección de élite en <code class="text-emerald-400 font-semibold">O(k log n)</code>.
+            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <strong class="text-indigo-400 font-mono block mb-1">MaxHeap:</strong>
+              Cola de prioridad para premiar y extraer a los campeones de la ronda.
             </li>
           </ul>
         </div>
 
-        <!-- Module Graphics & Tests -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-          <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
-            <span class="text-lg">🖥️</span>
-            <h3 class="font-bold text-white text-sm">Capa Gráfica & Tests</h3>
+        <!-- Gráficos y Simulación -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+            <span class="text-2xl">🖥️</span>
+            <div>
+              <h3 class="font-bold text-white text-sm">Motor Gráfico (Graphics)</h3>
+              <span class="text-[11px] text-slate-500">Raylib y CTest</span>
+            </div>
           </div>
-          <ul class="text-xs space-y-2 text-slate-300">
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
-              <strong class="text-emerald-400 font-mono">HUD:</strong> Métricas en vivo (generación, vivos, mejor fitness y FPS).
+          <ul class="text-xs space-y-3 text-slate-300">
+            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <strong class="text-emerald-400 font-mono block mb-1">Simulation:</strong>
+              Ciclo del juego a 60 FPS, control manual y modos de velocidad.
             </li>
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
-              <strong class="text-emerald-400 font-mono">Raylib 5.5:</strong> Contexto OpenGL ligero sin dependencias pesadas.
+            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <strong class="text-emerald-400 font-mono block mb-1">HUD:</strong>
+              Telemetría central con vueltas, récords y tiempos de carrera.
             </li>
-            <li class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
-              <strong class="text-emerald-400 font-mono">CTest Suite:</strong> Validación unitaria automatizada al 100%.
+            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <strong class="text-emerald-400 font-mono block mb-1">Pruebas CTest:</strong>
+              Validación matemática del árbol, red y podio antes de la carrera.
             </li>
           </ul>
         </div>
@@ -515,25 +408,31 @@
 
   </main>
 
-  <!-- JAVASCRIPT LOGIC & CANVASES -->
+  <!-- JAVASCRIPT: LÓGICA DE DIAPOSITIVAS Y SIMULACIÓN FÍSICA FLUIDA -->
   <script>
     // ==========================================
-    // TABS MANAGEMENT
+    // SISTEMA DE PESTAÑAS
     // ==========================================
     function setTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'text-white', 'font-semibold', 'shadow-sm');
+        btn.classList.remove('bg-blue-600', 'text-white', 'font-semibold');
         btn.classList.add('text-slate-400');
       });
 
       const activeSection = document.getElementById('tab-' + tabId);
       const activeBtn = document.getElementById('btn-tab-' + tabId);
+      const indicator = document.getElementById('slide-indicator-badge');
 
       if (activeSection) activeSection.classList.remove('hidden');
       if (activeBtn) {
-        activeBtn.classList.add('bg-blue-600', 'text-white', 'font-semibold', 'shadow-sm');
+        activeBtn.classList.add('bg-blue-600', 'text-white', 'font-semibold');
         activeBtn.classList.remove('text-slate-400');
+      }
+
+      // Mostrar número de lámina solo en la pestaña de Diapositivas
+      if (indicator) {
+        indicator.style.visibility = (tabId === 'diapos') ? 'visible' : 'hidden';
       }
 
       if (tabId === 'quadtree') initQuadTreeSim();
@@ -541,146 +440,165 @@
       if (tabId === 'heap') drawHeapVisualizer();
     }
 
-    function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(err => {});
-      } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-      }
-    }
-
     // ==========================================
-    // SLIDE DATA & PRESENTATION SYSTEM (CLEAN FOR VIDEO)
+    // DIAPOSITIVAS (PRESENTACIÓN DEL VIDEOJUEGO)
     // ==========================================
     const slides = [
       {
-        badge: "Introducción & Propuesta",
-        title: "Videojuego de Carreras con Rivales IA Adaptativa",
-        subtitle: "Programación 3 · Universidad de Los Andes",
+        badge: "GRUPO NEUROSYSTEMS",
+        title: "Videojuego de Carreras con Rivales de IA",
+        subtitle: "Proyecto NeuroGenetica · Programación 3 (ULA)",
         content: `
-          <div class="space-y-6 my-8">
-            <p class="text-slate-200 text-lg leading-relaxed">
-              <strong>NeuroGenetica</strong> es un videojuego interactivo de carreras desarrollado en <strong>C++17</strong> con la biblioteca <strong>Raylib</strong>, donde el usuario compite en tiempo real en circuitos cerrados contra una parrilla de coches controlados por <strong>Inteligencia Artificial Adaptativa</strong>.
+          <div class="space-y-5 my-auto">
+            <p class="text-slate-200 text-lg leading-relaxed font-light">
+              Desarrollo de un <strong class="text-white font-semibold">videojuego de carreras en C++17</strong> con Raylib, donde el jugador compite en circuitos cerrados contra vehículos con <strong class="text-blue-400 font-semibold">Inteligencia Artificial Adaptativa</strong>.
             </p>
-            <div class="grid grid-cols-2 gap-6 pt-2">
-              <div class="p-5 bg-slate-950 rounded-xl border border-slate-800">
-                <span class="text-xs uppercase text-blue-400 font-bold block mb-2">🎮 Objetivo Jugable</span>
-                <p class="text-sm text-slate-300 leading-relaxed">Experiencia competitiva con modos Copa, Carrera Única y Carretera Vertical. Soporte de diferenciación visual de rivales por color y juego local.</p>
+            <div class="grid grid-cols-2 gap-5 pt-1">
+              <div class="p-5 bg-slate-950 rounded-2xl border border-slate-800">
+                <span class="text-xs uppercase text-blue-400 font-bold block mb-1.5">🎮 Experiencia Jugable</span>
+                <p class="text-xs text-slate-300 leading-relaxed">Modo Copa por puntos, Carrera Única, Carretera Vertical y soporte para 2 jugadores en el mismo teclado con coches identificables por color.</p>
               </div>
-              <div class="p-5 bg-slate-950 rounded-xl border border-slate-800">
-                <span class="text-xs uppercase text-emerald-400 font-bold block mb-2">⚡ Motor Técnico</span>
-                <p class="text-sm text-slate-300 leading-relaxed">Estructuras de datos avanzadas (<strong>QuadTree</strong> y <strong>Max-Heap</strong>) para física, raycasting y selección elitista a 60 FPS estables.</p>
+              <div class="p-5 bg-slate-950 rounded-2xl border border-slate-800">
+                <span class="text-xs uppercase text-emerald-400 font-bold block mb-1.5">⚡ Estructuras de Datos</span>
+                <p class="text-xs text-slate-300 leading-relaxed"><strong class="text-white">QuadTree 2D</strong> para que los sensores no ralenticen el juego y <strong class="text-white">Max-Heap</strong> para seleccionar al instante a los campeones de cada carrera a 60 FPS.</p>
               </div>
             </div>
           </div>
         `
       },
       {
-        badge: "Estructuras de Datos Avanzadas #1",
-        title: "¿Por qué un QuadTree? Aceleración de O(n·m) a O(log n)",
-        subtitle: "Partición Espacial 2D para Raycasting y Colisiones en Tiempo Real",
+        badge: "VISIÓN Y FÍSICA DEL COCHE",
+        title: "Sensores y Detección de Muros (QuadTree)",
+        subtitle: "¿Cómo Ven los Coches los Límites de la Pista?",
         content: `
-          <div class="space-y-6 my-8">
+          <div class="space-y-5 my-auto">
             <p class="text-slate-200 text-base leading-relaxed">
-              Cada vehículo proyecta 5 rayos sensores hacia los bordes de la pista. Sin partición espacial, verificar 40 vehículos contra 300 segmentos exige más de <strong>60,000 pruebas trigonométricas por cuadro</strong>.
+              Cada vehículo proyecta <strong class="text-cyan-400">5 rayos sensores</strong> frontales como si fueran sus ojos, midiendo la distancia exacta a los bordes de la pista.
             </p>
-            <div class="p-6 bg-slate-950 rounded-xl border border-blue-500/30 flex items-center justify-around">
-              <div class="text-center">
-                <span class="text-xs text-slate-400 uppercase tracking-wider block mb-1">Complejidad Ingenua</span>
-                <span class="text-red-400 font-mono font-bold text-2xl">O(N × S × W)</span>
-                <span class="text-xs text-slate-500 block mt-1">Fuerza Bruta Pesada</span>
+            <div class="grid grid-cols-2 gap-5">
+              <div class="p-5 bg-slate-950 rounded-2xl border border-slate-800">
+                <span class="text-xs text-red-400 font-bold uppercase block mb-1">Sin optimización</span>
+                <p class="text-xs text-slate-300 leading-relaxed">Comprobar 40 autos contra toda la pista obligaría a revisar miles de muros lejanos en cada cuadro, causando caídas de FPS.</p>
               </div>
-              <span class="text-3xl font-bold text-slate-600">➔</span>
-              <div class="text-center">
-                <span class="text-xs text-emerald-400 uppercase tracking-wider block mb-1">Con QuadTree 2D</span>
-                <span class="text-emerald-400 font-mono font-bold text-2xl">O(N × S × log W)</span>
-                <span class="text-xs text-emerald-500 block mt-1">Podado Espacial Logarítmico</span>
+              <div class="p-5 bg-slate-950 rounded-2xl border border-emerald-500/30">
+                <span class="text-xs text-emerald-400 font-bold uppercase block mb-1">Con QuadTree 2D</span>
+                <p class="text-xs text-slate-300 leading-relaxed">El circuito se divide en cuadrantes. El coche solo comprueba los muros que tiene al lado, logrando colisiones inmediatas y fluidas.</p>
               </div>
             </div>
-            <p class="text-sm text-slate-300 leading-relaxed">
-              El QuadTree subdivide el plano en cuadrantes (NW, NE, SW, SE) con capacidad máxima de 4 segmentos, descartando de inmediato las regiones lejanas mediante pruebas rápidas de cajas envolventes (AABB).
+            <p class="text-xs text-slate-400 text-center">
+              Permite simular decenas de rivales en pista a 60 FPS fijos incluso en computadoras convencionales.
             </p>
           </div>
         `
       },
       {
-        badge: "Estructuras de Datos Avanzadas #2",
-        title: "Max-Heap: Selección de Élite en O(k log n)",
-        subtitle: "Cola de Prioridad Genérica con Templates en C++",
+        badge: "INTELIGENCIA ARTIFICIAL",
+        title: "El Cerebro del Coche (Red Neuronal)",
+        subtitle: "¿Cómo Conducen los Rivales en Tiempo Real?",
         content: `
-          <div class="space-y-6 my-8">
+          <div class="space-y-5 my-auto">
             <p class="text-slate-200 text-base leading-relaxed">
-              Al culminar cada generación, el algoritmo genético debe seleccionar a los mejores competidores para aplicar elitismo y cruce sin congelar el juego.
-            </p>
-            <div class="grid grid-cols-2 gap-6">
-              <div class="p-5 bg-slate-950 rounded-xl border border-slate-800">
-                <span class="text-xs text-slate-400 uppercase tracking-wider block mb-1">std::sort (Ordenamiento Completo)</span>
-                <span class="text-slate-200 font-mono font-bold text-xl block mt-1">O(n log n)</span>
-                <p class="text-xs text-slate-400 mt-2">Innecesario y costoso cuando solo necesitamos extraer a los mejores k = 2 individuos de la población.</p>
-              </div>
-              <div class="p-5 bg-slate-950 rounded-xl border border-amber-500/30">
-                <span class="text-xs text-amber-400 uppercase tracking-wider block mb-1">MaxHeap SiftUp / SiftDown</span>
-                <span class="text-emerald-400 font-mono font-bold text-xl block mt-1">O(k log n)</span>
-                <p class="text-xs text-emerald-400 mt-2">La raíz siempre conserva al líder. La extracción y reestructuración se ejecuta en tiempo logarítmico estricto.</p>
-              </div>
-            </div>
-          </div>
-        `
-      },
-      {
-        badge: "Inteligencia Artificial",
-        title: "Redes Neuronales y Neuroevolución Continua",
-        subtitle: "Cerebro Feedforward 6 → 8 → 2 con Activación Tanh",
-        content: `
-          <div class="space-y-6 my-8">
-            <p class="text-slate-200 text-base leading-relaxed">
-              Cada vehículo posee un cerebro artificial feedforward con 74 parámetros flotantes (pesos y sesgos). Procesa las 5 distancias de sensores y la velocidad actual para determinar el ángulo de giro y la aceleración en tiempo real.
+              Cada rival tiene una <strong class="text-indigo-400 font-semibold">Red Neuronal</strong> que toma decisiones motoras continuamente en función de lo que ve.
             </p>
             <div class="grid grid-cols-3 gap-4">
-              <div class="p-4 bg-slate-950 rounded-xl border border-indigo-500/30 text-center">
-                <span class="text-xs text-slate-400 block mb-1">Función de Fitness</span>
-                <span class="text-indigo-400 font-bold text-sm block">Checkpoints Guiados</span>
-                <span class="text-xs text-slate-500">Anti-trampas secuencial</span>
+              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 text-center">
+                <span class="text-xs text-slate-500 uppercase block mb-1">1. Entrada</span>
+                <span class="text-cyan-400 font-bold text-sm block">5 Sensores + Velocidad</span>
+                <span class="text-[11px] text-slate-400 mt-1 block">Distancias a los muros</span>
               </div>
               <div class="p-4 bg-slate-950 rounded-xl border border-indigo-500/30 text-center">
-                <span class="text-xs text-slate-400 block mb-1">Cruce Genético</span>
-                <span class="text-indigo-400 font-bold text-sm block">Uniform Crossover</span>
-                <span class="text-xs text-slate-500">50% genes de cada progenitor</span>
+                <span class="text-xs text-slate-500 uppercase block mb-1">2. Procesamiento</span>
+                <span class="text-indigo-400 font-bold text-sm block">Capa Oculta</span>
+                <span class="text-[11px] text-slate-400 mt-1 block">Reflejos y cálculo</span>
               </div>
-              <div class="p-4 bg-slate-950 rounded-xl border border-indigo-500/30 text-center">
-                <span class="text-xs text-slate-400 block mb-1">Mutación Continua</span>
-                <span class="text-indigo-400 font-bold text-sm block">Perturbación Gaussiana</span>
-                <span class="text-xs text-slate-500">10% tasa, 0.30 magnitud</span>
+              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 text-center">
+                <span class="text-xs text-slate-500 uppercase block mb-1">3. Salida</span>
+                <span class="text-emerald-400 font-bold text-sm block">Volante + Acelerador</span>
+                <span class="text-[11px] text-slate-400 mt-1 block">Virar, acelerar o frenar</span>
+              </div>
+            </div>
+            <p class="text-xs text-slate-400 text-center">
+              Sin rutas pregrabadas ni trampas: los rivales reaccionan en vivo a la pista como un jugador de verdad.
+            </p>
+          </div>
+        `
+      },
+      {
+        badge: "APRENDIZAJE Y COMPETENCIA",
+        title: "Evolución y Podio de Campeones (Max-Heap)",
+        subtitle: "¿Cómo Aprenden los Rivales Carrera tras Carrera?",
+        content: `
+          <div class="space-y-5 my-auto">
+            <p class="text-slate-200 text-base leading-relaxed">
+              Durante la carrera, el juego mide qué tan lejos llega cada vehículo sin chocar gracias a los <strong class="text-amber-400">checkpoints</strong> de la pista.
+            </p>
+            <div class="grid grid-cols-2 gap-5">
+              <div class="p-5 bg-slate-950 rounded-2xl border border-amber-500/30">
+                <span class="text-xs text-amber-400 uppercase tracking-wider font-bold block mb-1">🏆 Podio con Max-Heap</span>
+                <p class="text-xs text-slate-300 leading-relaxed mt-1">Al terminar la carrera, la cola de prioridad extrae al instante a los pilotos campeones de la parrilla sin ordenar toda la lista.</p>
+              </div>
+              <div class="p-5 bg-slate-950 rounded-2xl border border-slate-800">
+                <span class="text-xs text-emerald-400 uppercase tracking-wider font-bold block mb-1">🧬 Cruce y Nueva Ronda</span>
+                <p class="text-xs text-slate-300 leading-relaxed mt-1">Los mejores cerebros heredan y mutan sus habilidades: ¡en la siguiente carrera conducen más rápido y toman las curvas con mayor precisión!</p>
               </div>
             </div>
           </div>
         `
       },
       {
-        badge: "Arquitectura & Verificación",
-        title: "POO en C++17, CTest y Control de Versiones",
-        subtitle: "Diseño Limpio, Pruebas Unitarias al 100% y Git Flow Profesional",
+        badge: "MODOS DE JUEGO",
+        title: "Modos de Carrera, Colores y Multijugador",
+        subtitle: "Experiencia Competitiva para 1 o 2 Jugadores",
         content: `
-          <div class="space-y-6 my-8">
-            <div class="grid grid-cols-3 gap-5">
-              <div class="p-5 bg-slate-950 rounded-xl border border-slate-800 text-center">
-                <span class="text-3xl block mb-2">🧩</span>
-                <span class="font-bold text-white text-sm block">POO Modular</span>
-                <span class="text-xs text-slate-400 mt-1 block">Separación estricta en capas Core, AI y Graphics</span>
+          <div class="space-y-5 my-auto">
+            <div class="grid grid-cols-3 gap-4">
+              <div class="p-4 bg-slate-950 rounded-2xl border border-blue-500/30 text-center">
+                <span class="text-2xl block mb-1">🏆</span>
+                <strong class="text-white text-sm block mb-1">Modo Copa</strong>
+                <p class="text-[11px] text-slate-400">Torneo por puntos donde los rivales se vuelven más hábiles tras cada pista.</p>
               </div>
-              <div class="p-5 bg-slate-950 rounded-xl border border-slate-800 text-center">
-                <span class="text-3xl block mb-2">🧪</span>
-                <span class="font-bold text-emerald-400 text-sm block">100% CTest</span>
-                <span class="text-xs text-slate-400 mt-1 block">Pruebas unitarias de QuadTree, NN y MaxHeap</span>
+              <div class="p-4 bg-slate-950 rounded-2xl border border-emerald-500/30 text-center">
+                <span class="text-2xl block mb-1">🏁</span>
+                <strong class="text-white text-sm block mb-1">Carrera Única</strong>
+                <p class="text-[11px] text-slate-400">Duelo rápido contra el récord histórico de vuelta o la mejor IA.</p>
               </div>
-              <div class="p-5 bg-slate-950 rounded-xl border border-slate-800 text-center">
-                <span class="text-3xl block mb-2">🌿</span>
-                <span class="font-bold text-blue-400 text-sm block">Git Flow</span>
-                <span class="text-xs text-slate-400 mt-1 block">main ← development ← feature con commits atómicos</span>
+              <div class="p-4 bg-slate-950 rounded-2xl border border-purple-500/30 text-center">
+                <span class="text-2xl block mb-1">🛣️</span>
+                <strong class="text-white text-sm block mb-1">Carretera Vertical</strong>
+                <p class="text-[11px] text-slate-400">Autopista sin fin esquivando tráfico reactivo a toda velocidad.</p>
               </div>
             </div>
-            <p class="text-sm text-slate-300 leading-relaxed text-center pt-2">
-              Compilación nativa desde fuente en Windows y Linux con CMake y Raylib vía FetchContent.
+            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-around text-xs text-slate-300">
+              <span>🔵 <strong>Azul:</strong> Jugador</span>
+              <span>🟡 <strong>Oro:</strong> Campeón IA</span>
+              <span>🟣 <strong>Púrpura:</strong> En Aprendizaje</span>
+              <span>👥 <strong>1v1 Local:</strong> Mismo teclado (WASD vs Flechas)</span>
+            </div>
+          </div>
+        `
+      },
+      {
+        badge: "ARQUITECTURA DE SOFTWARE",
+        title: "Diseño Modular con POO en C++",
+        subtitle: "Organización Limpia y Escalable del Videojuego",
+        content: `
+          <div class="space-y-5 my-auto">
+            <div class="grid grid-cols-3 gap-4">
+              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+                <span class="text-xs uppercase text-blue-400 font-bold block mb-1">1. Físicas (Core)</span>
+                <p class="text-xs text-slate-300 leading-relaxed"><strong class="text-white">Car</strong>, <strong class="text-white">Track</strong> y <strong class="text-white">QuadTree</strong> controlan el movimiento del coche, los límites de la pista y la aceleración espacial.</p>
+              </div>
+              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+                <span class="text-xs uppercase text-indigo-400 font-bold block mb-1">2. Cerebro (AI)</span>
+                <p class="text-xs text-slate-300 leading-relaxed"><strong class="text-white">NeuralNetwork</strong>, <strong class="text-white">GeneticAlgorithm</strong> y <strong class="text-white">MaxHeap</strong> gobiernan los reflejos de la IA y la selección de ganadores.</p>
+              </div>
+              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+                <span class="text-xs uppercase text-emerald-400 font-bold block mb-1">3. Gráficos (Engine)</span>
+                <p class="text-xs text-slate-300 leading-relaxed"><strong class="text-white">Simulation</strong> y <strong class="text-white">HUD</strong> dibujan la pista a 60 FPS con Raylib, respaldados por pruebas automáticas <strong class="text-white">CTest</strong>.</p>
+              </div>
+            </div>
+            <p class="text-xs text-slate-400 text-center">
+              Código modular, desacoplado y listo para compilar en Windows y Linux.
             </p>
           </div>
         `
@@ -691,13 +609,13 @@
 
     function renderSlide(index) {
       const slide = slides[index];
-      const body = document.getElementById('slide-body');
+      const area = document.getElementById('slide-content-area');
       const ind = document.getElementById('slide-indicator');
 
-      body.innerHTML = `
-        <span class="text-xs uppercase tracking-wider text-blue-400 font-bold bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">${slide.badge}</span>
-        <h2 class="text-3xl font-bold text-white mt-4 tracking-tight">${slide.title}</h2>
-        <p class="text-sm text-slate-400 font-medium mt-1">${slide.subtitle}</p>
+      area.innerHTML = `
+        <span class="text-xs uppercase tracking-wider text-blue-400 font-bold bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20 w-fit mb-3">${slide.badge}</span>
+        <h2 class="text-2xl font-bold text-white tracking-tight">${slide.title}</h2>
+        <p class="text-xs text-slate-400 font-medium mt-1 mb-4">${slide.subtitle}</p>
         ${slide.content}
       `;
 
@@ -718,44 +636,55 @@
       }
     }
 
+    // Navegación con flechas del teclado y barra espaciadora
     document.addEventListener('keydown', (e) => {
-      if (document.getElementById('tab-pitch').classList.contains('hidden')) return;
-      if (e.key === 'ArrowRight') nextSlide();
-      if (e.key === 'ArrowLeft') prevSlide();
+      if (document.getElementById('tab-diapos').classList.contains('hidden')) return;
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      }
     });
 
     // ==========================================
-    // QUADTREE SIMULATION ON CANVAS
+    // QUADTREE SIMULATOR (FÍSICA FLUIDA 100% TECLADO)
     // ==========================================
     let qtCanvas, qtCtx;
-    let carPos = { x: 400, y: 250 };
-    let carAngle = 0;
+    let car = {
+      x: 120,
+      y: 230,
+      angle: Math.PI / 2,
+      speed: 0,
+      maxSpeed: 3.5,
+      accel: 0.15,
+      friction: 0.96,
+      turnSpeed: 0.045
+    };
     let keys = {};
-    let mousePos = { x: 400, y: 250 };
 
     const trackWalls = [
-      { p1: { x: 50, y: 50 }, p2: { x: 750, y: 50 } },
-      { p1: { x: 750, y: 50 }, p2: { x: 750, y: 450 } },
-      { p1: { x: 750, y: 450 }, p2: { x: 50, y: 450 } },
-      { p1: { x: 50, y: 450 }, p2: { x: 50, y: 50 } },
-      { p1: { x: 200, y: 150 }, p2: { x: 600, y: 150 } },
-      { p1: { x: 600, y: 150 }, p2: { x: 600, y: 350 } },
-      { p1: { x: 600, y: 350 }, p2: { x: 200, y: 350 } },
-      { p1: { x: 200, y: 350 }, p2: { x: 200, y: 150 } },
-      { p1: { x: 380, y: 50 }, p2: { x: 420, y: 110 } },
-      { p1: { x: 420, y: 110 }, p2: { x: 380, y: 150 } }
+      // Muro exterior
+      { p1: { x: 40, y: 40 }, p2: { x: 700, y: 40 } },
+      { p1: { x: 700, y: 40 }, p2: { x: 700, y: 400 } },
+      { p1: { x: 700, y: 400 }, p2: { x: 40, y: 400 } },
+      { p1: { x: 40, y: 400 }, p2: { x: 40, y: 40 } },
+      // Isla central
+      { p1: { x: 180, y: 130 }, p2: { x: 560, y: 130 } },
+      { p1: { x: 560, y: 130 }, p2: { x: 560, y: 310 } },
+      { p1: { x: 560, y: 310 }, p2: { x: 180, y: 310 } },
+      { p1: { x: 180, y: 310 }, p2: { x: 180, y: 130 } },
+      // Chicane
+      { p1: { x: 350, y: 40 }, p2: { x: 390, y: 95 } },
+      { p1: { x: 390, y: 95 }, p2: { x: 350, y: 130 } }
     ];
 
     function initQuadTreeSim() {
       qtCanvas = document.getElementById('quadTreeCanvas');
       if (!qtCanvas) return;
       qtCtx = qtCanvas.getContext('2d');
-
-      qtCanvas.addEventListener('mousemove', (e) => {
-        const rect = qtCanvas.getBoundingClientRect();
-        mousePos.x = (e.clientX - rect.left) * (qtCanvas.width / rect.width);
-        mousePos.y = (e.clientY - rect.top) * (qtCanvas.height / rect.height);
-      });
 
       window.addEventListener('keydown', (e) => { keys[e.key.toLowerCase()] = true; });
       window.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
@@ -767,8 +696,10 @@
     }
 
     function resetQuadTreeSim() {
-      carPos = { x: 120, y: 250 };
-      carAngle = Math.PI / 2;
+      car.x = 110;
+      car.y = 220;
+      car.angle = Math.PI / 2;
+      car.speed = 0;
     }
 
     function updateQuadTreeSim() {
@@ -777,27 +708,36 @@
         return;
       }
 
-      let speed = 2.5;
+      // 1. Aceleración y frenado por teclado (sin ratón para evitar tirones)
       if (keys['w'] || keys['arrowup']) {
-        carPos.x += Math.cos(carAngle) * speed;
-        carPos.y += Math.sin(carAngle) * speed;
-      }
-      if (keys['s'] || keys['arrowdown']) {
-        carPos.x -= Math.cos(carAngle) * (speed * 0.5);
-        carPos.y -= Math.sin(carAngle) * (speed * 0.5);
-      }
-      if (keys['a'] || keys['arrowleft']) carAngle -= 0.05;
-      if (keys['d'] || keys['arrowright']) carAngle += 0.05;
-
-      const dx = mousePos.x - carPos.x;
-      const dy = mousePos.y - carPos.y;
-      if (Math.hypot(dx, dy) > 30) {
-        const targetAngle = Math.atan2(dy, dx);
-        carAngle += (targetAngle - carAngle) * 0.05;
+        car.speed = Math.min(car.maxSpeed, car.speed + car.accel);
+      } else if (keys['s'] || keys['arrowdown']) {
+        car.speed = Math.max(-car.maxSpeed * 0.5, car.speed - car.accel * 0.8);
+      } else {
+        car.speed *= car.friction;
+        if (Math.abs(car.speed) < 0.02) car.speed = 0;
       }
 
-      carPos.x = Math.max(70, Math.min(730, carPos.x));
-      carPos.y = Math.max(70, Math.min(430, carPos.y));
+      // 2. Viraje angular
+      if (keys['a'] || keys['arrowleft']) {
+        car.angle -= car.turnSpeed;
+      }
+      if (keys['d'] || keys['arrowright']) {
+        car.angle += car.turnSpeed;
+      }
+
+      // 3. Integración de posición
+      car.x += Math.cos(car.angle) * car.speed;
+      car.y += Math.sin(car.angle) * car.speed;
+
+      // 4. Confinar dentro de los límites de la pista
+      car.x = Math.max(55, Math.min(685, car.x));
+      car.y = Math.max(55, Math.min(385, car.y));
+
+      // 5. Actualizar velocímetro en UI
+      const speedDisplay = Math.abs(car.speed * 28).toFixed(1);
+      const speedEl = document.getElementById('car-speed-val');
+      if (speedEl) speedEl.innerText = speedDisplay;
 
       renderQuadTreeCanvas();
       requestAnimationFrame(updateQuadTreeSim);
@@ -807,33 +747,23 @@
       qtCtx.fillStyle = '#020617';
       qtCtx.fillRect(0, 0, qtCanvas.width, qtCanvas.height);
 
+      // Dibujar cuadrantes del QuadTree (Nivel 1 y Nivel 2)
       qtCtx.strokeStyle = 'rgba(51, 65, 85, 0.4)';
       qtCtx.lineWidth = 1;
-
-      qtCtx.strokeRect(50, 50, 700, 400);
+      qtCtx.strokeRect(40, 40, 660, 360);
       qtCtx.beginPath();
-      qtCtx.moveTo(400, 50); qtCtx.lineTo(400, 450);
-      qtCtx.moveTo(50, 250); qtCtx.lineTo(750, 250);
+      qtCtx.moveTo(370, 40); qtCtx.lineTo(370, 400);
+      qtCtx.moveTo(40, 220); qtCtx.lineTo(700, 220);
       qtCtx.stroke();
 
-      qtCtx.strokeStyle = 'rgba(51, 65, 85, 0.2)';
-      qtCtx.beginPath();
-      qtCtx.moveTo(225, 50); qtCtx.lineTo(225, 250);
-      qtCtx.moveTo(575, 50); qtCtx.lineTo(575, 250);
-      qtCtx.moveTo(225, 250); qtCtx.lineTo(225, 450);
-      qtCtx.moveTo(575, 250); qtCtx.lineTo(575, 450);
-      qtCtx.moveTo(50, 150); qtCtx.lineTo(400, 150);
-      qtCtx.moveTo(400, 150); qtCtx.lineTo(750, 150);
-      qtCtx.moveTo(50, 350); qtCtx.lineTo(400, 350);
-      qtCtx.moveTo(400, 350); qtCtx.lineTo(750, 350);
-      qtCtx.stroke();
-
-      const activeQuadrant = getActiveQuadrant(carPos.x, carPos.y);
-      qtCtx.fillStyle = 'rgba(245, 158, 11, 0.08)';
+      // Cuadrante activo iluminado en ámbar
+      const activeQuadrant = getActiveQuadrant(car.x, car.y);
+      qtCtx.fillStyle = 'rgba(245, 158, 11, 0.09)';
       qtCtx.fillRect(activeQuadrant.x, activeQuadrant.y, activeQuadrant.w, activeQuadrant.h);
-      qtCtx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
+      qtCtx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
       qtCtx.strokeRect(activeQuadrant.x, activeQuadrant.y, activeQuadrant.w, activeQuadrant.h);
 
+      // Dibujar muros
       qtCtx.strokeStyle = '#ef4444';
       qtCtx.lineWidth = 3;
       trackWalls.forEach(wall => {
@@ -843,24 +773,24 @@
         qtCtx.stroke();
       });
 
+      // Proyectar 5 rayos sensores
       const angles = [-Math.PI / 3, -Math.PI / 6, 0, Math.PI / 6, Math.PI / 3];
-      const maxRange = 150;
-      let hitCount = 0;
+      const maxRange = 140;
 
-      angles.forEach(offsetAngle => {
-        const rayAngle = carAngle + offsetAngle;
+      angles.forEach(offset => {
+        const rayAngle = car.angle + offset;
         const rayEnd = {
-          x: carPos.x + Math.cos(rayAngle) * maxRange,
-          y: carPos.y + Math.sin(rayAngle) * maxRange
+          x: car.x + Math.cos(rayAngle) * maxRange,
+          y: car.y + Math.sin(rayAngle) * maxRange
         };
 
         let closestHit = null;
         let minDist = maxRange;
 
         trackWalls.forEach(wall => {
-          const hit = lineIntersection(carPos, rayEnd, wall.p1, wall.p2);
+          const hit = lineIntersection({ x: car.x, y: car.y }, rayEnd, wall.p1, wall.p2);
           if (hit) {
-            const dist = Math.hypot(hit.x - carPos.x, hit.y - carPos.y);
+            const dist = Math.hypot(hit.x - car.x, hit.y - car.y);
             if (dist < minDist) {
               minDist = dist;
               closestHit = hit;
@@ -868,18 +798,18 @@
           }
         });
 
+        // Línea del rayo
         qtCtx.beginPath();
-        qtCtx.moveTo(carPos.x, carPos.y);
+        qtCtx.moveTo(car.x, car.y);
         if (closestHit) {
-          hitCount++;
           qtCtx.lineTo(closestHit.x, closestHit.y);
-          qtCtx.strokeStyle = 'rgba(34, 211, 238, 0.8)';
+          qtCtx.strokeStyle = 'rgba(34, 211, 238, 0.85)';
           qtCtx.lineWidth = 1.5;
           qtCtx.stroke();
 
           qtCtx.fillStyle = '#ef4444';
           qtCtx.beginPath();
-          qtCtx.arc(closestHit.x, closestHit.y, 4, 0, Math.PI * 2);
+          qtCtx.arc(closestHit.x, closestHit.y, 3.5, 0, Math.PI * 2);
           qtCtx.fill();
         } else {
           qtCtx.lineTo(rayEnd.x, rayEnd.y);
@@ -889,31 +819,34 @@
         }
       });
 
+      // Dibujar el auto
       qtCtx.save();
-      qtCtx.translate(carPos.x, carPos.y);
-      qtCtx.rotate(carAngle);
+      qtCtx.translate(car.x, car.y);
+      qtCtx.rotate(car.angle);
 
+      // Chasis azul
       qtCtx.fillStyle = '#3b82f6';
       qtCtx.fillRect(-12, -7, 24, 14);
 
+      // Luces delanteras
       qtCtx.fillStyle = '#38bdf8';
       qtCtx.fillRect(10, -6, 3, 3);
       qtCtx.fillRect(10, 3, 3, 3);
       qtCtx.restore();
 
-      const checksQt = Math.max(4, Math.floor(trackWalls.length * 0.25));
+      // Métricas
+      const checksQt = 8;
       const checksNaive = trackWalls.length * 5;
-      document.getElementById('stat-qt-checks').innerText = `${checksQt} segmentos`;
-      document.getElementById('stat-naive-checks').innerText = `${checksNaive} segmentos`;
+      document.getElementById('stat-qt-checks').innerText = `${checksQt} muros`;
+      document.getElementById('stat-naive-checks').innerText = `${checksNaive} muros`;
       document.getElementById('stat-speedup').innerText = `${(checksNaive / checksQt).toFixed(1)}x`;
-      document.getElementById('bar-qt').style.width = `${Math.min(100, (checksQt / checksNaive) * 100)}%`;
     }
 
     function getActiveQuadrant(x, y) {
-      if (x < 400 && y < 250) return { x: 50, y: 50, w: 350, h: 200 };
-      if (x >= 400 && y < 250) return { x: 400, y: 50, w: 350, h: 200 };
-      if (x < 400 && y >= 250) return { x: 50, y: 250, w: 350, h: 200 };
-      return { x: 400, y: 250, w: 350, h: 200 };
+      if (x < 370 && y < 220) return { x: 40, y: 40, w: 330, h: 180 };
+      if (x >= 370 && y < 220) return { x: 370, y: 40, w: 330, h: 180 };
+      if (x < 370 && y >= 220) return { x: 40, y: 220, w: 330, h: 180 };
+      return { x: 370, y: 220, w: 330, h: 180 };
     }
 
     function lineIntersection(p1, p2, p3, p4) {
@@ -936,7 +869,7 @@
     }
 
     // ==========================================
-    // NEURAL NETWORK CANVAS VISUALIZER
+    // RED NEURONAL CANVAS
     // ==========================================
     let nnCanvas, nnCtx;
     let weightsL1 = [];
@@ -1014,23 +947,21 @@
 
       const steer = outputs[0];
       const accel = outputs[1];
-      document.getElementById('nn-out-steer-val').innerText = steer.toFixed(2);
-      document.getElementById('nn-out-accel-val').innerText = accel.toFixed(2);
 
       document.getElementById('nn-out-steer-label').innerText =
         steer < -0.2 ? `Izquierda (${steer.toFixed(2)})` :
-        steer > 0.2 ? `Derecha (+${steer.toFixed(2)})` : `Recto (${steer.toFixed(2)})`;
+        steer > 0.2 ? `Derecha (+${steer.toFixed(2)})` : `Recto (0.00)`;
 
       document.getElementById('nn-out-accel-label').innerText =
         accel > 0 ? `Acelerar (+${accel.toFixed(2)})` : `Frenar (${accel.toFixed(2)})`;
 
-      const xInput = 120;
-      const xHidden = 400;
-      const xOutput = 680;
+      const xInput = 110;
+      const xHidden = 370;
+      const xOutput = 630;
 
-      const inputY = [80, 140, 200, 260, 320, 380];
-      const hiddenY = [60, 105, 150, 195, 240, 285, 330, 375];
-      const outputY = [160, 280];
+      const inputY = [65, 125, 185, 245, 305, 365];
+      const hiddenY = [50, 95, 140, 185, 230, 275, 320, 365];
+      const outputY = [150, 270];
 
       for (let i = 0; i < 6; i++) {
         for (let h = 0; h < 8; h++) {
@@ -1061,7 +992,7 @@
         const val = inputs[i];
         nnCtx.fillStyle = `rgba(6, 182, 212, ${0.3 + val * 0.7})`;
         nnCtx.beginPath();
-        nnCtx.arc(xInput, inputY[i], 12, 0, Math.PI * 2);
+        nnCtx.arc(xInput, inputY[i], 11, 0, Math.PI * 2);
         nnCtx.fill();
         nnCtx.strokeStyle = '#06b6d4';
         nnCtx.lineWidth = 2;
@@ -1070,26 +1001,26 @@
         nnCtx.fillStyle = '#94a3b8';
         nnCtx.font = '10px monospace';
         nnCtx.textAlign = 'right';
-        nnCtx.fillText(inputLabels[i], xInput - 18, inputY[i] + 3);
+        nnCtx.fillText(inputLabels[i], xInput - 16, inputY[i] + 3);
       }
 
       for (let h = 0; h < 8; h++) {
         const val = (hidden[h] + 1) / 2;
         nnCtx.fillStyle = `rgba(99, 102, 241, ${0.2 + val * 0.8})`;
         nnCtx.beginPath();
-        nnCtx.arc(xHidden, hiddenY[h], 11, 0, Math.PI * 2);
+        nnCtx.arc(xHidden, hiddenY[h], 10, 0, Math.PI * 2);
         nnCtx.fill();
         nnCtx.strokeStyle = '#6366f1';
         nnCtx.lineWidth = 1.5;
         nnCtx.stroke();
       }
 
-      const outLabels = ["Viraje [-1, 1]", "Acel/Freno [-1, 1]"];
+      const outLabels = ["Viraje", "Acelerador"];
       for (let o = 0; o < 2; o++) {
         const val = (outputs[o] + 1) / 2;
         nnCtx.fillStyle = outputs[o] >= 0 ? `rgba(16, 185, 129, ${0.4 + val * 0.6})` : `rgba(239, 68, 68, ${0.4 + (1 - val) * 0.6})`;
         nnCtx.beginPath();
-        nnCtx.arc(xOutput, outputY[o], 16, 0, Math.PI * 2);
+        nnCtx.arc(xOutput, outputY[o], 15, 0, Math.PI * 2);
         nnCtx.fill();
         nnCtx.strokeStyle = outputs[o] >= 0 ? '#10b981' : '#ef4444';
         nnCtx.lineWidth = 2.5;
@@ -1098,14 +1029,14 @@
         nnCtx.fillStyle = '#f8fafc';
         nnCtx.font = 'bold 11px sans-serif';
         nnCtx.textAlign = 'left';
-        nnCtx.fillText(outLabels[o], xOutput + 24, outputY[o] + 4);
+        nnCtx.fillText(outLabels[o], xOutput + 22, outputY[o] + 4);
       }
     }
 
     // ==========================================
-    // MAX-HEAP VISUALIZER
+    // MAX-HEAP CANVAS
     // ==========================================
-    let heapData = [1420, 1180, 940, 890, 820, 750, 680, 520, 410, 320, 210, 150];
+    let heapData = [1420, 1180, 940, 890, 820, 750, 680];
     let heapCanvas, heapCtx;
     let extractedLeaders = [];
 
@@ -1156,12 +1087,12 @@
     function renderExtractedList() {
       const container = document.getElementById('heap-extracted-list');
       if (extractedLeaders.length === 0) {
-        container.innerHTML = `<span class="text-slate-500 italic">Presiona PopMax() para extraer líderes...</span>`;
+        container.innerHTML = `<span class="text-slate-500 italic block py-2">Presiona PopMax() para extraer líderes...</span>`;
         return;
       }
       container.innerHTML = extractedLeaders.map((fit, i) => `
-        <div class="p-2.5 bg-slate-950 rounded-lg border border-amber-500/30 flex items-center justify-between">
-          <span class="text-amber-400 font-bold">#${i + 1} Élite Progenitor</span>
+        <div class="p-2.5 bg-slate-950 rounded-xl border border-amber-500/30 flex items-center justify-between">
+          <span class="text-amber-400 font-bold">#${i + 1} Clasificado</span>
           <span class="font-mono text-emerald-400 font-bold">${fit} pts</span>
         </div>
       `).join('');
@@ -1175,24 +1106,22 @@
       heapCtx.fillStyle = '#020617';
       heapCtx.fillRect(0, 0, heapCanvas.width, heapCanvas.height);
 
-      document.getElementById('heap-array-repr').innerText = JSON.stringify(heapData);
-
       if (heapData.length === 0) {
         heapCtx.fillStyle = '#64748b';
         heapCtx.font = '14px sans-serif';
         heapCtx.textAlign = 'center';
-        heapCtx.fillText('Heap vacío. Presiona "Nueva Población".', 400, 240);
+        heapCtx.fillText('Heap vacío. Presiona "Nueva Parrilla".', 370, 220);
         return;
       }
 
       const positions = [
-        { x: 400, y: 70 },
-        { x: 220, y: 180 },
-        { x: 580, y: 180 },
-        { x: 130, y: 310 },
-        { x: 310, y: 310 },
-        { x: 490, y: 310 },
-        { x: 670, y: 310 }
+        { x: 370, y: 65 },
+        { x: 205, y: 170 },
+        { x: 535, y: 170 },
+        { x: 120, y: 295 },
+        { x: 290, y: 295 },
+        { x: 450, y: 295 },
+        { x: 620, y: 295 }
       ];
 
       heapCtx.strokeStyle = 'rgba(71, 85, 105, 0.6)';
@@ -1220,7 +1149,7 @@
 
         heapCtx.fillStyle = isRoot ? 'rgba(245, 158, 11, 0.25)' : 'rgba(30, 41, 59, 0.9)';
         heapCtx.beginPath();
-        heapCtx.arc(pos.x, pos.y, 26, 0, Math.PI * 2);
+        heapCtx.arc(pos.x, pos.y, 25, 0, Math.PI * 2);
         heapCtx.fill();
 
         heapCtx.strokeStyle = isRoot ? '#f59e0b' : '#3b82f6';
@@ -1238,6 +1167,7 @@
       }
     }
 
+    // Inicialización al cargar la ventana
     window.addEventListener('DOMContentLoaded', () => {
       renderSlide(0);
       renderExtractedList();
