@@ -8,11 +8,20 @@ HUD::HUD()
 }
 
 void HUD::Draw(const Car& playerCar, const GeneticAlgorithm& ga, bool isGeneticMode, const Track& track, bool showQuadTree, int simSpeed) const {
-    DrawRectangleRec(panelBounds, panelColor);
-    DrawRectangleLinesEx(panelBounds, 1.0f, borderColor);
+    Rectangle activePanelBounds = panelBounds;
 
-    int startX = (int)panelBounds.x + 12;
-    int startY = (int)panelBounds.y + 10;
+    if (!isGeneticMode) {
+        constexpr float panelMargin = 10.0f;
+        activePanelBounds.x = panelMargin;
+        activePanelBounds.y =
+            static_cast<float>(GetScreenHeight()) - panelBounds.height - panelMargin;
+    }
+
+    DrawRectangleRec(activePanelBounds, panelColor);
+    DrawRectangleLinesEx(activePanelBounds, 1.0f, borderColor);
+
+    int startX = static_cast<int>(activePanelBounds.x) + 12;
+    int startY = static_cast<int>(activePanelBounds.y) + 10;
 
     DrawText("NeuroGenetica - Neuroevolucion", startX, startY, 13, GOLD);
 

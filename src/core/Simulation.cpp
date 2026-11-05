@@ -8,6 +8,7 @@ Simulation::Simulation(int width, int height, const std::string& title)
       playerCar(track.GetStartPosition(), track.GetStartAngle(), ControlMode::Manual),
       geneticAlgorithm(40, 0.10f, 0.30f),
       hud(),
+      carCamera(width, height, track.GetStartPosition()),
       isGeneticMode(true), // Iniciar por defecto en entrenamiento masivo de IA
       showQuadTreeDebug(false),
       simSpeed(1)
@@ -25,6 +26,7 @@ Simulation::Simulation(int width, int height, const std::string& title)
     geneticAlgorithm.ResetPopulation();
 
     playerCar.CastSensors(track.GetQuadTree());
+    carCamera.SetTrainingView({ 480.0f, 270.0f }, 960.0f, 540.0f);
 }
 
 Simulation::~Simulation() {
@@ -42,6 +44,12 @@ void Simulation::Update() {
     float dt = GetFrameTime();
     // Limitar delta time para evitar saltos si hay micro-pausas
     if (dt > 0.05f) dt = 0.016f;
+
+    if (IsWindowResized()) {
+        screenWidth = GetScreenWidth();
+        screenHeight = GetScreenHeight();
+        carCamera.SetScreenSize(screenWidth, screenHeight);
+    }
 
     // 1. Pantalla completa con F11 o Alt+Enter
     if (IsKeyPressed(KEY_F11) || (IsKeyDown(KEY_LEFT_ALT) && IsKeyPressed(KEY_ENTER))) {
@@ -100,12 +108,22 @@ void Simulation::Update() {
         playerCar.CheckCheckpoints(track.GetCheckpoints(), dt);
         playerCar.CheckCollision(track.GetQuadTree());
     }
+
+    // La cámara sigue al carro únicamente en modo manual.
+    // En modo genético conserva una vista general fija.
+    carCamera.Update(
+        playerCar.GetPosition(),
+        playerCar.GetSpeed(),
+        !isGeneticMode);
 }
 
 void Simulation::Render() {
     BeginDrawing();
+    ClearBackground(BLACK);
 
-    // 1. Dibujar pista y fondo
+    BeginMode2D(carCamera.GetCamera());
+
+    // 1. Dibujar pista y fondo dentro del sistema de coordenadas de la cámara
     track.Draw();
 
     // 2. Modo depuración de cuadrantes del QuadTree
@@ -120,7 +138,9 @@ void Simulation::Render() {
         playerCar.Draw();
     }
 
-    // 4. Dibujar telemetría y controles en el HUD
+    EndMode2D();
+
+    // 4. Dibujar telemetría y controles en el HUD sin transformación de cámara
     hud.Draw(playerCar, geneticAlgorithm, isGeneticMode, track, showQuadTreeDebug, simSpeed);
 
     EndDrawing();
