@@ -4,6 +4,7 @@
 #include "Car.hpp"
 #include "HUD.hpp"
 #include "GeneticAlgorithm.hpp"
+#include "CarCamera.hpp"
 #include <string>
 
 class Simulation {
@@ -27,6 +28,7 @@ private:
     Car playerCar;
     GeneticAlgorithm geneticAlgorithm;
     HUD hud;
+    CarCamera carCamera;
 
     // Modos y configuración de ejecución
     bool isGeneticMode;
