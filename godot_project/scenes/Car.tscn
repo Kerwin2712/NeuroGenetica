@@ -1,0 +1,51 @@
+[gd_scene load_steps=3 format=3 uid="uid://c8x1carscene"]
+
+[ext_resource type="Script" path="res://scripts/Car.gd" id="1_car"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(18, 32)
+
+[node name="Car" type="CharacterBody2D"]
+collision_layer = 1
+collision_mask = 2
+script = ExtResource("1_car")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_1")
+
+[node name="Chassis" type="Polygon2D" parent="."]
+color = Color(0.2, 0.65, 1, 1)
+polygon = PackedVector2Array(-9, -16, 9, -16, 9, 16, -9, 16)
+
+[node name="Roof" type="Polygon2D" parent="."]
+color = Color(0.1, 0.15, 0.25, 1)
+polygon = PackedVector2Array(-6, -6, 6, -6, 6, 8, -6, 8)
+
+[node name="HeadlightsLeft" type="Polygon2D" parent="."]
+color = Color(1, 0.95, 0.4, 1)
+polygon = PackedVector2Array(-8, -16, -4, -16, -4, -13, -8, -13)
+
+[node name="HeadlightsRight" type="Polygon2D" parent="."]
+color = Color(1, 0.95, 0.4, 1)
+polygon = PackedVector2Array(4, -16, 8, -16, 8, -13, 4, -13)
+
+[node name="RayFront" type="RayCast2D" parent="."]
+target_position = Vector2(0, -200)
+collision_mask = 2
+
+[node name="RayLeft" type="RayCast2D" parent="."]
+target_position = Vector2(-141, -141)
+collision_mask = 2
+
+[node name="RayRight" type="RayCast2D" parent="."]
+target_position = Vector2(141, -141)
+collision_mask = 2
+
+[node name="RayLeftFar" type="RayCast2D" parent="."]
+target_position = Vector2(-200, 0)
+collision_mask = 2
+
+[node name="RayRightFar" type="RayCast2D" parent="."]
+target_position = Vector2(200, 0)
+collision_mask = 2
+

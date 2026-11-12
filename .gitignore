@@ -42,3 +42,21 @@ cmake-build-*/
 
 # Raylib FetchContent cache
 _deps/
+
+# SCons cache
+.sconsign.dblite
+
+# Godot Engine Cache and Import files
+.godot/
+*.import
+~*
+
+# Dependencias pesadas de enlaces C++ de Godot (se descargan si se recompila)
+godot-cpp/
+
+# Excepción para incluir la carpeta bin y DLL de Godot precompilada
+!godot_project/bin/
+!godot_project/bin/neurogenetica.gdextension
+!godot_project/bin/*.dll
+
+
