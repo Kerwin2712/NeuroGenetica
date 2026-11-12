@@ -42,3 +42,4 @@ Si quieres explorar la pista, los sensores o la interfaz gráfica:
 Si modificas los archivos en `src/ai/` o `src/godot/`:
 1. Instala SCons: `pip install scons`
 2. Ejecuta: **`compilar_libreria_godot.bat`**
+
