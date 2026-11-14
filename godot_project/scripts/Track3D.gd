@@ -2,7 +2,7 @@ extends Node3D
 class_name Track3D
 
 @export var track_width: float = 22.0  # Ancho de pista para 4-5 carriles
-@export var barrier_height: float = 1.4
+@export var barrier_height: float = 2.2
 
 var centerline_points: Array[Vector3] = []
 var checkpoints: Array[Vector3] = []
@@ -115,6 +115,14 @@ func generate_barriers_and_collisions():
 	static_body_walls.collision_mask = 1  # Colisiona con autos
 	add_child(static_body_walls)
 
+	# Suelo físico continuo sólido a Y=0 para evitar caídas bajo la pista
+	var floor_col = CollisionShape3D.new()
+	var floor_box = BoxShape3D.new()
+	floor_box.size = Vector3(700.0, 1.0, 600.0)
+	floor_col.shape = floor_box
+	floor_col.position = Vector3(0, -0.5, 0)
+	static_body_walls.add_child(floor_col)
+
 	var half_w = track_width * 0.5
 	var total = centerline_points.size()
 
@@ -154,16 +162,17 @@ func generate_barriers_and_collisions():
 			st.set_normal(-norm if is_outer else norm)
 			st.add_vertex(p2_top)
 
-			# Crear colisión física directa para cada segmento
+			# Crear colisión física directa reforzada para cada segmento
 			var col_shape = CollisionShape3D.new()
 			var box = BoxShape3D.new()
 			var seg_len = (p2 - p1).length()
-			box.size = Vector3(0.6, barrier_height, seg_len)
+			box.size = Vector3(1.2, barrier_height, seg_len * 1.08)
 			col_shape.shape = box
 			static_body_walls.add_child(col_shape)
 			col_shape.global_position = (p1 + p2) * 0.5 + Vector3(0, barrier_height * 0.5, 0)
 			if seg_len > 0.01:
 				col_shape.look_at(col_shape.global_position + dir, Vector3.UP)
+
 
 
 		var barrier_mesh = st.commit()
@@ -289,6 +298,19 @@ func get_starting_grid_transforms(car_count: int) -> Array[Transform3D]:
 		transforms.append(t)
 
 	return transforms
+
+# Comprobar si una posición 3D está dentro del asfalto de la pista
+func is_on_track(pos: Vector3) -> bool:
+	var min_dist_sq = 999999.0
+	for cp in centerline_points:
+		var dx = pos.x - cp.x
+		var dz = pos.z - cp.z
+		var d2 = dx * dx + dz * dz
+		if d2 < min_dist_sq:
+			min_dist_sq = d2
+	var half_w = track_width * 0.5
+	return min_dist_sq <= (half_w * half_w)
+
 
 func catmull_rom_3d(p0: Vector3, p1: Vector3, p2: Vector3, p3: Vector3, t: float) -> Vector3:
 	var t2 = t * t

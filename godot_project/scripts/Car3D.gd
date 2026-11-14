@@ -23,6 +23,8 @@ var steer_speed: float = 2.4
 var max_health: float = 100.0
 var health: float = 100.0
 var is_alive: bool = true
+var is_in_grass: bool = false
+var track_ref: Track3D = null
 
 # Rendimiento y Carrera
 var fitness: float = 0.0
@@ -119,13 +121,31 @@ func _physics_process(delta: float):
 		# Resistencia y fricción natural
 		speed = move_toward(speed, 0.0, friction * delta)
 
-	# Movimiento en plano horizontal con gravedad
+	# Movimiento en plano horizontal asegurando que no caiga bajo el suelo
 	var forward = -global_transform.basis.z
 	velocity = forward * speed
-	velocity.y -= 9.8 * delta # Mantener pegado al asfalto
+	velocity.y = 0.0
 	move_and_slide()
 
-	# 3. Cálculo de colisiones y daño por impacto
+	# Garantizar plano de altura Y estricto y orientación vertical correcta
+	if global_position.y < 0.2:
+		global_position.y = 0.25
+	rotation.x = 0.0
+	rotation.z = 0.0
+
+	# 3. Detección y penalización por salirse de la pista al pasto
+	if track_ref:
+		var on_track = track_ref.is_on_track(global_position)
+		if not on_track:
+			is_in_grass = true
+			# Drena energía continuamente mientras esté fuera del asfalto
+			take_damage(26.0 * delta)
+			# Fricción extrema del pasto que frena el auto
+			speed = move_toward(speed, 0.0, 22.0 * delta)
+		else:
+			is_in_grass = false
+
+	# 4. Cálculo de colisiones y daño por impacto
 	process_collisions()
 
 	# 4. Actualizar métricas de rendimiento (Fitness)
@@ -231,8 +251,14 @@ func set_car_color(new_color: Color):
 func update_label():
 	if label_3d:
 		if is_alive:
-			label_3d.text = "%s\n[%.0f%% HP] %.0f km/h" % [car_name, health, abs(speed * 3.6)]
-			if health > 60.0:
+			var prefix = "⭐ [TÚ]\n" if is_player else ""
+			var grass_warn = " ⚠️[PASTO]" if is_in_grass else ""
+			label_3d.text = "%s%s\n[%.0f%% HP]%s %.0f km/h" % [prefix, car_name, health, grass_warn, abs(speed * 3.6)]
+			if is_player:
+				label_3d.modulate = Color(1.0, 0.9, 0.2)
+			elif is_in_grass:
+				label_3d.modulate = Color(1.0, 0.3, 0.2)
+			elif health > 60.0:
 				label_3d.modulate = Color(0.4, 1.0, 0.4)
 			elif health > 30.0:
 				label_3d.modulate = Color(1.0, 0.9, 0.3)

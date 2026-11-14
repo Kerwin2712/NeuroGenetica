@@ -33,12 +33,14 @@ Versión **Tridimensional** de **NeuroGenetica** con física 3D, pistas de 4 car
 
 ## 🕹️ Controles del Juego
 
-| Tecla | Acción |
+| Tecla / Ratón | Acción |
 | :--- | :--- |
-| **`W`, `A`, `S`, `D`** o **`Flechas`** | Conducir el auto seleccionado (en Modo Humano). |
-| **`M`** | Alternar entre **Control Humano** y **Control por IA** en el auto actual. |
-| **`C`** / **`Shift + C`** | Cambiar al siguiente / anterior auto en la pista. |
-| **`V`** | Alternar modo de cámara (**GTA Cenital**, **Isométrica**, **Tercera Persona**, **Panorámica**). |
+| **`TAB`** o **`P`** | **Alternar Modalidad**: Cambia entre **Modo Espectador Libre** y **Modo Piloto Humano**. |
+| **`Arrastrar Ratón`** *(Clic Derecho/Izquierdo)* | **Desplazar cámara**: Muévete libremente por toda la pista en la Vista Isométrica. |
+| **`Rueda del Ratón`** *(Scroll)* | **Zoom**: Acércate o aléjate de cualquier curva o sector del circuito. |
+| **`W`, `A`, `S`, `D`** o **`Flechas`** | Conducir tu auto (en Modo Piloto Humano) o desplazar la vista (en Modo Espectador). |
+| **`C`** / **`Shift + C`** | Cambiar al siguiente / anterior auto en la pista para ver su telemetría. |
+| **`V`** | Alternar modo de cámara (**Isométrica Libre**, **GTA Cenital**, **Isométrica Auto**, **3ª Persona**). |
 | **`Espacio`** | Velocidad de simulación (**1x**, **2x**, **4x**). |
 | **`R`** | Forzar fin de ronda y avanzar a la siguiente carrera de la Copa. |
 | **`ESC` / `Alt + F4`** | Salir del juego. |
