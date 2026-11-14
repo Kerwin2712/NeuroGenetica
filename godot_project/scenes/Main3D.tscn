@@ -1,0 +1,193 @@
+[gd_scene load_steps=9 format=3 uid="uid://b3dmainscene"]
+
+[ext_resource type="Script" path="res://scripts/SimulationManager3D.gd" id="1_sim3d"]
+[ext_resource type="Script" path="res://scripts/Track3D.gd" id="2_track3d"]
+[ext_resource type="Script" path="res://scripts/CameraRig3D.gd" id="3_camrig3d"]
+
+[sub_resource type="Environment" id="Environment_main"]
+background_mode = 1
+background_color = Color(0.15, 0.18, 0.22, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.45, 0.48, 0.52, 1)
+tonemap_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grass"]
+albedo_color = Color(0.09, 0.32, 0.14, 1)
+roughness = 0.9
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+material = SubResource("StandardMaterial3D_grass")
+size = Vector2(400, 300)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
+bg_color = Color(0.06, 0.08, 0.12, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp"]
+bg_color = Color(0.1, 0.75, 0.25, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="Main3D" type="Node3D"]
+script = ExtResource("1_sim3d")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_main")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707107, -0.45452, 0.541675, 0, 0.766044, 0.642788, -0.707107, -0.45452, 0.541675, 0, 40, 0)
+light_color = Color(1, 0.97, 0.9, 1)
+light_energy = 1.2
+shadow_enabled = true
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, 0)
+mesh = SubResource("PlaneMesh_ground")
+
+[node name="Track3D" type="Node3D" parent="."]
+script = ExtResource("2_track3d")
+
+[node name="CameraRig3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.258819, 0.965926, 0, -0.965926, 0.258819, 0, 26, 0)
+current = true
+fov = 65.0
+script = ExtResource("3_camrig3d")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="LeftPanel" type="PanelContainer" parent="CanvasLayer/HUD"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 290.0
+offset_bottom = 120.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/HUD/LeftPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="RoundLabel" type="Label" parent="CanvasLayer/HUD/LeftPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "🏆 Modo Copa - Ronda 1"
+
+[node name="AliveLabel" type="Label" parent="CanvasLayer/HUD/LeftPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "🏎️ Autos en Pista: 10 / 10"
+
+[node name="SpeedLabel" type="Label" parent="CanvasLayer/HUD/LeftPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 13
+text = "⚡ Simulación: 1x [Espacio]"
+
+[node name="RightPanel" type="PanelContainer" parent="CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -340.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 165.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/HUD/RightPanel"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="CarNameLabel" type="Label" parent="CanvasLayer/HUD/RightPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "🎯 Siguiendo: Auto #1"
+
+[node name="CarModeLabel" type="Label" parent="CanvasLayer/HUD/RightPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "🧠 Modo: IA ADAPTATIVA (C++)"
+
+[node name="HpLabel" type="Label" parent="CanvasLayer/HUD/RightPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Energía / Resistencia:"
+
+[node name="HpBar" type="ProgressBar" parent="CanvasLayer/HUD/RightPanel/VBox"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_hp")
+value = 100.0
+
+[node name="SpeedLabel" type="Label" parent="CanvasLayer/HUD/RightPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Velocidad: 0 km/h | Vueltas: 0"
+
+[node name="CamModeLabel" type="Label" parent="CanvasLayer/HUD/RightPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "🎮 Vista GTA Cenital [Tecla V]"
+
+[node name="BottomPanel" type="PanelContainer" parent="CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -175.0
+offset_right = 320.0
+offset_bottom = -16.0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="LeaderboardLabel" type="Label" parent="CanvasLayer/HUD/BottomPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "🏁 CLASIFICACIÓN EN VIVO:
+1º Auto #1 (100% HP)
+2º Auto #2 (100% HP)
+3º Auto #3 (100% HP)"
+
+[node name="HelpPanel" type="PanelContainer" parent="CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -390.0
+offset_top = -75.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="HelpLabel" type="Label" parent="CanvasLayer/HUD/HelpPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.88, 0.92, 0.9)
+theme_override_font_sizes/font_size = 12
+text = "🎮 [WASD]: Conducir auto enfocado  |  [M]: Alternar Humano/IA
+👁️ [C]: Cambiar auto a seguir  |  [V]: Alternar Vista (GTA / Iso / 3ª)
+⚡ [Espacio]: Velocidad simulación  |  [R]: Siguiente ronda Copa"

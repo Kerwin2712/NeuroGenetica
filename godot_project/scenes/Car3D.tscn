@@ -1,0 +1,151 @@
+[gd_scene load_steps=12 format=3 uid="uid://c3dcarscene"]
+
+[ext_resource type="Script" path="res://scripts/Car3D.gd" id="1_car3d"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_car"]
+size = Vector3(2, 1, 4.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_chassis"]
+size = Vector3(2, 0.55, 4.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glass"]
+albedo_color = Color(0.12, 0.15, 0.2, 0.9)
+roughness = 0.1
+metallic = 0.8
+
+[sub_resource type="BoxMesh" id="BoxMesh_cabin"]
+material = SubResource("StandardMaterial3D_glass")
+size = Vector3(1.5, 0.45, 2.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wheel"]
+albedo_color = Color(0.1, 0.1, 0.1, 1)
+roughness = 0.8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_wheel"]
+material = SubResource("StandardMaterial3D_wheel")
+top_radius = 0.38
+bottom_radius = 0.38
+height = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_light_yellow"]
+albedo_color = Color(1, 0.95, 0.6, 1)
+emission_enabled = true
+emission = Color(1, 0.95, 0.6, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_headlight"]
+material = SubResource("StandardMaterial3D_light_yellow")
+size = Vector3(0.35, 0.15, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_light_red"]
+albedo_color = Color(1, 0.1, 0.1, 1)
+emission_enabled = true
+emission = Color(1, 0.1, 0.1, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_taillight"]
+material = SubResource("StandardMaterial3D_light_red")
+size = Vector3(0.4, 0.15, 0.1)
+
+[node name="Car3D" type="CharacterBody3D"]
+collision_layer = 1
+collision_mask = 3
+script = ExtResource("1_car3d")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("BoxShape3D_car")
+
+[node name="Chassis" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+mesh = SubResource("BoxMesh_chassis")
+
+[node name="Cabin" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0.1)
+mesh = SubResource("BoxMesh_cabin")
+
+[node name="Wheels" type="Node3D" parent="."]
+
+[node name="WheelFL" type="MeshInstance3D" parent="Wheels"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -1.05, 0.38, -1.35)
+mesh = SubResource("CylinderMesh_wheel")
+
+[node name="WheelFR" type="MeshInstance3D" parent="Wheels"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 1.05, 0.38, -1.35)
+mesh = SubResource("CylinderMesh_wheel")
+
+[node name="WheelRL" type="MeshInstance3D" parent="Wheels"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -1.05, 0.38, 1.35)
+mesh = SubResource("CylinderMesh_wheel")
+
+[node name="WheelRR" type="MeshInstance3D" parent="Wheels"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 1.05, 0.38, 1.35)
+mesh = SubResource("CylinderMesh_wheel")
+
+[node name="Lights" type="Node3D" parent="."]
+
+[node name="HeadlightL" type="MeshInstance3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65, 0.45, -2.12)
+mesh = SubResource("BoxMesh_headlight")
+
+[node name="HeadlightR" type="MeshInstance3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 0.45, -2.12)
+mesh = SubResource("BoxMesh_headlight")
+
+[node name="TaillightL" type="MeshInstance3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65, 0.5, 2.12)
+mesh = SubResource("BoxMesh_taillight")
+
+[node name="TaillightR" type="MeshInstance3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 0.5, 2.12)
+mesh = SubResource("BoxMesh_taillight")
+
+[node name="Sensors" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="RayFront" type="RayCast3D" parent="Sensors"]
+target_position = Vector3(0, 0, -35)
+collision_mask = 3
+
+[node name="RayLeft" type="RayCast3D" parent="Sensors"]
+target_position = Vector3(-17.5, 0, -30)
+collision_mask = 3
+
+[node name="RayRight" type="RayCast3D" parent="Sensors"]
+target_position = Vector3(17.5, 0, -30)
+collision_mask = 3
+
+[node name="RayLeftFar" type="RayCast3D" parent="Sensors"]
+target_position = Vector3(-25, 0, -12)
+collision_mask = 3
+
+[node name="RayRightFar" type="RayCast3D" parent="Sensors"]
+target_position = Vector3(25, 0, -12)
+collision_mask = 3
+
+[node name="Billboard" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="Label3D" type="Label3D" parent="Billboard"]
+billboard = 1
+double_sided = false
+no_depth_test = true
+text = "Auto #1
+[100% HP]"
+font_size = 28
+outline_size = 8
+outline_modulate = Color(0, 0, 0, 1)
+
+[node name="SmokeParticles" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0.5)
+emitting = false
+amount = 20
+lifetime = 1.0
+direction = Vector3(0, 1, 0)
+spread = 30.0
+gravity = Vector3(0, 2, 0)
+initial_velocity_min = 1.0
+initial_velocity_max = 3.0
+scale_amount_min = 0.5
+scale_amount_max = 1.5
+color = Color(0.2, 0.2, 0.2, 0.7)
