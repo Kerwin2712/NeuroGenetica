@@ -17,7 +17,8 @@ roughness = 0.9
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
 material = SubResource("StandardMaterial3D_grass")
-size = Vector2(400, 300)
+size = Vector2(1600, 1400)
+
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
 bg_color = Color(0.06, 0.08, 0.12, 0.85)
@@ -120,6 +121,13 @@ theme_override_colors/font_color = Color(0.9, 0.85, 0.2, 1)
 theme_override_font_sizes/font_size = 13
 text = "⚡ Simulación: 1x [Espacio]"
 
+[node name="TeamLabel" type="Label" parent="CanvasLayer/HUD/LeftPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "🤖 Equipo IA: Novatos [Tecla L]"
+
+
 [node name="RightPanel" type="PanelContainer" parent="CanvasLayer/HUD"]
 layout_mode = 1
 anchors_preset = 1
@@ -188,6 +196,60 @@ text = "🏁 CLASIFICACIÓN EN VIVO:
 2º Auto #2 (100% HP)
 3º Auto #3 (100% HP)"
 
+[node name="ToastBanner" type="PanelContainer" parent="CanvasLayer/HUD"]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -65.0
+offset_right = 320.0
+offset_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="ToastLabel" type="Label" parent="CanvasLayer/HUD/ToastBanner"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Aviso del sistema"
+
+[node name="TelemetryWindow" type="PanelContainer" parent="CanvasLayer/HUD"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -380.0
+offset_top = -200.0
+offset_right = 380.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/HUD/TelemetryWindow"]
+layout_mode = 2
+
+[node name="Scroll" type="ScrollContainer" parent="CanvasLayer/HUD/TelemetryWindow/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Text" type="RichTextLabel" parent="CanvasLayer/HUD/TelemetryWindow/VBox/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "Telemetría..."
+
 [node name="HelpPanel" type="PanelContainer" parent="CanvasLayer/HUD"]
 layout_mode = 1
 anchors_preset = 3
@@ -195,8 +257,8 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -390.0
-offset_top = -75.0
+offset_left = -440.0
+offset_top = -80.0
 offset_right = -16.0
 offset_bottom = -16.0
 grow_horizontal = 0
@@ -206,7 +268,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
 [node name="HelpLabel" type="Label" parent="CanvasLayer/HUD/HelpPanel"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.88, 0.92, 0.9)
-theme_override_font_sizes/font_size = 12
-text = "🎮 [WASD]: Conducir auto enfocado  |  [M]: Alternar Humano/IA
-👁️ [C]: Cambiar auto a seguir  |  [V]: Alternar Vista (GTA / Iso / 3ª)
-⚡ [Espacio]: Velocidad simulación  |  [R]: Siguiente ronda Copa"
+theme_override_font_sizes/font_size = 11
+text = "🎮 [TAB]: Conducir/Espectador  |  [G]: Guardar Gen  |  [L]: Cambiar Equipo IA
+🔄 [F5 / Shift+R]: Reiniciar Todo  |  [I]: Telemetría/Stats  |  [V]: Vista Cámara"
+

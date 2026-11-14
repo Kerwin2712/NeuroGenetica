@@ -31,8 +31,14 @@ var fitness: float = 0.0
 var distance_traveled: float = 0.0
 var current_lap: int = 0
 var current_checkpoint: int = 0
+var checkpoints_passed: int = 0
+var current_lap_time: float = 0.0
+var best_lap_time: float = 999.0
+var top_speed_kmh: float = 0.0
+var training_level: int = 1
 var race_time: float = 0.0
 var total_collisions: int = 0
+
 
 # Referencias a nodos
 @onready var ray_front: RayCast3D = $Sensors/RayFront
@@ -148,16 +154,35 @@ func _physics_process(delta: float):
 	# 4. Cálculo de colisiones y daño por impacto
 	process_collisions()
 
-	# 4. Actualizar métricas de rendimiento (Fitness)
+	# 5. Registro de telemetría y paso por Checkpoints
+	current_lap_time += delta
+	var current_kmh = abs(speed * 3.6)
+	if current_kmh > top_speed_kmh:
+		top_speed_kmh = current_kmh
+
+	if track_ref and track_ref.checkpoints.size() > 0:
+		var target_idx = (current_checkpoint + 1) % track_ref.checkpoints.size()
+		var target_pos = track_ref.checkpoints[target_idx]
+		if global_position.distance_to(target_pos) < track_ref.track_width * 0.75:
+			current_checkpoint = target_idx
+			checkpoints_passed += 1
+			if current_checkpoint == 0:
+				current_lap += 1
+				if current_lap_time < best_lap_time:
+					best_lap_time = current_lap_time
+				current_lap_time = 0.0
+
+	# 6. Actualizar métricas de rendimiento (Fitness y Nivel de Entrenamiento)
 	distance_traveled += speed * delta
-	# El fitness premia: distancia recorrida + salud preservada - penalización por inactividad
-	fitness = distance_traveled + (health * 1.5) + (current_lap * 2000.0)
+	fitness = distance_traveled + (current_lap * 3000.0) + (checkpoints_passed * 120.0) + (health * 1.5) - (total_collisions * 12.0)
+	training_level = clamp(1 + int(fitness / 400.0), 1, 10)
 
 	# Estancamiento: si tras 6s no avanza casi nada, pierde energía
 	if race_time > 6.0 and distance_traveled < 15.0:
 		take_damage(20.0 * delta)
 
 	update_label()
+
 
 func read_sensors() -> PackedFloat32Array:
 	var inputs = PackedFloat32Array()
@@ -236,7 +261,10 @@ func reset_car(spawn_transform: Transform3D):
 	race_time = 0.0
 	current_lap = 0
 	current_checkpoint = 0
+	checkpoints_passed = 0
+	current_lap_time = 0.0
 	total_collisions = 0
+
 	if smoke_particles:
 		smoke_particles.emitting = false
 	if chassis_material:

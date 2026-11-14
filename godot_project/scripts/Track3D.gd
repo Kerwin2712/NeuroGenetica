@@ -118,10 +118,11 @@ func generate_barriers_and_collisions():
 	# Suelo físico continuo sólido a Y=0 para evitar caídas bajo la pista
 	var floor_col = CollisionShape3D.new()
 	var floor_box = BoxShape3D.new()
-	floor_box.size = Vector3(700.0, 1.0, 600.0)
+	floor_box.size = Vector3(1800.0, 1.0, 1600.0)
 	floor_col.shape = floor_box
 	floor_col.position = Vector3(0, -0.5, 0)
 	static_body_walls.add_child(floor_col)
+
 
 	var half_w = track_width * 0.5
 	var total = centerline_points.size()
