@@ -23,8 +23,10 @@ var steer_speed: float = 2.4
 var max_health: float = 100.0
 var health: float = 100.0
 var is_alive: bool = true
+var is_frozen: bool = false
 var is_in_grass: bool = false
 var track_ref: Track3D = null
+
 
 # Rendimiento y Carrera
 var fitness: float = 0.0
@@ -68,6 +70,11 @@ func _ready():
 	update_label()
 
 func _physics_process(delta: float):
+	if is_frozen:
+		speed = 0.0
+		velocity = Vector3.ZERO
+		return
+
 	if not is_alive:
 		# Auto destruido: desacelerar hasta detenerse
 		speed = move_toward(speed, 0.0, friction * 2.0 * delta)
