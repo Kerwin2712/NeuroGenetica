@@ -43,6 +43,7 @@ var current_team_name: String = "Escudería GT Pro"
 var toast_message: String = ""
 var toast_timer: float = 0.0
 var show_telemetry_panel: bool = false
+var show_debug_overlays: bool = false
 
 var car_colors = [
 	Color(1.0, 0.85, 0.1),    # 1: Amarillo Dorado (Jugador)
@@ -551,6 +552,7 @@ func spawn_race_grid(count: int):
 		car.brain.initialize_heuristic()
 
 		car.reset_car(grid_transforms[i])
+		car.set_debug_rays_visible(show_debug_overlays)
 		cars.append(car)
 		cup_points[car.car_id] = 0
 
@@ -665,11 +667,13 @@ func _unhandled_input(event: InputEvent):
 	elif key == KEY_F11:
 		toggle_fullscreen()
 
-	# Q: Visualizar u ocultar las divisiones del Árbol de Partición Espacial (SpatialTree3D)
+	# Q: Visualizar u ocultar las divisiones del Árbol Espacial (SpatialTree3D) y sensores de los autos
 	elif key == KEY_Q:
 		if track:
-			var is_vis = track.toggle_spatial_tree_debug()
-			show_toast("🔲 Divisiones de Pista 3D: " + ("ACTIVADAS (Visualizando cuadrantes en tiempo real)" if is_vis else "DESACTIVADAS") + " [Tecla Q]")
+			show_debug_overlays = track.toggle_spatial_tree_debug()
+			for car in cars:
+				car.set_debug_rays_visible(show_debug_overlays)
+			show_toast("🔲 Divisiones 3D y Sensores: " + ("ACTIVADOS (Cuadrantes + Rayos de sensores)" if show_debug_overlays else "DESACTIVADAS") + " [Tecla Q]")
 
 	# TAB: Alternar entre MODO JUGADOR y ESPECTADOR
 	if key == KEY_TAB:

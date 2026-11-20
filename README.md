@@ -2,9 +2,6 @@
 
 **Videojuego de Carreras 3D con Rivales de Inteligencia Artificial Adaptativa**, desarrollado con **Godot Engine 4** y un núcleo de alto rendimiento en **C++17 (GDExtension)**, optimizado mediante estructuras de datos avanzadas (**`SpatialTree3D`**, **`QuadTree`** y **`MaxHeap`**). Proyecto desarrollado para la materia *Programación 3*.
 
-> [!TIP]
-> 📖 **Portal Oficial de Documentación**: Abre **[`docs/showcase.html`](docs/showcase.html)** mediante un servidor local (ej. *Live Server* en VS Code o `python -m http.server 8080`) para leer toda la documentación con ecuaciones matemáticas, navegación seccionada y modo claro/oscuro.
-
 ---
 
 ## 🕰️ Línea de Tiempo y Evolución del Proyecto
@@ -98,7 +95,7 @@ El proyecto opera bajo una **arquitectura híbrida**: Godot Engine 4 gestiona la
 | **`V`** | Cambiar cámara | Alterna entre **GTA Cenital**, **Isométrica Libre**, **Isométrica Auto** y **3ª Persona**. |
 | **`C`** / **`Shift + C`** | Cambiar auto enfocado | Cambia el vehículo seguido por la cámara para inspeccionar su telemetría y sensores. |
 | **`M`** | Alternar Humano / IA | Toma el control manual del auto enfocado o devuélvelo a la IA. |
-| **`Q`** | Divisiones de Pista 3D | Muestra u oculta en pantalla la malla 3D de cuadrantes del **`SpatialTree3D`**. |
+| **`Q`** | Divisiones 3D y Sensores | Muestra u oculta en pantalla las cajas del **`SpatialTree3D`** y los **5 rayos sensores** de cada auto con código de color por distancia. |
 | **`I`** | Panel de Telemetría | Abre/cierra la tabla detallada de rendimiento, complejidad y métricas de los autos. |
 | **`Espacio`** | Velocidad de simulación | Alterna la escala temporal entre **$\times 1$**, **$\times 2$** y **$\times 4$**. |
 | **`TAB`** | Cambiar Modalidad | Alterna rápidamente entre **Modo Copa (Humano)** y **Modo Espectador**. |

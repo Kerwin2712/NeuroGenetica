@@ -67,7 +67,7 @@ Versión **Tridimensional** de **NeuroGenetica** con física 3D, pistas de 4 car
 | :--- | :--- |
 | **`ESC`** | **Volver al Menú Principal** (durante la carrera) o **Salir del Juego** (en el Menú Principal). |
 | **`F11`** | **Pantalla Completa / Modo Ventana**: Alterna instantáneamente el tamaño de pantalla. |
-| **`Q`** | **Ver Divisiones de Pista 3D**: Activa/desactiva la visualización en 3D de las cajas del `SpatialTree3D`. |
+| **`Q`** | **Ver Divisiones de Pista 3D y Sensores**: Activa/desactiva las cajas del `SpatialTree3D` y los 5 rayos sensores de cada auto (verde/amarillo/rojo según distancia). |
 | **`TAB`** | **Alternar Modalidad** (Modo Copa Humano $\leftrightarrow$ Modo Espectador Libre). |
 | **`G`** | **Guardar Generación**: Guarda los cerebros y datos en archivo `.json`. |
 | **`I`** | **Ver Telemetría y Estadísticas**: Abre/cierra la tabla completa de rendimiento. |

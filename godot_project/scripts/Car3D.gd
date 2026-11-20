@@ -43,6 +43,7 @@ var total_collisions: int = 0
 
 
 # Referencias a nodos
+@onready var sensors_node: Node3D = $Sensors
 @onready var ray_front: RayCast3D = $Sensors/RayFront
 @onready var ray_left: RayCast3D = $Sensors/RayLeft
 @onready var ray_right: RayCast3D = $Sensors/RayRight
@@ -52,6 +53,9 @@ var total_collisions: int = 0
 @onready var label_3d: Label3D = $Billboard/Label3D
 @onready var smoke_particles: CPUParticles3D = $SmokeParticles
 
+var sensor_rays: Array[RayCast3D] = []
+var sensor_debug_instance: MeshInstance3D = null
+var sensor_debug_mesh: ImmediateMesh = null
 var chassis_material: StandardMaterial3D
 var flash_timer: float = 0.0
 var debug_show_rays: bool = false
@@ -59,6 +63,9 @@ var debug_show_rays: bool = false
 func _ready():
 	if brain == null:
 		brain = GodotBrain.new()
+
+	sensor_rays = [ray_left_far, ray_left, ray_front, ray_right, ray_right_far]
+	_setup_sensor_debug_mesh()
 
 	# Configurar material único para el chasis
 	chassis_material = StandardMaterial3D.new()
@@ -69,10 +76,101 @@ func _ready():
 
 	update_label()
 
+func _setup_sensor_debug_mesh():
+	sensor_debug_mesh = ImmediateMesh.new()
+	sensor_debug_instance = MeshInstance3D.new()
+	sensor_debug_instance.name = "SensorDebugRays"
+	sensor_debug_instance.mesh = sensor_debug_mesh
+	sensor_debug_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	sensor_debug_instance.visible = debug_show_rays
+
+	var mat = StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.vertex_color_use_as_albedo = true
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	sensor_debug_instance.material_override = mat
+
+	if sensors_node:
+		sensors_node.add_child(sensor_debug_instance)
+	else:
+		add_child(sensor_debug_instance)
+
+func set_debug_rays_visible(enabled: bool):
+	debug_show_rays = enabled
+	if sensor_debug_instance:
+		sensor_debug_instance.visible = enabled and is_alive
+		if enabled and is_alive:
+			update_debug_rays_mesh()
+		else:
+			sensor_debug_mesh.clear_surfaces()
+
+func update_debug_rays_mesh():
+	if not sensor_debug_mesh or not sensors_node:
+		return
+	sensor_debug_mesh.clear_surfaces()
+	if not debug_show_rays or not is_alive:
+		return
+
+	const ORIGIN := Vector3(0.0, 0.15, 0.0)
+	const NEAR_SQ: float = 10.5 * 10.5   # < 30% de 35m -> rojo
+	const MID_SQ: float = 22.75 * 22.75  # < 65% de 35m -> amarillo
+	const CROSS_SIZE: float = 0.45
+
+	sensor_debug_mesh.surface_begin(Mesh.PRIMITIVE_LINES)
+	for ray in sensor_rays:
+		if not is_instance_valid(ray):
+			continue
+		var end_local: Vector3
+		var line_color: Color
+		var did_hit: bool = ray.is_colliding()
+
+		if did_hit:
+			var hit_global = ray.get_collision_point()
+			end_local = sensors_node.to_local(hit_global)
+			end_local.y = ORIGIN.y
+			var dist_sq = (hit_global - ray.global_position).length_squared()
+			if dist_sq < NEAR_SQ:
+				line_color = Color(1.0, 0.18, 0.18, 0.95)  # Peligro cercano
+			elif dist_sq < MID_SQ:
+				line_color = Color(1.0, 0.8, 0.12, 0.92)   # Distancia media
+			else:
+				line_color = Color(0.25, 1.0, 0.45, 0.85)  # Obstáculo lejano
+		else:
+			end_local = ray.target_position
+			end_local.y = ORIGIN.y
+			line_color = Color(0.15, 0.92, 0.65, 0.55)     # Camino despejado
+
+		sensor_debug_mesh.surface_set_color(line_color)
+		sensor_debug_mesh.surface_add_vertex(ORIGIN)
+		sensor_debug_mesh.surface_set_color(line_color)
+		sensor_debug_mesh.surface_add_vertex(end_local)
+
+		# Pequeña cruz 3D en el punto exacto de impacto del sensor
+		if did_hit:
+			var hit_color = Color(1.0, 0.95, 0.95, 1.0)
+			sensor_debug_mesh.surface_set_color(hit_color)
+			sensor_debug_mesh.surface_add_vertex(end_local + Vector3(-CROSS_SIZE, 0, 0))
+			sensor_debug_mesh.surface_set_color(hit_color)
+			sensor_debug_mesh.surface_add_vertex(end_local + Vector3(CROSS_SIZE, 0, 0))
+
+			sensor_debug_mesh.surface_set_color(hit_color)
+			sensor_debug_mesh.surface_add_vertex(end_local + Vector3(0, -CROSS_SIZE, 0))
+			sensor_debug_mesh.surface_set_color(hit_color)
+			sensor_debug_mesh.surface_add_vertex(end_local + Vector3(0, CROSS_SIZE, 0))
+
+			sensor_debug_mesh.surface_set_color(hit_color)
+			sensor_debug_mesh.surface_add_vertex(end_local + Vector3(0, 0, -CROSS_SIZE))
+			sensor_debug_mesh.surface_set_color(hit_color)
+			sensor_debug_mesh.surface_add_vertex(end_local + Vector3(0, 0, CROSS_SIZE))
+	sensor_debug_mesh.surface_end()
+
 func _physics_process(delta: float):
 	if is_frozen:
 		speed = 0.0
 		velocity = Vector3.ZERO
+		if debug_show_rays and is_alive:
+			update_debug_rays_mesh()
 		return
 
 	if not is_alive:
@@ -190,6 +288,9 @@ func _physics_process(delta: float):
 	if race_time > 6.0 and distance_traveled < 15.0:
 		take_damage(20.0 * delta)
 
+	if debug_show_rays:
+		update_debug_rays_mesh()
+
 	update_label()
 
 
@@ -198,12 +299,11 @@ func _physics_process(delta: float):
 # - Comprobación por distancia al cuadrado para descarte rápido y reducción de overhead
 func read_sensors() -> PackedFloat32Array:
 	var inputs = PackedFloat32Array()
-	var rays = [ray_left_far, ray_left, ray_front, ray_right, ray_right_far]
 	const MAX_RANGE: float = 35.0
 	const MAX_RANGE_SQ: float = MAX_RANGE * MAX_RANGE
 	const INV_MAX_RANGE: float = 1.0 / MAX_RANGE
 
-	for ray in rays:
+	for ray in sensor_rays:
 		if ray.is_colliding():
 			var hit_pos = ray.get_collision_point()
 			var diff = hit_pos - ray.global_position
@@ -265,6 +365,8 @@ func die():
 	speed = 0.0
 	if smoke_particles:
 		smoke_particles.emitting = true
+	if sensor_debug_instance:
+		sensor_debug_instance.visible = false
 	if chassis_material:
 		chassis_material.albedo_color = Color(0.15, 0.15, 0.15)
 	update_label()
@@ -286,6 +388,8 @@ func reset_car(spawn_transform: Transform3D):
 
 	if smoke_particles:
 		smoke_particles.emitting = false
+	if sensor_debug_instance:
+		sensor_debug_instance.visible = debug_show_rays
 	if chassis_material:
 		chassis_material.albedo_color = car_color
 	update_label()
