@@ -1,6 +1,8 @@
 extends Node3D
 class_name Track3D
 
+const SpatialTree3D = preload("res://scripts/SpatialTree3D.gd")
+
 @export var track_width: float = 22.0  # Ancho de pista para 4-5 carriles
 @export var barrier_height: float = 2.2
 
@@ -10,6 +12,10 @@ var road_mesh_instance: MeshInstance3D
 var barrier_inner_instance: MeshInstance3D
 var barrier_outer_instance: MeshInstance3D
 var static_body_walls: StaticBody3D
+
+# Estructura de Datos Avanzada: Árbol de Partición Espacial 3D (SpatialTree3D)
+# Optimiza la localización en pista y consultas espaciales en O(log N)
+var spatial_tree: SpatialTree3D = null
 
 func _ready():
 	build_track()
@@ -57,6 +63,24 @@ func build_track():
 	generate_barriers_and_collisions()
 	generate_lane_markings()
 	generate_start_finish_line()
+
+	# Construir Árbol de Partición Espacial 3D (SpatialTree3D) para consultas O(log N)
+	build_spatial_tree()
+
+func build_spatial_tree():
+	var min_v = Vector3(INF, -5, INF)
+	var max_v = Vector3(-INF, 20, -INF)
+	for p in centerline_points:
+		min_v.x = min(min_v.x, p.x - track_width)
+		min_v.z = min(min_v.z, p.z - track_width)
+		max_v.x = max(max_v.x, p.x + track_width)
+		max_v.z = max(max_v.z, p.z + track_width)
+
+	var size = max_v - min_v
+	var bounds = AABB(min_v, size)
+	spatial_tree = SpatialTree3D.new(bounds, 4, 6)
+	for pt in centerline_points:
+		spatial_tree.insert(pt)
 
 func generate_road_mesh():
 	var st = SurfaceTool.new()
@@ -301,7 +325,12 @@ func get_starting_grid_transforms(car_count: int) -> Array[Transform3D]:
 	return transforms
 
 # Comprobar si una posición 3D está dentro del asfalto de la pista
+# Optimizado con Árbol de Partición Espacial 3D (SpatialTree3D) en O(log N)
 func is_on_track(pos: Vector3) -> bool:
+	if spatial_tree != null:
+		return spatial_tree.is_within_track(pos, track_width * 0.5)
+
+	# Fallback a fuerza bruta O(N) si el árbol no estuviera instanciado
 	var min_dist_sq = 999999.0
 	for cp in centerline_points:
 		var dx = pos.x - cp.x

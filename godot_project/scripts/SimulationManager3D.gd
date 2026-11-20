@@ -1,6 +1,8 @@
 extends Node3D
 class_name SimulationManager3D
 
+const MaxHeap = preload("res://scripts/MaxHeap.gd")
+
 enum MatchState {
 	MENU,          # Pantalla de inicio para elegir modo y equipo rival
 	COUNTDOWN,     # Semáforo de salida (3.. 2.. 1.. ¡GO!)
@@ -349,9 +351,11 @@ func show_race_results():
 	freeze_all_cars(true)
 	hud_results_panel.visible = true
 
-	# Clasificar autos por fitness y vueltas
-	var sorted_cars = cars.duplicate()
-	sorted_cars.sort_custom(func(a, b): return a.fitness > b.fitness)
+	# Clasificar autos mediante Max-Heap (Cola de Prioridad O(k log N))
+	var rank_heap = MaxHeap.new()
+	for car in cars:
+		rank_heap.push(car, car.fitness)
+	var sorted_cars: Array = rank_heap.get_top_k(cars.size())
 
 	var winner = sorted_cars[0]
 	var player_car = get_player_car()
@@ -404,14 +408,17 @@ func advance_to_next_cup_round():
 	cup_round += 1
 	generation += 1
 
-	# Evolucionar en C++ a los sobrevivientes para la siguiente ronda
-	cars.sort_custom(func(a, b): return a.fitness > b.fitness)
+	# Selección Elitista Óptima en O(k log N) con Max-Heap
 	var num_elites = max(2, int(cars.size() * 0.25))
-	var new_brains: Array[GodotBrain] = []
+	var elite_heap = MaxHeap.new()
+	for car in cars:
+		elite_heap.push(car, car.fitness)
+	var elite_cars: Array = elite_heap.get_top_k(num_elites)
 
+	var new_brains: Array[GodotBrain] = []
 	for i in range(num_elites):
 		var elite = GodotBrain.new()
-		elite.set_weights(cars[i].brain.get_weights())
+		elite.set_weights(elite_cars[i].brain.get_weights())
 		new_brains.append(elite)
 
 	while new_brains.size() < cars.size():
@@ -691,8 +698,11 @@ func update_telemetry_panel():
 	text += "[table=7]"
 	text += "[cell][b]Auto[/b][/cell][cell][b]Nivel[/b][/cell][cell][b]Vel. Punta[/b][/cell][cell][b]Vueltas[/b][/cell][cell][b]Mejor Vuelta[/b][/cell][cell][b]Salud[/b][/cell][cell][b]Puntos[/b][/cell]"
 
-	var sorted = cars.duplicate()
-	sorted.sort_custom(func(a, b): return a.fitness > b.fitness)
+	# Clasificación eficiente con Max-Heap en O(k log N)
+	var heap = MaxHeap.new()
+	for car in cars:
+		heap.push(car, car.fitness)
+	var sorted: Array = heap.get_top_k(cars.size())
 
 	for c in sorted:
 		var name_str = c.car_name + (" (TÚ)" if c.is_player else "")
@@ -705,7 +715,19 @@ func update_telemetry_panel():
 		text += "[cell]%s[/cell][cell]%s[/cell][cell]%s[/cell][cell]%s[/cell][cell]%s[/cell][cell]%s[/cell][cell]%s[/cell]" % [
 			name_str, level_str, speed_str, laps_str, lap_time_str, hp_str, pts_str
 		]
-	text += "[/table]\n[color=gray]Pulsa [I] para cerrar.[/color]"
+	text += "[/table]\n"
+
+	# Estadísticas de Estructuras de Datos Avanzadas (Programación 3 - Kerwin Quintero)
+	if track and track.spatial_tree:
+		var metrics = track.spatial_tree.get_metrics_summary()
+		text += "\n[b]🌳 ESTRUCTURAS DE DATOS Y OPTIMIZACIÓN (Programación 3):[/b]\n"
+		text += "• [color=cyan]SpatialTree3D[/color]: Nodos=%d | Consultas=%d | Ramas podadas=%d [O(log N)]\n" % [
+			metrics["total_nodes"], metrics["total_queries"], metrics["pruned_branches"]
+		]
+		text += "• [color=green]Max-Heap[/color]: Montículo binario activo para selección de élite y ranking [O(k log N)]\n"
+		text += "• [color=yellow]Sensores Optimizados[/color]: Evaluación por distancia al cuadrado (d²) sin sqrt redundante\n"
+
+	text += "\n[color=gray]Pulsa [I] para cerrar.[/color]"
 	hud_telemetry_text.text = text
 
 func show_toast(msg: String):

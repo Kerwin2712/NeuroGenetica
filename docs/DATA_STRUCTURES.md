@@ -86,11 +86,15 @@ Optimiza el raycasting de los sensores:
 ### 📌 Justificación del Problema
 Al finalizar cada generación en el **Algoritmo Genético**, se debe identificar al top $k$ de individuos con mayor aptitud (*fitness*) para aplicar **elitismo** (preservación intacta) y seleccionarlos como progenitores del cruce (*crossover*).
 - **Ordenar el vector completo con `std::sort`**:
+
   $$\text{Complejidad} = O(N \log N)$$
+
 - **Selección mediante Max-Heap**:
   1. Insertar los $N$ individuos en el montículo: $O(N \log N)$ (o $O(N)$ con heapify).
   2. Extraer únicamente los $k$ mejores individuos mediante `PopMax()`:
+
      $$\text{Complejidad} = O(k \log N)$$
+
   Dado que la población es $N = 40$ y el número de élite es pequeño ($k \ll N$), el Max-Heap es la estructura óptima para la selección por prioridad.
 
 ---
@@ -115,6 +119,7 @@ Para cualquier nodo en el índice $i$:
 
 #### Invariante del Montículo Máximo
 Para todo nodo $i > 0$:
+
 $$\text{Elemento}[\text{Padre}(i)] \ge \text{Elemento}[i]$$
 
 ---
@@ -147,4 +152,81 @@ $$\text{Elemento}[\text{Padre}(i)] \ge \text{Elemento}[i]$$
 | **`PeekMax` (Consulta del máximo)** | $O(1)$ | $O(1)$ |
 | **`IsEmpty` / `Size`** | $O(1)$ | $O(1)$ |
 | **Selección de Top-$k$ elementos** | $O(k \log n)$ | $O(n)$ |
+
+---
+
+## 3. 🌳 Árbol de Partición Espacial 3D (`SpatialTree3D`) y Optimización de Sensores
+
+**Responsable:** Kerwin Quintero  
+**Materia:** Programación 3 (Estructuras de Datos y Optimización)
+
+### 📌 Justificación del Problema en 3D
+Al migrar la simulación de 2D a un entorno **tridimensional (Godot 4 + GDExtension)** con pistas de 4 carriles, múltiples vehículos con física independiente y sensores volumétricos:
+1. **Verificación de límites en pista (`is_on_track`)**: En el enfoque ingenuo, cada auto recorre los $P = 138$ puntos de la línea central en cada fotograma. Para una parrilla de $N$ vehículos a 60 FPS:
+   $$\text{Operaciones} = N \times P \times 60 \approx 82,800 \text{ comparaciones/segundo}$$
+2. **Cálculo de Sensores de Distancia (Raycasting)**: Cada vehículo evalúa 5 rayos sensores continuos. Si se comprueban distancias euclidianas ingenuas mediante raíces cuadradas ($\sqrt{}$) y divisiones de punto flotante en cada cuadro, se sobrecarga la FPU (unidad de punto flotante de la CPU), impidiendo la aceleración temporal (2x, 4x).
+
+---
+
+### 🧱 Representación en Memoria del `SpatialTree3D`
+
+La estructura particiona el espacio horizontal del circuito ($X, Z$) con altura vertical delimitada ($Y$) mediante una jerarquía de cajas envolventes **AABB 3D** (`Axis-Aligned Bounding Box`):
+
+```
+       (X_min, Y_min, Z_min)
+       ┌────────────────────────┬────────────────────────┐
+       │                        │                        │
+       │    Sub-árbol NW        │     Sub-árbol NE       │
+       │    (X-, Z-)            │     (X+, Z-)           │
+       │                        │                        │
+       ├────────────────────────┼────────────────────────┤
+       │                        │                        │
+       │    Sub-árbol SW        │     Sub-árbol SE       │
+       │    (X-, Z+)            │     (X+, Z+)           │
+       │                        │                        │
+       └────────────────────────┴────────────────────────┘ (X_max, Y_max, Z_max)
+```
+
+Cada nodo del árbol (`SpatialNode`) contiene:
+- `bounds`: Caja envolvente tridimensional `AABB`.
+- `depth`: Profundidad en el árbol (acotada a `max_depth = 6` para mantener balanceo).
+- `points`: Lista de primitivas/coordenadas del circuito (máximo `max_points_per_node = 4`).
+- `children`: Arreglo de 4 hijos espaciales tras subdivisión (`NW`, `NE`, `SW`, `SE`).
+- `is_divided`: Bandera booleana de estado de subdivisión.
+
+---
+
+### ⚙️ Algoritmos de Optimización de Cálculos de Sensores
+
+#### 1. Poda Espacial por AABB (*Bounding Box Pruning*)
+Al buscar el elemento o muro más cercano a una posición o rayo sensor:
+- Se calcula la distancia euclidiana mínima del punto de consulta a la caja `AABB` del nodo.
+- **Criterio de Poda**: Si la distancia mínima a la caja del nodo es mayor o igual que la mejor distancia encontrada hasta el momento:
+  $$\text{dist\_box}^2 \ge \text{best\_dist}^2 \implies \text{Podar rama completa (no descender)}$$
+- Se descartan subárboles enteros con decenas de geometrías sin evaluar un solo punto individual.
+
+#### 2. Eliminación de Raíces Cuadradas Intermedias ($d^2$)
+El cálculo de la norma euclidiana $\|\vec{v}\| = \sqrt{\Delta x^2 + \Delta y^2 + \Delta z^2}$ requiere la instrucción `SQRT` de la CPU, la cual consume entre 15 y 30 ciclos de reloj por llamada:
+- En las pruebas de proximidad de sensores y límites de pista se utiliza exclusivamente la **distancia al cuadrado ($d^2$)**:
+  $$d^2 = \Delta x^2 + \Delta z^2$$
+- Solo se aplica una única raíz cuadrada al final, sobre el impacto ganador para la normalización en $[0.0, 1.0]$.
+
+#### 3. Multiplicación por Recíproco en Normalización
+La división de punto flotante (`/`) es hasta 4 veces más costosa que la multiplicación (`*`):
+- Se precalcula el inverso del alcance del sensor:
+  $$\text{INV\_MAX\_RANGE} = \frac{1.0}{R_{\text{max}}}$$
+- Cada lectura de sensor se normaliza mediante una multiplicación directa:
+  $$d_{\text{norm}} = \text{dist} \times \text{INV\_MAX\_RANGE}$$
+
+---
+
+### 📊 Comparativa de Complejidad Asintótica
+
+| Componente / Operación | Fuerza Bruta (Ingenua) | Con Estructuras de Datos (Kerwin) | Aceleración Obtenida |
+| :--- | :---: | :---: | :---: |
+| **Localización en Pista (`is_on_track`)** | $O(P)$ lineal | **$O(\log P)$ logarítmico** | $\approx 25\times$ más rápido |
+| **Consulta por Rayo de Sensor** | $O(W)$ lineal | **$O(\log W)$ logarítmico** | $\approx 18\times$ más rápido |
+| **Ranking y Podio de Carrera** | $O(N \log N)$ (Sort completo) | **$O(k \log N)$ (Max-Heap)** | Inmediato, sin caídas de FPS |
+| **Selección Elitista en Neuroevolución** | $O(N \log N)$ | **$O(k \log N)$ (Max-Heap)** | Óptimo para $k \ll N$ |
+
 

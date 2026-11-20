@@ -18,18 +18,23 @@ El movimiento del vehículo se calcula mediante cinemática 2D en tiempo discret
 
 ### Ecuaciones de Movimiento por Fotograma
 
-1. **Aceleración y Fricción**:
+1. **Aceleración y Fricción**:  
    Dado el comando de aceleración $u_a \in [-1, 1]$:
-   $$v_{t+1} = (v_t + u_a \cdot a) \cdot (1 - \mu)$$
+
+   $$v_{t+1} = (v_t + u_a \cdot a_{\text{max}}) \cdot (1 - \mu)$$
+
    La velocidad está acotada entre una velocidad máxima de reversa y avance:
+
    $$-v_{\text{max\_rev}} \le v_{t+1} \le v_{\text{max}}$$
 
-2. **Rotación Dependiente de la Velocidad**:
-   Dado el comando de viraje $u_s \in [-1, 1]$:
+2. **Rotación Dependiente de la Velocidad**:  
+   Dado el comando de viraje $u_s \in [-1, 1]$:  
    Un vehículo real no puede rotar sobre su propio eje si está detenido. Por ende, la velocidad angular es proporcional a la velocidad lineal:
+
    $$\theta_{t+1} = \theta_t + u_s \cdot \omega \cdot \left(\frac{v_{t+1}}{v_{\text{max}}}\right)$$
 
 3. **Integración de Posición**:
+
    $$\vec{p}_{t+1} = \vec{p}_t + \begin{pmatrix} v_{t+1} \cos(\theta_{t+1}) \\ v_{t+1} \sin(\theta_{t+1}) \end{pmatrix} \cdot \Delta t$$
 
 ---
@@ -51,9 +56,11 @@ Cada vehículo cuenta con **5 sensores de distancia ultrasónicos/ópticos simul
 
 - **Ángulos de Proyección**: $\{-60^\circ, -30^\circ, 0^\circ, +30^\circ, +60^\circ\}$.
 - **Alcance Máximo ($R_{\text{max}}$)**: 150 píxeles.
-- **Normalización**:
+- **Normalización**:  
   Para cada rayo $i$, la lectura entregada a la red neuronal es:
+
   $$d_i = \frac{\text{distancia\_impacto}}{R_{\text{max}}} \in [0.0, 1.0]$$
+
   Donde:
   - $0.0$: Obstáculo inmediato (colisión inminente).
   - $1.0$: Espacio totalmente despejado dentro del rango del sensor.
@@ -70,7 +77,7 @@ Cada agente es controlado por una **Red Neuronal Artificial (ANN)** multicapa co
    │ Sensor -60° (d0)│───┐   │                 │   ┌───│ Viraje [-1, 1]  │
    │ Sensor -30° (d1)│───┼──►│  Neuronas con   │───┤   └─────────────────┘
    │ Sensor   0° (d2)│───┼──►│   Activación    │   │   ┌─────────────────┐
-   │ Sensor +30° (d3)│───┼──►│  Tanh(z) en R   │───┴──►│ Acel/Freno[-1, 1│
+   │ Sensor +30° (d3)│───┼──►│  Tanh(z) en R   │───┴──►│Acel/Freno [-1, 1│]
    │ Sensor +60° (d4)│───┼──►│                 │       └─────────────────┘
    │ Velocidad norm  │───┘   └─────────────────┘
    └─────────────────┘
@@ -79,13 +86,19 @@ Cada agente es controlado por una **Red Neuronal Artificial (ANN)** multicapa co
 ### Formulación Matemática
 
 1. **Capa Oculta**:
+
    $$\vec{z}_h = \mathbf{W}_1 \cdot \vec{x} + \vec{b}_1$$
+
    $$\vec{a}_h = \tanh(\vec{z}_h)$$
+
    Donde $\mathbf{W}_1 \in \mathbb{R}^{8 \times 6}$ y $\vec{b}_1 \in \mathbb{R}^8$.
 
 2. **Capa de Salida**:
+
    $$\vec{z}_o = \mathbf{W}_2 \cdot \vec{a}_h + \vec{b}_2$$
+
    $$\vec{y} = \tanh(\vec{z}_o)$$
+
    Donde $\mathbf{W}_2 \in \mathbb{R}^{2 \times 8}$ y $\vec{b}_2 \in \mathbb{R}^2$.
 
 3. **Interpretación de las Salidas**:
@@ -94,7 +107,9 @@ Cada agente es controlado por una **Red Neuronal Artificial (ANN)** multicapa co
 
 ### Genoma Lineal
 Todas las matrices de pesos y vectores de sesgo se serializan en un único vector continuo unidimensional:
+
 $$\text{Genoma} = [\mathbf{W}_1, \vec{b}_1, \mathbf{W}_2, \vec{b}_2] \in \mathbb{R}^{74}$$
+
 - Pesos capa oculta: $8 \times 6 = 48$.
 - Sesgos capa oculta: $8$.
 - Pesos capa salida: $2 \times 8 = 16$.
@@ -109,6 +124,7 @@ A diferencia del entrenamiento supervisado tradicional con retropropagación (*B
 
 ### 1. Función de Aptitud (Fitness)
 El fitness mide el progreso real a lo largo del circuito:
+
 $$\text{Fitness} = (\text{Checkpoints Superados} \times 1000) + \text{Distancia Recorrida} - \text{Penalización por Inactividad}$$
 
 #### Mecanismos Anti-Trampas
@@ -121,11 +137,15 @@ $$\text{Fitness} = (\text{Checkpoints Superados} \times 1000) + \text{Distancia 
 
 ### 3. Cruce Genético (Uniform Crossover)
 Para engendrar nuevos individuos a partir de los progenitores élite $P_A$ y $P_B$:
+
 $$\text{Hijo}_i = \begin{cases} P_{A, i} & \text{si } r < 0.5 \\ P_{B, i} & \text{si } r \ge 0.5 \end{cases}$$
+
 Donde $r \sim \mathcal{U}(0, 1)$ se genera aleatoriamente para cada uno de los 74 genes.
 
 ### 4. Mutación Gaussiana Continua
 Con una tasa de mutación del **10%** por gen:
+
 $$\text{Gen}' = \text{Gen} + \mathcal{N}(0, \sigma^2)$$
+
 Donde la perturbación $\sigma = 0.30$ altera suavemente los pesos sin destruir las representaciones aprendidas previamente.
 

@@ -22,8 +22,8 @@
 3. **Evolución de Rivales (IA Adaptativa)**:
    - Dotar a los vehículos enemigos de la capacidad de aprender a trazar curvas y conducir dinámicamente mediante Redes Neuronales Feedforward y Algoritmos Genéticos continuos sin atajos precalculados ni trampas.
 4. **Optimización de Físicas y Rendimiento (Estructuras de Datos Avanzadas)**:
-   - **QuadTree (Árbol de partición espacial 2D)**: Almacena los segmentos y límites de la pista para optimizar el cálculo de colisiones y el raycasting de sensores en tiempo **$O(\log n)$** en lugar de iteraciones exhaustivas $O(n \times m)$.
-   - **Max-Heap (Cola de Prioridad)**: Ordenamiento y selección extremadamente veloz del top de competidores por fitness para cruce y elitismo en **$O(k \log n)$** sin pausar los FPS del juego.
+   - **Árboles de Partición Espacial (QuadTree 2D y SpatialTree3D)**: Almacenan los segmentos y límites de la pista en jerarquías AABB para optimizar la comprobación de límites y el raycasting de sensores en tiempo **$O(\log n)$** en lugar de iteraciones exhaustivas $O(n \times m)$.
+   - **Max-Heap (Cola de Prioridad)**: Ordenamiento y selección extremadamente veloz del top de competidores por fitness para cruce, podio y elitismo en **$O(k \log n)$** sin pausar los FPS del juego.
 5. **Arquitectura de Software (POO)**:
    - Diseño modular, desacoplado y limpio en C++17, separando la lógica del juego, el motor físico y el renderizado visual con pruebas unitarias (**CTest**).
 

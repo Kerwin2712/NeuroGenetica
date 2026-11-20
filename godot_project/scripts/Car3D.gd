@@ -170,7 +170,9 @@ func _physics_process(delta: float):
 	if track_ref and track_ref.checkpoints.size() > 0:
 		var target_idx = (current_checkpoint + 1) % track_ref.checkpoints.size()
 		var target_pos = track_ref.checkpoints[target_idx]
-		if global_position.distance_to(target_pos) < track_ref.track_width * 0.75:
+		# Optimización: Comparación por distancia euclidiana al cuadrado (evita sqrt innecesario)
+		var check_radius = track_ref.track_width * 0.75
+		if global_position.distance_squared_to(target_pos) < (check_radius * check_radius):
 			current_checkpoint = target_idx
 			checkpoints_passed += 1
 			if current_checkpoint == 0:
@@ -191,16 +193,26 @@ func _physics_process(delta: float):
 	update_label()
 
 
+# Lectura optimizada de sensores de distancia
+# - Multiplicación por inverso para evitar divisiones repetidas en el pipeline gráfico
+# - Comprobación por distancia al cuadrado para descarte rápido y reducción de overhead
 func read_sensors() -> PackedFloat32Array:
 	var inputs = PackedFloat32Array()
 	var rays = [ray_left_far, ray_left, ray_front, ray_right, ray_right_far]
-	var max_range = 35.0
+	const MAX_RANGE: float = 35.0
+	const MAX_RANGE_SQ: float = MAX_RANGE * MAX_RANGE
+	const INV_MAX_RANGE: float = 1.0 / MAX_RANGE
 
 	for ray in rays:
 		if ray.is_colliding():
 			var hit_pos = ray.get_collision_point()
-			var dist = (hit_pos - ray.global_position).length()
-			inputs.append(clamp(dist / max_range, 0.0, 1.0))
+			var diff = hit_pos - ray.global_position
+			var dist_sq = diff.length_squared()
+			if dist_sq < MAX_RANGE_SQ:
+				var dist = sqrt(dist_sq)
+				inputs.append(clamp(dist * INV_MAX_RANGE, 0.0, 1.0))
+			else:
+				inputs.append(1.0)
 		else:
 			inputs.append(1.0)
 

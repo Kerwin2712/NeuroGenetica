@@ -46,6 +46,19 @@ Versión **Tridimensional** de **NeuroGenetica** con física 3D, pistas de 4 car
      * Tabla con tiempos de carrera, velocidad punta, vueltas y puntos de Copa sumados.
      * Botones para pasar a la siguiente ronda, reintentar la carrera o volver al menú.
 
+8. **Estructuras de Datos Avanzadas y Optimización de Sensores (Programación 3)**:
+   * **`SpatialTree3D` (Árbol de Partición Espacial 3D)**:
+     * Indexa los 138 puntos de la pista y muros en una jerarquía de cajas envolventes 3D (`AABB`).
+     * Reduce la comprobación de límites de pista (`is_on_track`) de un escaneo lineal $O(P)$ a búsqueda en tiempo logarítmico **$O(\log P)$**.
+     * Poda automática de ramas lejanas para no desperdiciar ciclos de CPU.
+   * **`MaxHeap` (Montículo Binario / Cola de Prioridad)**:
+     * Clasificación de podio y ranking de la carrera en tiempo **$O(k \log N)$** mediante `SiftDown`.
+     * Selección de los mejores individuos élite para evolución entre rondas de la Copa sin necesidad de ordenar todo el arreglo.
+   * **Optimización de Cálculos de Sensores**:
+     * Eliminación de raíces cuadradas ($\sqrt{}$) en comprobaciones intermedias mediante distancias al cuadrado ($d^2$).
+     * Multiplicación por recíproco precalculado (`INV_MAX_RANGE`) para evitar divisiones de coma flotante.
+   * Puedes ver estas métricas en tiempo real pulsando la tecla **`I`** (ventana de telemetría).
+
 ---
 
 ## 🕹️ Controles del Juego

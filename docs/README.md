@@ -21,8 +21,9 @@ Bienvenido al centro de documentación técnica y arquitectónica de **NeuroGene
 | **[Showcase Dinámico (HTML)](showcase.html)** | Interfaz web interactiva en 1080p para captura de video y demostración en vivo. | Canvas QuadTree $O(\log n)$, Red Neuronal animada y Max-Heap $O(k \log n)$. |
 | **[Guion de Video (Markdown)](GUION_VIDEO.md)** | Guion técnico y narrativo detallado por integrantes para grabar el video. | Tiempos cronometrados, locución exacta por integrante y consejos OBS. |
 | **[Arquitectura de Software y Archivos](ARCHITECTURE.md)** | Visión integral de capas, componentes y árbol del repositorio. | Módulos Core, AI, Graphics, ciclo de vida del frame, flujo de datos. |
-| **[Estructuras de Datos Avanzadas](DATA_STRUCTURES.md)** | Análisis teórico y práctico de los árboles y colas de prioridad. | QuadTree 2D, Max-Heap genérico, podado espacial, análisis de complejidad $O$. |
-| **[Física, Red Neuronal y Neuroevolución](AI_AND_PHYSICS.md)** | Fundamentos matemáticos del simulador y del aprendizaje autónomo. | Cinemática 2D, Raycasting, ANN Feedforward, función de fitness, cruce y mutación. |
+| **[Estructuras de Datos Avanzadas](DATA_STRUCTURES.md)** | Análisis teórico y práctico de los árboles y colas de prioridad. | QuadTree 2D, SpatialTree3D, Max-Heap, optimización de sensores, análisis de complejidad $O$. |
+| **[Física, Red Neuronal y Neuroevolución](AI_AND_PHYSICS.md)** | Fundamentos matemáticos del simulador y del aprendizaje autónomo. | Cinemática, Raycasting optimizado, ANN Feedforward, fitness, cruce y mutación. |
+| **[Guía de Simulación 3D (Godot 4)](GUIA_GODOT.md)** | Manual de usuario y arquitectura del simulador tridimensional. | Modos Copa/Espectador, cámaras GTA/Isométrica, controles, telemetría y ejecución. |
 
 ---
 

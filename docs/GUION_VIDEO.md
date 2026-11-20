@@ -85,17 +85,17 @@ Este documento contiene el guion técnico y narrativo detallado para grabar el v
 2. A los 3:30, cambiar a la pestaña **🏔️ Max-Heap**. Mostrar el árbol binario de los coches y presionar el botón *"PopMax() [Extraer Líder]"* para mostrar la extracción animada del Top-2 de élite.
 
 #### 🗣️ Locución (Kerwin Quintero):
-> "Buenas a todos, les habla Kerwin Quintero. Yo me encargué del cerebro de los vehículos, la neuroevolución y la estructura de datos Max-Heap.
+> "Buenas a todos, les habla Kerwin Quintero. Yo me encargué del cerebro de los vehículos, la neuroevolución, la optimización de cálculos de sensores y la aplicación de las estructuras de datos avanzadas: el Max-Heap y el Árbol de Partición Espacial 3D.
 >
 > Cada vehículo enemigo está controlado por una **Red Neuronal Artificial Feedforward**. Recibe 6 entradas normalizadas: las 5 lecturas de distancia de los sensores más la velocidad actual. Estas señales pasan por una capa oculta de 8 neuronas con función de activación tangente hiperbólica ($\tanh$), y generan 2 salidas continuas: el ángulo de viraje y la aceleración o frenado. En total, cada coche posee un genoma lineal de 74 parámetros flotantes.
 >
 > Para que los rivales aprendan a conducir sin necesidad de un entrenamiento supervisado tradicional, usamos un **Algoritmo Genético**. Evaluamos la aptitud o *fitness* de cada individuo según la cantidad de checkpoints superados de forma secuencial, premiando el avance y penalizando la inactividad.
 >
-> Aquí entra nuestra segunda estructura de datos clave: el **Max-Heap o Cola de Prioridad genérica**, implementado en C++ mediante templates.
+> Aquí entra nuestra estructura de datos clave: el **Max-Heap o Cola de Prioridad genérica**, implementado en C++ mediante templates y adaptado a la simulación.
 >
-> Al finalizar cada generación, no necesitamos ordenar toda la población de 40 autos con algoritmos de costo $O(n \log n)$. En su lugar, insertamos los participantes en el Max-Heap y extraemos a los dos mejores mediante la operación `PopMax()`, garantizando la selección de élite en tiempo **$O(k \log n)$** gracias al algoritmo `SiftDown`.
+> Al finalizar cada carrera o generación, no necesitamos ordenar toda la población de autos con algoritmos de costo $O(n \log n)$. En su lugar, insertamos los participantes en el Max-Heap y extraemos a los líderes mediante la operación `PopMax()`, garantizando la selección de élite y el podio en tiempo **$O(k \log n)$** gracias al algoritmo `SiftDown`.
 >
-> Estos líderes pasan intactos a la siguiente ronda, y mediante cruce genético uniforme y mutación gaussiana continua en sus pesos, la siguiente generación de rivales es progresivamente más hábil y competitiva."
+> Además, para el entorno tridimensional optimizamos el cálculo de sensores y la geometría mediante el **SpatialTree3D**, un árbol espacial de cajas envolventes AABB que reduce la verificación de pista de $O(P)$ lineal a **$O(\log P)$ logarítmico** y elimina raíces cuadradas intermedias mediante comparaciones directas de distancias al cuadrado ($d^2$), garantizando máxima fluidez a 60 FPS."
 
 ---
 
