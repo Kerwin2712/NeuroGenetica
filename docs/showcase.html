@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="dark">
+<html lang="es" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NeuroGenetica – Documentación Técnica</title>
+<title>NeuroGenetica — Documentación Oficial</title>
 
 <!-- Marked.js (Markdown parser) -->
 <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
@@ -14,266 +14,515 @@
   onload="renderMathOnLoad()"></script>
 
 <style>
-  /* ── Variables de tema ─────────────────────────── */
+  /* ── Paleta de Temas ─────────────────────────────────────────── */
+  /* Modo Claro: fondo pastel aperlado suave con tipografía oscura */
   :root[data-theme="light"] {
-    --bg:          #f4f1eb;
-    --bg-sidebar:  #ede9e1;
-    --bg-card:     #faf8f4;
-    --border:      #d8d2c8;
-    --text:        #2c2c2c;
-    --text-muted:  #6b6460;
-    --text-faint:  #9a918a;
-    --accent:      #5a7a5c;
-    --accent-soft: #e8f0e8;
-    --link:        #3d6b41;
-    --code-bg:     #ede9e1;
-    --code-border: #c8c2b8;
-    --tip-bg:      #eaf3ea;
-    --tip-border:  #7aad7e;
-    --note-bg:     #eaf0f8;
-    --note-border: #7aaad4;
-    --warn-bg:     #fdf5e0;
-    --warn-border: #d4aa50;
-    --caution-bg:  #fdecea;
-    --caution-border:#d47a7a;
-    --imp-bg:      #f3eafa;
-    --imp-border:  #9a7ad4;
-    --shadow:      rgba(0,0,0,0.08);
-    --toc-active:  #5a7a5c;
+    --bg:             #f8f6f0;
+    --bg-sidebar:     #f1eee6;
+    --bg-elevated:    #fdfcf9;
+    --bg-hover:       #e7e2d6;
+    --border:         #ded8ca;
+    --border-subtle:  #e9e4d8;
+    --text:           #262421;
+    --text-muted:     #5e5952;
+    --text-faint:     #8e887e;
+    --accent:         #4b6b53;
+    --accent-soft:    #e5efe7;
+    --accent-border:  #b8d0be;
+    --link:           #395d43;
+    --code-bg:        #efeae0;
+    --code-border:    #d9d2c3;
+    --tip-bg:         #edf5ee;
+    --tip-border:     #5c8d67;
+    --note-bg:        #edf3f8;
+    --note-border:    #5c82a8;
+    --warn-bg:        #fbf4e2;
+    --warn-border:    #c29338;
+    --caution-bg:     #faeceb;
+    --caution-border: #c25e57;
+    --imp-bg:         #f3eef9;
+    --imp-border:     #8264ad;
+    --scrollbar:      #cfc8b8;
+    --scrollbar-hover:#b5ad9b;
   }
+
+  /* Modo Oscuro: tonos de grises oscuros sobrios con texto claro */
   :root[data-theme="dark"] {
-    --bg:          #121214;
-    --bg-sidebar:  #19191d;
-    --bg-card:     #1c1c20;
-    --border:      #2e2e34;
-    --text:        #e0ddd8;
-    --text-muted:  #9a9898;
-    --text-faint:  #6a6868;
-    --accent:      #7aad7e;
-    --accent-soft: #1e2e1e;
-    --link:        #8cc48f;
-    --code-bg:     #1a1a1e;
-    --code-border: #2e2e36;
-    --tip-bg:      #172017;
-    --tip-border:  #4a7a4e;
-    --note-bg:     #141a24;
-    --note-border: #4a6a9a;
-    --warn-bg:     #24200e;
-    --warn-border: #9a7a28;
-    --caution-bg:  #24140e;
-    --caution-border:#9a4a3e;
-    --imp-bg:      #1e162a;
-    --imp-border:  #6a4a9a;
-    --shadow:      rgba(0,0,0,0.3);
-    --toc-active:  #7aad7e;
+    --bg:             #121214;
+    --bg-sidebar:     #18181b;
+    --bg-elevated:    #1d1d21;
+    --bg-hover:       #25252b;
+    --border:         #2b2b31;
+    --border-subtle:  #222228;
+    --text:           #e4e4e7;
+    --text-muted:     #a1a1aa;
+    --text-faint:     #71717a;
+    --accent:         #9ec4a6;
+    --accent-soft:    #1e2921;
+    --accent-border:  #354d3b;
+    --link:           #a7d1b0;
+    --code-bg:        #1b1b20;
+    --code-border:    #2e2e36;
+    --tip-bg:         #162119;
+    --tip-border:     #528a5f;
+    --note-bg:        #161d26;
+    --note-border:    #5982ab;
+    --warn-bg:        #241f12;
+    --warn-border:    #b38936;
+    --caution-bg:     #261616;
+    --caution-border: #b35952;
+    --imp-bg:         #1e1828;
+    --imp-border:     #8668b3;
+    --scrollbar:      #32323a;
+    --scrollbar-hover:#494954;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html, body {
+    height: 100%;
+    overflow: hidden; /* Evita scroll global: cada columna scrollea aparte */
+  }
+
   body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 15px;
-    line-height: 1.7;
+    line-height: 1.72;
     background: var(--bg);
     color: var(--text);
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-    transition: background 0.2s, color 0.2s;
+    transition: background 0.2s ease, color 0.2s ease;
   }
 
-  /* ── Header ─────────────────────────────────────── */
-  header {
+  /* ── Barra Superior ──────────────────────────────────────────── */
+  header.topbar {
+    height: 54px;
+    min-height: 54px;
+    padding: 0 20px;
+    background: var(--bg-sidebar);
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 28px;
-    height: 54px;
-    background: var(--bg-sidebar);
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    gap: 16px;
+    gap: 14px;
+    z-index: 50;
   }
-  .header-brand {
-    font-weight: 700;
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    padding: 4px 9px;
+    cursor: pointer;
     font-size: 1rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-weight: 700;
+    font-size: 0.98rem;
     letter-spacing: -0.02em;
     color: var(--text);
     white-space: nowrap;
+  }
+
+  .brand-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
+    letter-spacing: 0.02em;
+  }
+
+  .topbar-actions {
     display: flex;
     align-items: center;
     gap: 8px;
   }
-  .header-nav {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    flex: 1;
-  }
-  .header-nav::-webkit-scrollbar { display: none; }
-  .nav-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 6px 14px;
-    border-radius: 6px;
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    white-space: nowrap;
-    transition: background 0.15s, color 0.15s;
-  }
-  .nav-btn:hover { background: var(--border); color: var(--text); }
-  .nav-btn.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
 
-  .header-actions { display: flex; align-items: center; gap: 8px; }
-  .theme-btn {
-    background: none;
+  .action-btn {
+    background: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 5px 10px;
+    border-radius: 7px;
+    padding: 5px 11px;
     cursor: pointer;
     font-size: 0.8rem;
+    font-weight: 500;
     color: var(--text-muted);
-    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s ease;
     white-space: nowrap;
   }
-  .theme-btn:hover { border-color: var(--accent); color: var(--text); }
+  .action-btn:hover {
+    border-color: var(--accent);
+    color: var(--text);
+    background: var(--bg-hover);
+  }
 
-  /* ── Layout ─────────────────────────────────────── */
-  .workspace {
+  /* ── Contenedor de 3 Columnas con Scroll Independiente ───────── */
+  .layout {
     display: flex;
     flex: 1;
+    min-height: 0; /* Crítico para que overflow-y funcione dentro de flex */
     overflow: hidden;
-    height: calc(100vh - 54px);
   }
 
-  /* ── TOC Sidebar ─────────────────────────────────── */
-  aside.toc-sidebar {
-    width: 220px;
-    min-width: 220px;
+  /* Scrollbars finas y limpias para cada panel */
+  .scroll-pane {
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar) transparent;
+  }
+  .scroll-pane::-webkit-scrollbar { width: 6px; }
+  .scroll-pane::-webkit-scrollbar-track { background: transparent; }
+  .scroll-pane::-webkit-scrollbar-thumb {
+    background: var(--scrollbar);
+    border-radius: 6px;
+  }
+  .scroll-pane::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-hover);
+  }
+
+  /* ── Columna 1: Sidebar Izquierda (Secciones y Documentos) ───── */
+  aside.nav-sidebar {
+    width: 270px;
+    min-width: 270px;
     background: var(--bg-sidebar);
     border-right: 1px solid var(--border);
-    overflow-y: auto;
-    padding: 16px 0;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
+    padding: 18px 14px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
   }
-  aside.toc-sidebar::-webkit-scrollbar { width: 4px; }
-  aside.toc-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-  .toc-title {
-    padding: 0 16px 8px;
-    font-size: 0.68rem;
+
+  .nav-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .nav-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px 6px;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 4px;
+  }
+
+  .nav-section-title {
+    font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.09em;
     text-transform: uppercase;
     color: var(--text-faint);
   }
+
+  .nav-item {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 9px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    color: var(--text-muted);
+    transition: all 0.14s ease;
+  }
+
+  .nav-item:hover {
+    background: var(--bg-hover);
+    color: var(--text);
+  }
+
+  .nav-item.active {
+    background: var(--accent-soft);
+    border-color: var(--accent-border);
+    color: var(--text);
+  }
+
+  .nav-item-icon {
+    font-size: 0.95rem;
+    line-height: 1.3;
+    flex-shrink: 0;
+  }
+
+  .nav-item-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .nav-item-label {
+    font-size: 0.84rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: inherit;
+  }
+  .nav-item.active .nav-item-label {
+    color: var(--accent);
+  }
+
+  .nav-item-desc {
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    line-height: 1.35;
+    margin-top: 2px;
+  }
+
+  /* Bloque TOC inline solo visible cuando se oculta la columna derecha */
+  .sidebar-inline-toc {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+    margin-top: 4px;
+  }
+
+  /* ── Columna 2: Visor Principal del Documento ────────────────── */
+  main.doc-viewport {
+    flex: 1;
+    min-width: 0;
+    padding: 28px 52px 64px;
+    background: var(--bg);
+  }
+
+  .doc-container {
+    max-width: 840px;
+    margin: 0 auto;
+  }
+
+  .doc-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.76rem;
+    color: var(--text-faint);
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .doc-breadcrumb strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .doc-breadcrumb .file-pill {
+    margin-left: auto;
+    font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 5px;
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    color: var(--text-muted);
+  }
+
+  /* ── Columna 3: Sidebar Derecha (Temas de la Página) ─────────── */
+  aside.toc-sidebar {
+    width: 248px;
+    min-width: 248px;
+    background: var(--bg-sidebar);
+    border-left: 1px solid var(--border);
+    padding: 18px 12px 28px;
+  }
+
+  .toc-header {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding: 0 10px 8px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .toc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
   .toc-link {
     display: block;
-    padding: 4px 16px 4px 20px;
+    padding: 5px 10px;
     font-size: 0.78rem;
+    line-height: 1.4;
     color: var(--text-muted);
     text-decoration: none;
     border-left: 2px solid transparent;
-    transition: all 0.12s;
-    line-height: 1.4;
+    border-radius: 0 6px 6px 0;
+    transition: all 0.12s ease;
+    word-break: break-word;
   }
-  .toc-link:hover { color: var(--text); background: var(--border); }
-  .toc-link.active { border-left-color: var(--toc-active); color: var(--toc-active); background: var(--accent-soft); font-weight: 600; }
-  .toc-link.h3 { padding-left: 30px; font-size: 0.74rem; }
-  .toc-link.h4 { padding-left: 42px; font-size: 0.72rem; color: var(--text-faint); }
+  .toc-link:hover {
+    color: var(--text);
+    background: var(--bg-hover);
+  }
+  .toc-link.active {
+    border-left-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-soft);
+    font-weight: 600;
+  }
+  .toc-link.level-h2 {
+    font-weight: 600;
+    margin-top: 6px;
+    color: var(--text);
+  }
+  .toc-link.level-h3 {
+    padding-left: 20px;
+    font-size: 0.74rem;
+  }
+  .toc-link.level-h4 {
+    padding-left: 30px;
+    font-size: 0.71rem;
+    color: var(--text-faint);
+  }
 
-  @media (max-width: 1080px) {
+  /* ── Responsive ──────────────────────────────────────────────── */
+  @media (max-width: 1160px) {
     aside.toc-sidebar { display: none; }
+    .sidebar-inline-toc { display: block; }
+    main.doc-viewport { padding: 24px 32px 56px; }
   }
 
-  /* ── Main Content ───────────────────────────────── */
-  main.doc-viewport {
-    flex: 1;
-    overflow-y: auto;
-    padding: 36px 56px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
+  @media (max-width: 820px) {
+    .menu-toggle { display: inline-flex; }
+    aside.nav-sidebar {
+      position: fixed;
+      top: 54px;
+      bottom: 0;
+      left: 0;
+      z-index: 90;
+      transform: translateX(-100%);
+      transition: transform 0.2s ease;
+      box-shadow: 6px 0 24px rgba(0, 0, 0, 0.25);
+    }
+    aside.nav-sidebar.open { transform: translateX(0); }
+    main.doc-viewport { padding: 20px 20px 48px; }
   }
-  main.doc-viewport::-webkit-scrollbar { width: 6px; }
-  main.doc-viewport::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-  /* ── Loading / error ────────────────────────────── */
+  /* ── Estado de carga ─────────────────────────────────────────── */
   .loading-msg {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 60vh;
+    height: 45vh;
     color: var(--text-faint);
     font-size: 0.9rem;
     gap: 10px;
   }
   .spinner {
-    width: 20px; height: 20px;
+    width: 18px;
+    height: 18px;
     border: 2px solid var(--border);
     border-top-color: var(--accent);
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    animation: spin 0.75s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── Markdown Styles ────────────────────────────── */
-  .md-body { max-width: 820px; }
-
+  /* ── Estilos del Contenido Markdown ──────────────────────────── */
   .md-body h1 {
-    font-size: 2rem;
+    font-size: 1.95rem;
     font-weight: 700;
-    margin: 0 0 20px;
+    margin: 0 0 18px;
     padding-bottom: 10px;
     border-bottom: 2px solid var(--border);
     color: var(--text);
-    letter-spacing: -0.03em;
+    letter-spacing: -0.025em;
   }
   .md-body h2 {
-    font-size: 1.35rem;
+    font-size: 1.32rem;
     font-weight: 700;
-    margin: 36px 0 12px;
+    margin: 34px 0 12px;
     padding-bottom: 6px;
     border-bottom: 1px solid var(--border);
     color: var(--text);
+    scroll-margin-top: 16px;
   }
-  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
-  .md-body h4 { font-size: 0.95rem; font-weight: 600; margin: 16px 0 6px; color: var(--text-muted); }
+  .md-body h3 {
+    font-size: 1.08rem;
+    font-weight: 600;
+    margin: 24px 0 8px;
+    color: var(--text);
+    scroll-margin-top: 16px;
+  }
+  .md-body h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 16px 0 6px;
+    color: var(--text-muted);
+    scroll-margin-top: 16px;
+  }
+
   .md-body p { margin: 0 0 14px; }
-  .md-body a { color: var(--link); text-decoration: underline; text-underline-offset: 2px; }
+  .md-body a {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
   .md-body a:hover { color: var(--accent); }
 
   .md-body ul, .md-body ol { margin: 0 0 14px 24px; }
   .md-body li { margin: 4px 0; }
-  .md-body li > ul, .md-body li > ol { margin-bottom: 0; }
+  .md-body li > ul, .md-body li > ol { margin-top: 4px; margin-bottom: 4px; }
 
-  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+  .md-body hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
 
   .md-body table {
     width: 100%;
     border-collapse: collapse;
     margin: 16px 0;
-    font-size: 0.88rem;
+    font-size: 0.87rem;
+    background: var(--bg-elevated);
+    border-radius: 8px;
+    overflow: hidden;
   }
   .md-body th, .md-body td {
     border: 1px solid var(--border);
-    padding: 8px 12px;
+    padding: 9px 12px;
     text-align: left;
     vertical-align: top;
   }
-  .md-body th { background: var(--bg-sidebar); font-weight: 600; }
-  .md-body tr:nth-child(even) td { background: var(--bg-card); }
+  .md-body th {
+    background: var(--bg-sidebar);
+    font-weight: 600;
+    color: var(--text);
+  }
 
   .md-body code {
     background: var(--code-bg);
     border: 1px solid var(--code-border);
     border-radius: 4px;
     padding: 1px 5px;
-    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
     font-size: 0.84em;
     color: var(--text);
   }
@@ -281,16 +530,18 @@
     background: var(--code-bg);
     border: 1px solid var(--code-border);
     border-radius: 8px;
-    padding: 16px;
+    padding: 15px 16px;
     overflow-x: auto;
     margin: 14px 0;
+    line-height: 1.5;
   }
   .md-body pre code {
     background: none;
     border: none;
     padding: 0;
-    font-size: 0.85em;
+    font-size: 0.84em;
   }
+
   .md-body kbd {
     display: inline-block;
     padding: 1px 6px;
@@ -300,26 +551,31 @@
     background: var(--code-bg);
     font-family: inherit;
   }
+
   .md-body blockquote {
-    border-left: 3px solid var(--border);
-    padding: 2px 16px;
-    margin: 10px 0;
+    border-left: 3px solid var(--accent-border);
+    background: var(--bg-elevated);
+    padding: 8px 16px;
+    margin: 12px 0;
+    border-radius: 0 6px 6px 0;
     color: var(--text-muted);
   }
+  .md-body blockquote p:last-child { margin-bottom: 0; }
+
   .md-body img { max-width: 100%; border-radius: 6px; }
   .md-body strong { font-weight: 700; color: var(--text); }
 
-  /* ── GitHub Alert Boxes ────────────────────────── */
+  /* ── Alertas Estilo GitHub ───────────────────────────────────── */
   .gh-alert {
     border-radius: 8px;
     padding: 14px 18px;
-    margin: 14px 0;
+    margin: 16px 0;
     border-left: 4px solid;
     font-size: 0.9rem;
   }
   .gh-alert .alert-label {
     font-weight: 700;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     margin-bottom: 6px;
@@ -327,59 +583,141 @@
     align-items: center;
     gap: 6px;
   }
-  .gh-alert.tip    { background: var(--tip-bg);     border-color: var(--tip-border);     }
-  .gh-alert.note   { background: var(--note-bg);    border-color: var(--note-border);    }
-  .gh-alert.warning{ background: var(--warn-bg);    border-color: var(--warn-border);    }
-  .gh-alert.caution{ background: var(--caution-bg); border-color: var(--caution-border); }
-  .gh-alert.important{ background: var(--imp-bg);   border-color: var(--imp-border);     }
+  .gh-alert.tip       { background: var(--tip-bg);     border-color: var(--tip-border);     }
+  .gh-alert.note      { background: var(--note-bg);    border-color: var(--note-border);    }
+  .gh-alert.warning   { background: var(--warn-bg);    border-color: var(--warn-border);    }
+  .gh-alert.caution   { background: var(--caution-bg); border-color: var(--caution-border); }
+  .gh-alert.important { background: var(--imp-bg);     border-color: var(--imp-border);     }
 
-  .gh-alert.tip .alert-label     { color: var(--tip-border);     }
-  .gh-alert.note .alert-label    { color: var(--note-border);    }
-  .gh-alert.warning .alert-label { color: var(--warn-border);    }
-  .gh-alert.caution .alert-label { color: var(--caution-border); }
-  .gh-alert.important .alert-label{ color: var(--imp-border);    }
+  .gh-alert.tip .alert-label       { color: var(--tip-border);     }
+  .gh-alert.note .alert-label      { color: var(--note-border);    }
+  .gh-alert.warning .alert-label   { color: var(--warn-border);    }
+  .gh-alert.caution .alert-label   { color: var(--caution-border); }
+  .gh-alert.important .alert-label { color: var(--imp-border);     }
+
   .gh-alert .alert-body { color: var(--text); }
-  .gh-alert .alert-body p:last-child { margin-bottom: 0; }
-  .gh-alert .alert-body ul,
-  .gh-alert .alert-body ol { margin-bottom: 0; }
+  .gh-alert .alert-body p:last-child,
+  .gh-alert .alert-body ul:last-child,
+  .gh-alert .alert-body ol:last-child { margin-bottom: 0; }
 
-  /* ── KaTeX display math ─────────────────────────── */
-  .katex-display { overflow-x: auto; padding: 4px 0; }
+  .katex-display { overflow-x: auto; padding: 6px 0; }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="header-brand">🏎️🧠 NeuroGenetica</div>
-  <nav class="header-nav" id="docNav"></nav>
-  <div class="header-actions">
-    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️ Claro</button>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="menu-toggle" onclick="toggleMobileSidebar()" title="Menú">☰</button>
+    <div class="brand">
+      <span>🏎️ NeuroGenetica</span>
+      <span class="brand-badge">Godot 4 · C++17</span>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <button class="action-btn" onclick="reloadCurrentDoc()" title="Recargar archivo .md desde disco">🔄 Recargar</button>
+    <button class="action-btn" onclick="toggleTheme()" id="themeBtn">🌙 Modo Oscuro</button>
   </div>
 </header>
 
-<div class="workspace">
-  <aside class="toc-sidebar" id="tocSidebar">
-    <div class="toc-title">En esta página</div>
-    <div id="tocContent"></div>
+<div class="layout">
+  <!-- Sidebar Izquierda: Secciones de Documentación (Scroll Independiente) -->
+  <aside class="nav-sidebar scroll-pane" id="navSidebar">
+    <div id="navSections"></div>
+    <div class="sidebar-inline-toc">
+      <div class="toc-header">En esta página</div>
+      <div class="toc-list" id="tocContentMobile"></div>
+    </div>
   </aside>
-  <main class="doc-viewport" id="docViewport">
-    <div class="loading-msg"><div class="spinner"></div> Cargando documentación…</div>
+
+  <!-- Visor Central del Documento (Scroll Independiente) -->
+  <main class="doc-viewport scroll-pane" id="docViewport">
+    <div class="doc-container">
+      <div class="loading-msg"><div class="spinner"></div> Cargando documentación…</div>
+    </div>
   </main>
+
+  <!-- Sidebar Derecha: Índice de Temas del Documento Actual (Scroll Independiente) -->
+  <aside class="toc-sidebar scroll-pane" id="tocSidebar">
+    <div class="toc-header">Temas en esta página</div>
+    <div class="toc-list" id="tocContent"></div>
+  </aside>
 </div>
 
 <script>
-// ── Documentos disponibles ────────────────────────────────────────────────────
-// Edita esta lista para agregar o quitar documentos del menú de navegación.
-const DOCS = [
-  { label: 'README',           file: '../README.md'              },
-  { label: 'Arquitectura',     file: 'ARCHITECTURE.md'           },
-  { label: 'Estructuras Datos',file: 'DATA_STRUCTURES.md'        },
-  { label: 'Física & IA',      file: 'AI_AND_PHYSICS.md'         },
-  { label: 'Guía Godot 3D',    file: 'GUIA_GODOT.md'            },
+// ── Estructura Seccionada de la Documentación ─────────────────────────────────
+// Cada archivo se carga en vivo con fetch(), así tus ediciones en .md se ven al instante.
+const DOC_SECTIONS = [
+  {
+    title: 'Inicio y Proyecto',
+    items: [
+      {
+        id: 'readme',
+        icon: '🏁',
+        label: 'Visión General',
+        desc: 'Línea de tiempo, ejecución 3D y equipo',
+        file: '../README.md',
+        displayPath: 'README.md',
+      },
+      {
+        id: 'docs-index',
+        icon: '📚',
+        label: 'Índice Técnico',
+        desc: 'Mapa de documentación y propuesta',
+        file: 'README.md',
+        displayPath: 'docs/README.md',
+      },
+    ],
+  },
+  {
+    title: 'Motor 3D y Arquitectura',
+    items: [
+      {
+        id: 'godot-3d',
+        icon: '🎮',
+        label: 'Guía Godot 4 (3D)',
+        desc: 'Modo Copa, cámaras, daño y controles',
+        file: 'GUIA_GODOT.md',
+        displayPath: 'docs/GUIA_GODOT.md',
+      },
+      {
+        id: 'architecture',
+        icon: '🏛️',
+        label: 'Arquitectura y Módulos',
+        desc: 'GDExtension C++, Godot 3D y archivos',
+        file: 'ARCHITECTURE.md',
+        displayPath: 'docs/ARCHITECTURE.md',
+      },
+    ],
+  },
+  {
+    title: 'Algoritmos y Ciencia',
+    items: [
+      {
+        id: 'data-structures',
+        icon: '🌳',
+        label: 'Estructuras de Datos',
+        desc: 'SpatialTree3D, QuadTree y Max-Heap',
+        file: 'DATA_STRUCTURES.md',
+        displayPath: 'docs/DATA_STRUCTURES.md',
+      },
+      {
+        id: 'ai-physics',
+        icon: '🧠',
+        label: 'Física, IA y Genética',
+        desc: 'Cinemática, sensores, ANN y evolución',
+        file: 'AI_AND_PHYSICS.md',
+        displayPath: 'docs/AI_AND_PHYSICS.md',
+      },
+    ],
+  },
 ];
 
-// ── Estado ────────────────────────────────────────────────────────────────────
-let currentDoc = 0;
+// Lista plana para búsqueda rápida y navegación por enlaces internos
+const ALL_DOCS = DOC_SECTIONS.flatMap(sec =>
+  sec.items.map(item => ({ ...item, sectionTitle: sec.title }))
+);
+
+let currentDocId = ALL_DOCS[0].id;
 let mathReady = false;
 
 // ── KaTeX ─────────────────────────────────────────────────────────────────────
@@ -400,168 +738,267 @@ function tryRenderMath() {
   });
 }
 
-// ── Marked.js config ──────────────────────────────────────────────────────────
+// ── Marked.js ─────────────────────────────────────────────────────────────────
 marked.setOptions({ gfm: true, breaks: false });
-
-// Renderer personalizado: NO re-escapar $ para que KaTeX los procese
 const renderer = new marked.Renderer();
 renderer.codespan = (code) => {
   const escaped = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   return `<code>${escaped}</code>`;
 };
 
-// ── Alert Box Parser ──────────────────────────────────────────────────────────
+// ── Alertas GitHub ([!TIP], [!NOTE], [!IMPORTANT], [!WARNING], [!CAUTION]) ───
 const ALERT_TYPES = {
-  'TIP':       { cls: 'tip',       icon: '💡', label: 'TIP'       },
-  'NOTE':      { cls: 'note',      icon: 'ℹ️',  label: 'NOTA'      },
-  'WARNING':   { cls: 'warning',   icon: '⚠️',  label: 'ATENCIÓN'  },
-  'CAUTION':   { cls: 'caution',   icon: '🚨',  label: 'CUIDADO'   },
-  'IMPORTANT': { cls: 'important', icon: '📌',  label: 'IMPORTANTE'},
+  'TIP':       { cls: 'tip',       icon: '💡', label: 'CONSEJO'    },
+  'NOTE':      { cls: 'note',      icon: 'ℹ️',  label: 'NOTA'       },
+  'WARNING':   { cls: 'warning',   icon: '⚠️',  label: 'ATENCIÓN'   },
+  'CAUTION':   { cls: 'caution',   icon: '🚨',  label: 'CUIDADO'    },
+  'IMPORTANT': { cls: 'important', icon: '📌',  label: 'IMPORTANTE' },
 };
 
-function parseAlerts(html) {
-  // Match <blockquote> that starts with [!TYPE]
-  return html.replace(
-    /<blockquote>\s*<p>\[!(TIP|NOTE|WARNING|CAUTION|IMPORTANT)\]([\s\S]*?)<\/p>\s*<\/blockquote>/gi,
-    (_, type, rest) => {
-      const def = ALERT_TYPES[type.toUpperCase()];
-      if (!def) return _;
-      // rest may contain leading <br> or lines; clean up and re-parse as markdown
-      const rawInner = rest
-        .replace(/^[\s\S]*?\[!(TIP|NOTE|WARNING|CAUTION|IMPORTANT)\]/i, '') // strip type line if duplicated
-        .replace(/<br\s*\/?>/gi, '\n')
-        .replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
-      const innerHtml = marked.parse(rawInner.trim(), { renderer });
-      return `<div class="gh-alert ${def.cls}">
-  <div class="alert-label">${def.icon} ${def.label}</div>
-  <div class="alert-body">${innerHtml}</div>
-</div>`;
+function convertGitHubAlertsInMarkdown(md) {
+  // Reemplaza bloques "> [!TYPE]\n> ..." antes de marked para preservar listas y enlaces dentro
+  const lines = md.split(/\r?\n/);
+  const out = [];
+  let i = 0;
+  while (i < lines.length) {
+    const match = lines[i].match(/^>\s*\[!(TIP|NOTE|WARNING|CAUTION|IMPORTANT)\]\s*$/i);
+    if (match) {
+      const typeKey = match[1].toUpperCase();
+      const def = ALERT_TYPES[typeKey];
+      const innerLines = [];
+      i++;
+      while (i < lines.length && lines[i].startsWith('>')) {
+        innerLines.push(lines[i].replace(/^>\s?/, ''));
+        i++;
+      }
+      const innerHtml = marked.parse(innerLines.join('\n').trim(), { renderer });
+      out.push(
+        `\n<div class="gh-alert ${def.cls}">` +
+        `<div class="alert-label">${def.icon} ${def.label}</div>` +
+        `<div class="alert-body">${innerHtml}</div>` +
+        `</div>\n`
+      );
+    } else {
+      out.push(lines[i]);
+      i++;
     }
-  );
+  }
+  return out.join('\n');
 }
 
-// ── Markdown → HTML ───────────────────────────────────────────────────────────
 function mdToHtml(md) {
-  // Protect math blocks from marked processing
+  // Proteger bloques matemáticos para que marked no altere guiones bajos o barras
   const mathBlocks = [];
   md = md.replace(/\$\$[\s\S]*?\$\$/g, m => {
     mathBlocks.push(m);
     return `@@MATH${mathBlocks.length - 1}@@`;
   });
-  md = md.replace(/(?<![\\])\$(?!\$)([^\n$`]+?)(?<![\\])\$/g, (m) => {
+  md = md.replace(/(?<![\\])\$(?!\$)([^\n$`]+?)(?<![\\])\$/g, m => {
     mathBlocks.push(m);
     return `@@MATH${mathBlocks.length - 1}@@`;
   });
 
+  // Convertir alertas GitHub preservando listas y enlaces internos
+  md = convertGitHubAlertsInMarkdown(md);
+
   let html = marked.parse(md, { renderer });
-
-  // Restore math blocks
-  html = html.replace(/@@MATH(\d+)@@/g, (_, i) => mathBlocks[+i]);
-
-  // Parse GitHub alert boxes
-  html = parseAlerts(html);
-
+  html = html.replace(/@@MATH(\d+)@@/g, (_, idx) => mathBlocks[+idx]);
   return html;
 }
 
-// ── TOC Builder ───────────────────────────────────────────────────────────────
-function buildToc(container) {
-  const headings = container.querySelectorAll('h1, h2, h3, h4');
-  const toc = document.getElementById('tocContent');
-  toc.innerHTML = '';
-  headings.forEach((h, i) => {
-    if (!h.id) h.id = 'h-' + i + '-' + h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-');
-    const a = document.createElement('a');
-    a.className = 'toc-link ' + h.tagName.toLowerCase();
-    a.href = '#' + h.id;
-    a.textContent = h.textContent.replace(/^[^\w\s]+\s*/, '').trim().slice(0, 52);
-    a.addEventListener('click', e => {
-      e.preventDefault();
-      h.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-    toc.appendChild(a);
-  });
+// ── Construcción de Sidebar Izquierda Seccionada ──────────────────────────────
+function buildSidebarNav() {
+  const container = document.getElementById('navSections');
+  container.innerHTML = '';
 
-  // Highlight active heading on scroll
+  DOC_SECTIONS.forEach(section => {
+    const secEl = document.createElement('div');
+    secEl.className = 'nav-section';
+
+    const header = document.createElement('div');
+    header.className = 'nav-section-header';
+    header.innerHTML = `<span class="nav-section-title">${section.title}</span>`;
+    secEl.appendChild(header);
+
+    section.items.forEach(item => {
+      const btn = document.createElement('button');
+      btn.className = 'nav-item' + (item.id === currentDocId ? ' active' : '');
+      btn.onclick = () => {
+        loadDoc(item.id);
+        document.getElementById('navSidebar').classList.remove('open');
+      };
+      btn.innerHTML = `
+        <span class="nav-item-icon">${item.icon}</span>
+        <span class="nav-item-text">
+          <span class="nav-item-label">${item.label}</span>
+          <span class="nav-item-desc">${item.desc}</span>
+        </span>
+      `;
+      secEl.appendChild(btn);
+    });
+
+    container.appendChild(secEl);
+  });
+}
+
+// ── Índice de Temas de la Página (con Scroll Independiente y Resaltado) ───────
+function buildToc(contentRoot) {
+  const headings = Array.from(contentRoot.querySelectorAll('h2, h3, h4'));
+  const tocDesktop = document.getElementById('tocContent');
+  const tocMobile = document.getElementById('tocContentMobile');
+  tocDesktop.innerHTML = '';
+  tocMobile.innerHTML = '';
+
+  const populate = (targetEl) => {
+    const links = [];
+    headings.forEach((h, i) => {
+      if (!h.id) {
+        h.id = 'sec-' + i + '-' + h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      }
+      const a = document.createElement('a');
+      a.className = 'toc-link level-' + h.tagName.toLowerCase();
+      a.href = '#' + h.id;
+      a.textContent = h.textContent.trim();
+      a.onclick = (e) => {
+        e.preventDefault();
+        h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.getElementById('navSidebar').classList.remove('open');
+      };
+      targetEl.appendChild(a);
+      links.push(a);
+    });
+    return links;
+  };
+
+  const desktopLinks = populate(tocDesktop);
+  const mobileLinks = populate(tocMobile);
+
   const viewport = document.getElementById('docViewport');
-  const tocLinks = toc.querySelectorAll('.toc-link');
-  const headingArr = Array.from(headings);
   viewport.onscroll = () => {
-    const scrollTop = viewport.scrollTop + 80;
-    let active = 0;
-    headingArr.forEach((h, i) => { if (h.offsetTop <= scrollTop) active = i; });
-    tocLinks.forEach((l, i) => l.classList.toggle('active', i === active));
+    const scrollPos = viewport.scrollTop + 95;
+    let activeIdx = 0;
+    headings.forEach((h, idx) => {
+      if (h.offsetTop <= scrollPos) activeIdx = idx;
+    });
+    desktopLinks.forEach((l, i) => l.classList.toggle('active', i === activeIdx));
+    mobileLinks.forEach((l, i) => l.classList.toggle('active', i === activeIdx));
+
+    // Mantener visible el ítem activo dentro de la sidebar derecha si tiene mucho contenido
+    const activeLink = desktopLinks[activeIdx];
+    if (activeLink) {
+      const tocBox = document.getElementById('tocSidebar');
+      const linkTop = activeLink.offsetTop;
+      const linkBottom = linkTop + activeLink.offsetHeight;
+      if (linkTop < tocBox.scrollTop + 20 || linkBottom > tocBox.scrollTop + tocBox.clientHeight - 20) {
+        activeLink.scrollIntoView({ block: 'nearest' });
+      }
+    }
   };
 }
 
-// ── Nav Builder ───────────────────────────────────────────────────────────────
-function buildNav() {
-  const nav = document.getElementById('docNav');
-  nav.innerHTML = '';
-  DOCS.forEach((doc, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'nav-btn' + (i === currentDoc ? ' active' : '');
-    btn.textContent = doc.label;
-    btn.onclick = () => loadDoc(i);
-    nav.appendChild(btn);
+// ── Interceptar enlaces a otros .md para abrirlos dentro del portal ───────────
+function wireInternalDocLinks(contentRoot) {
+  contentRoot.querySelectorAll('a[href]').forEach(a => {
+    const href = a.getAttribute('href') || '';
+    if (!href.toLowerCase().endsWith('.md')) return;
+    const cleanName = href.replace(/^\.?\.?\//, '').replace(/^docs\//i, '').toUpperCase();
+    const target = ALL_DOCS.find(d => {
+      if (href === '../README.md' || href === 'README.md') {
+        return (href === '../README.md' && d.id === 'readme') ||
+               (href === 'README.md' && d.id === 'docs-index');
+      }
+      return d.file.toUpperCase().endsWith(cleanName);
+    });
+    if (target) {
+      a.onclick = (e) => {
+        e.preventDefault();
+        loadDoc(target.id);
+      };
+    }
   });
 }
 
-// ── Load Document ─────────────────────────────────────────────────────────────
-async function loadDoc(index) {
-  currentDoc = index;
-  buildNav();
+// ── Carga Dinámica del Documento ──────────────────────────────────────────────
+async function loadDoc(docId) {
+  const doc = ALL_DOCS.find(d => d.id === docId) || ALL_DOCS[0];
+  currentDocId = doc.id;
+  buildSidebarNav();
 
   const viewport = document.getElementById('docViewport');
-  viewport.innerHTML = '<div class="loading-msg"><div class="spinner"></div> Cargando…</div>';
+  viewport.innerHTML = '<div class="doc-container"><div class="loading-msg"><div class="spinner"></div> Cargando…</div></div>';
   document.getElementById('tocContent').innerHTML = '';
+  document.getElementById('tocContentMobile').innerHTML = '';
 
-  const doc = DOCS[index];
   try {
-    // Add cache-busting to always get the latest version of the file
     const res = await fetch(doc.file + '?_=' + Date.now());
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const md = await res.text();
     const html = mdToHtml(md);
-    viewport.innerHTML = `<div class="md-body">${html}</div>`;
-    buildToc(viewport.querySelector('.md-body'));
-    viewport.scrollTop = 0;
-    tryRenderMath();
-  } catch(err) {
+
     viewport.innerHTML = `
-      <div class="md-body">
+      <div class="doc-container">
+        <div class="doc-breadcrumb">
+          <span>${doc.sectionTitle}</span>
+          <span>›</span>
+          <strong>${doc.label}</strong>
+          <span class="file-pill">${doc.displayPath}</span>
+        </div>
+        <article class="md-body">${html}</article>
+      </div>
+    `;
+
+    const bodyEl = viewport.querySelector('.md-body');
+    buildToc(bodyEl);
+    wireInternalDocLinks(bodyEl);
+    viewport.scrollTop = 0;
+    document.getElementById('tocSidebar').scrollTop = 0;
+    tryRenderMath();
+  } catch (err) {
+    viewport.innerHTML = `
+      <div class="doc-container">
         <div class="gh-alert caution">
-          <div class="alert-label">🚨 Error al cargar</div>
+          <div class="alert-label">🚨 No se pudo leer el archivo Markdown</div>
           <div class="alert-body">
-            <p>No se pudo cargar <strong>${doc.file}</strong>.</p>
-            <p><em>${err.message}</em></p>
-            <p>Este portal de documentación funciona mejor cuando se sirve desde un servidor local
-               (ej. la extensión <strong>Live Server</strong> de VS Code, o
-               <code>python -m http.server 8080</code> en la carpeta raíz del proyecto).</p>
+            <p>Error cargando <code>${doc.displayPath}</code> (<em>${err.message}</em>).</p>
+            <p>Para que tus cambios en los archivos <code>.md</code> se actualicen automáticamente al guardar, abre esta página con un servidor local:</p>
+            <ul>
+              <li>En <strong>VS Code</strong>: instala la extensión <em>Live Server</em> y pulsa <strong>Go Live</strong>.</li>
+              <li>En <strong>terminal</strong> (raíz del proyecto): ejecuta <code>python -m http.server 8080</code> y abre <code>http://localhost:8080/docs/showcase.html</code>.</li>
+            </ul>
           </div>
         </div>
-      </div>`;
+      </div>
+    `;
   }
 }
 
-// ── Theme Toggle ─────────────────────────────────────────────────────────────
-function toggleTheme() {
-  const root = document.documentElement;
-  const isDark = root.getAttribute('data-theme') === 'dark';
-  root.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.getElementById('themeBtn').textContent = isDark ? '🌙 Oscuro' : '☀️ Claro';
-  localStorage.setItem('ngTheme', isDark ? 'light' : 'dark');
+function reloadCurrentDoc() {
+  loadDoc(currentDocId);
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
-(function init() {
-  // Restore saved theme
-  const saved = localStorage.getItem('ngTheme') || 'dark';
-  document.documentElement.setAttribute('data-theme', saved);
-  document.getElementById('themeBtn').textContent = saved === 'dark' ? '☀️ Claro' : '🌙 Oscuro';
+function toggleMobileSidebar() {
+  document.getElementById('navSidebar').classList.toggle('open');
+}
 
-  buildNav();
-  loadDoc(0);
+// ── Tema Claro (Aperlado) / Modo Oscuro (Grises Oscuros) ──────────────────────
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeBtn').textContent =
+    theme === 'dark' ? '☀️ Modo Aperlado' : '🌙 Modo Oscuro';
+  localStorage.setItem('ngDocsTheme', theme);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+}
+
+// ── Inicialización ────────────────────────────────────────────────────────────
+(function init() {
+  const savedTheme = localStorage.getItem('ngDocsTheme') || 'light';
+  applyTheme(savedTheme);
+  buildSidebarNav();
+  loadDoc(ALL_DOCS[0].id);
 })();
 </script>
 </body>

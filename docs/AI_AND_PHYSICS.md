@@ -1,12 +1,12 @@
 # 🧠 Física, Redes Neuronales y Neuroevolución
 
-Este documento detalla los principios matemáticos, el modelo físico 2D y la arquitectura de aprendizaje por neuroevolución implementados en **NeuroGenetica**.
+Este documento detalla los principios matemáticos, el modelo físico vehicular y la arquitectura de aprendizaje por neuroevolución implementados en **NeuroGenetica**. Estas formulaciones rigen tanto el motor principal **3D en Godot Engine 4 (`Car3D.gd` + `GodotBrain` C++17)** —proyectado sobre el plano horizontal $(X, Z)$ con colisiones y sistema de energía de 100 HP— como el núcleo original 2D en C++.
 
 ---
 
 ## 1. 🏎️ Modelo Cinemático del Vehículo
 
-El movimiento del vehículo se calcula mediante cinemática 2D en tiempo discreto:
+El movimiento del vehículo sobre la pista se calcula mediante cinemática plana en tiempo discreto (coordenadas $(x, z)$ en Godot 3D y $(x, y)$ en el prototipo 2D):
 
 ### Parámetros Físicos
 - $\vec{p} = (x, y)$: Posición actual en el plano.

@@ -1,231 +1,186 @@
 # 🏛️ Arquitectura de Software y Organización de Archivos
 
-Este documento describe la arquitectura modular, los patrones de diseño y la estructura completa de archivos que conforman el proyecto **NeuroGenetica**.
+Este documento describe la arquitectura modular híbrida (**Godot Engine 4 + C++17 GDExtension**), los patrones de diseño y la estructura completa de archivos que conforman el proyecto **NeuroGenetica**, incluyendo su núcleo evolutivo original en 2D y su suite de pruebas unitarias.
 
 ---
 
-## 📐 Visión General de la Arquitectura
+## 📐 Visión General de la Arquitectura Actual (3D + GDExtension)
 
-El sistema está diseñado bajo una arquitectura modular en **C++17**, aplicando el principio de **Responsabilidad Única (SRP)** y un desacoplamiento estricto entre la lógica de simulación, las estructuras de datos, la inteligencia artificial y el renderizado gráfico.
+El sistema aplica el principio de **Responsabilidad Única (SRP)** y desacopla la simulación tridimensional (renderizado, físicas, cámaras e interfaz en **Godot Engine 4**) del cómputo de inteligencia artificial (redes neuronales y algoritmos genéticos compilados de forma nativa en **C++17** mediante **GDExtension**):
 
 ```
-                                 ┌──────────────┐
-                                 │   main.cpp   │
-                                 └──────┬───────┘
-                                        │
-                                        ▼
-                               ┌─────────────────┐
-                               │   Simulation    │  (Orquestador Principal)
-                               └────────┬────────┘
-                                        │
-         ┌──────────────────────────────┼──────────────────────────────┐
-         ▼                              ▼                              ▼
-  ┌─────────────┐               ┌───────────────┐               ┌─────────────┐
-  │  Capa Core  │               │    Capa AI    │               │Capa Graphics│
-  │ (Física y   │               │ (Aprendizaje  │               │ (Raylib y   │
-  │  Geometría) │               │   Genético)   │               │  Interfaz)  │
-  └──────┬──────┘               └───────┬───────┘               └──────┬──────┘
-         │                              │                              │
-  ┌──────┴──────────────┐        ┌──────┴──────────────┐               │
-  │ - Geometry.hpp      │        │ - NeuralNetwork     │               ▼
-  │ - QuadTree (Árbol)  │        │ - GeneticAlgorithm  │        ┌─────────────┐
-  │ - Track (Circuito)  │        │ - MaxHeap (Priority)│        │ - HUD.hpp   │
-  │ - Car (Cinemática)  │        └─────────────────────┘        │ - Raylib GL │
-  └─────────────────────┘                                       └─────────────┘
+                      ┌─────────────────────────────────────────────┐
+                      │         Godot Engine 4 (Main3D.tscn)        │
+                      │       SimulationManager3D.gd (Orquestador)  │
+                      └──────────────────────┬──────────────────────┘
+                                             │
+        ┌────────────────────────────────────┼────────────────────────────────────┐
+        ▼                                    ▼                                    ▼
+┌─────────────────────┐          ┌───────────────────────┐          ┌─────────────────────┐
+│   Capa Escenario    │          │   Capa Agentes 3D     │          │  Capa Presentación  │
+│  (Geometría 3D)     │          │ (Física y Sensores)   │          │  (Cámara y UI)      │
+└──────────┬──────────┘          └───────────┬───────────┘          └──────────┬──────────┘
+           │                                 │                                 │
+┌──────────┴──────────┐          ┌───────────┴───────────┐          ┌──────────┴──────────┐
+│ - Track3D.gd        │          │ - Car3D.gd (100 HP)   │          │ - CameraRig3D.gd    │
+│ - SpatialTree3D.gd  │          │ - Raycasting (d²,1/R) │          │ - Menú / Semáforo   │
+│   (AABB O(log P))   │          │ - MaxHeap.gd O(k lgN) │          │ - Telemetría (I)    │
+└─────────────────────┘          └───────────┬───────────┘          │ - Podio / JSON (G)  │
+                                             │                      └─────────────────────┘
+                                             │ puente nativo DLL (.gdextension)
+                                             ▼
+                                 ┌───────────────────────┐
+                                 │  Núcleo C++17 Nativo  │
+                                 │  (src/godot + src/ai) │
+                                 │ - GodotBrain.cpp/.hpp │
+                                 │ - NeuralNetwork.cpp   │
+                                 │ - GeneticAlgorithm    │
+                                 │ - MaxHeap.hpp         │
+                                 └───────────────────────┘
 ```
+
+> [!NOTE]
+> **Arquitectura Legada 2D (Raylib)**: Las carpetas `src/core/`, `src/graphics/` y `src/main.cpp` conservan el prototipo 2D original compilable con CMake + Raylib 5.5, sobre el cual se construyeron y validan las suites de pruebas unitarias C++ (`tests/`).
 
 ---
 
 ## 📂 Árbol de Directorios y Responsabilidades
 
-```
+```text
 NeuroGenetica/
-├── CMakeLists.txt                # Configuración de CMake, FetchContent (Raylib) y CTest
-├── README.md                     # Guía principal de compilación y ejecución rápida
-├── .gitignore                    # Reglas de exclusión para binarios, build/ y temporales
+├── SConstruct                        # Script de compilación SCons para GDExtension C++17
+├── CMakeLists.txt                    # Configuración CMake para tests unitarios (CTest) y prototipo 2D
+├── ejecutar_juego_godot.bat          # Lanzador directo del juego 3D en Godot Engine 4
+├── abrir_editor_godot.bat            # Lanzador del proyecto en el Editor de Godot 4
+├── compilar_libreria_godot.bat       # Compilador automático de la librería nativa C++ GDExtension
+├── README.md                         # Visión general, línea de tiempo y guía rápida
 │
-├── docs/                         # Documentación técnica y académica detallada
-│   ├── README.md                 # Índice y mapa de navegación de la documentación
-│   ├── ARCHITECTURE.md           # Arquitectura de software, capas y árbol de archivos
-│   ├── DATA_STRUCTURES.md        # Documentación de QuadTree y MaxHeap con complejidades
-│   └── AI_AND_PHYSICS.md         # Fundamentos de cinemática, raycasting y neuroevolución
+├── godot_project/                    # Proyecto Principal 3D en Godot Engine 4
+│   ├── project.godot                 # Configuración de ventana (1152×648 centrada) y escena principal
+│   ├── bin/                          # Librería nativa C++ compilada (.dll) y descriptor .gdextension
+│   │   ├── neurogenetica.gdextension # Mapeo de entrada del puente GDExtension
+│   │   └── liblibneurogenetica...dll # Binario nativo de GodotBrain + NeuralNetwork
+│   ├── scenes/                       # Escenas tridimensionales y de respaldo
+│   │   ├── Main3D.tscn               # Escena principal 3D (pista, parrilla, luces, cámara y HUD)
+│   │   └── Car3D.tscn                # Prefab 3D del vehículo (chasis, ruedas, faros y colisionador)
+│   ├── scripts/                      # Lógica 3D, estructuras espaciales y UI en GDScript
+│   │   ├── SimulationManager3D.gd    # Orquestador: Menú, Copa, Semáforo, Podio, Telemetría y JSON
+│   │   ├── Track3D.gd                # Circuito 3D de 4 carriles, muros y depuración de cuadrantes
+│   │   ├── Car3D.gd                  # Física 3D, daño HP y sensores optimizados (d² y 1/R)
+│   │   ├── SpatialTree3D.gd          # Árbol de partición espacial 3D (AABB, 0 asignaciones en heap)
+│   │   ├── MaxHeap.gd                # Montículo Máximo (Cola de Prioridad) para podio y elitismo
+│   │   └── CameraRig3D.gd            # 4 vistas: GTA Cenital, Isométrica Libre/Auto y 3ª Persona
+│   └── saved_teams/                  # Escuderías pre-entrenadas y generaciones guardadas (.json)
+│       ├── Escuderia_Novatos.json
+│       ├── Escuderia_GT_Pro.json
+│       └── Escuderia_Elite_Leyendas.json
 │
-├── include/                      # Declaraciones y cabeceras (.hpp)
-│   ├── core/                     # Capa Core: Simulación, geometría y espacio
-│   │   ├── Geometry.hpp          # Primitivas geométricas, AABB y función de intersección
-│   │   ├── QuadTree.hpp          # Definición del árbol de partición espacial 2D
-│   │   ├── Track.hpp             # Geometría del circuito, splines y checkpoints
-│   │   ├── Car.hpp               # Cinemática física, sensores de raycasting y agente
-│   │   └── Simulation.hpp        # Controlador principal y bucle de juego
-│   ├── ai/                       # Capa de Inteligencia Artificial y Neuroevolución
-│   │   ├── NeuralNetwork.hpp     # Red neuronal feedforward multicapa y genoma
-│   │   ├── MaxHeap.hpp           # Estructura de datos Max-Heap (Cola de Prioridad genérica)
-│   │   └── GeneticAlgorithm.hpp  # Población, elitismo, cruce uniforme y mutación
-│   └── graphics/                 # Capa de Presentación e Interfaz
-│       └── HUD.hpp               # Panel de estadísticas, telemetría y métricas
+├── src/                              # Código Fuente Nativo en C++17
+│   ├── godot/                        # Puente GDExtension (C++17 ↔ Godot 4)
+│   │   ├── GodotBrain.hpp / .cpp     # Clase expuesta a Godot: Think(), Mutate(), Crossover(), JSON
+│   │   └── register_types.hpp / .cpp # Registro de clases nativas en el ciclo de carga de Godot
+│   ├── ai/                           # Núcleo de Inteligencia Artificial (Compartido 3D y 2D)
+│   │   ├── NeuralNetwork.cpp         # Red neuronal Feedforward densa, activación tanh y mutación
+│   │   └── GeneticAlgorithm.cpp      # Evolución poblacional y selección elitista con MaxHeap
+│   ├── core/                         # Prototipo histórico 2D (QuadTree, Track, Car, Simulation)
+│   ├── graphics/                     # Renderizador histórico 2D (HUD, CarCamera en Raylib)
+│   └── main.cpp                      # Punto de entrada del prototipo histórico 2D
 │
-├── src/                          # Implementaciones de código fuente (.cpp)
-│   ├── core/
-│   │   ├── QuadTree.cpp          # Implementación de inserción, subdivisión y podado
-│   │   ├── Track.cpp             # Generación por splines Catmull-Rom y muros
-│   │   ├── Car.cpp               # Física de aceleración, fricción y raycasting
-│   │   └── Simulation.cpp        # Inicialización, bucle Update/Render y eventos
-│   ├── ai/
-│   │   ├── NeuralNetwork.cpp     # Feedforward, activación Tanh y mutación continua
-│   │   └── GeneticAlgorithm.cpp  # Ciclo generativo y ranking con MaxHeap
-│   ├── graphics/
-│   │   └── HUD.cpp               # Dibujo de métricas, velocímetro y controles
-│   └── main.cpp                  # Punto de entrada de la aplicación
+├── include/                          # Cabeceras C++17 (.hpp) de las capas ai/, core/ y graphics/
+├── tests/                            # Pruebas unitarias independientes (CTest)
+│   ├── test_quadtree.cpp             # Subdivisión, consultas y podado espacial
+│   ├── test_neural_network.cpp       # Topología, forward pass tanh y mutación
+│   └── test_genetic_algorithm.cpp    # Propiedad Max-Heap, elitismo y ciclo generativo
 │
-├── tests/                        # Pruebas unitarias independientes (validadas con CTest)
-│   ├── test_quadtree.cpp         # Verificación de subdivisión y podado espacial
-│   ├── test_neural_network.cpp   # Verificación de topología, activaciones y mutación
-│   └── test_genetic_algorithm.cpp# Verificación de propiedad Max-Heap y ciclo genético
-│
-└── assets/                       # Recursos visuales y texturas externas
-    ├── cars/                     # Modelos y sprites de vehículos
-    └── tracks/                   # Fondos y texturas de asfalto
+└── docs/                             # Documentación Técnica Oficial
+    ├── showcase.html                 # Portal web dinámico (lee los .md en vivo con KaTeX)
+    ├── README.md                     # Índice de la documentación
+    ├── GUIA_GODOT.md                 # Manual de usuario del motor 3D
+    ├── ARCHITECTURE.md               # Este documento
+    ├── DATA_STRUCTURES.md            # Análisis formal de SpatialTree3D, QuadTree y MaxHeap
+    └── AI_AND_PHYSICS.md             # Ecuaciones cinemáticas, sensores y neuroevolución
 ```
 
 ---
 
-## 🔍 Detalle por Módulos y Archivos
+## 🔍 Detalle por Módulos Clave
 
-### 1. Capa Core (`include/core/`, `src/core/`)
+### 1. Motor 3D en Godot (`godot_project/scripts/`)
 
-#### `Geometry.hpp`
-- **Propósito**: Proporciona las estructuras matemáticas básicas para el motor 2D sin dependencias de alto nivel.
-- **Estructuras**:
-  - `LineSegment`: Representa un segmento de pared o checkpoint con puntos `start` y `end`, e identificador numérico único para deduplicación rápida.
-  - `BoundingBox2D`: Rectángulo alineado a los ejes (**AABB**) utilizado para delimitar nodos del QuadTree, cajas de impacto de vehículos y áreas de consulta espacial.
-  - `SensorHit`: Registro del resultado del raycasting (distancia euclidiana, punto de impacto y normalización).
-  - `CheckLineIntersection`: Función matemática optimizada de intersección entre 2 segmentos de recta en 2D.
+- **`SimulationManager3D.gd`**: Controla los estados globales del juego (`MENU`, `COUNTDOWN`, `RACING`, `RESULTS`), la parrilla de 10 vehículos en 4 carriles, el sistema de puntos de la Copa, la carga/guardado de escuderías en `.json`, la telemetría (`I`) y la transición entre rondas usando `MaxHeap.gd`.
+- **`Track3D.gd`**: Construye procedimentalmente la malla 3D del circuito (asfalto de 22 m de ancho, 4 carriles discontinuos, bordillos rojiblancos y muros colisionables) e indexa sus 138 segmentos dentro de `SpatialTree3D`. Permite alternar el wireframe de depuración con `Q`.
+- **`SpatialTree3D.gd`**: Árbol espacial jerárquico basado en cajas `AABB` tridimensionales. Realiza consultas `is_on_track` en tiempo **$O(\log P)$** sin asignaciones dinámicas por fotograma (sin `duplicate()` ni lambdas de ordenamiento) y genera una malla 3D de cajas para inspección visual.
+- **`Car3D.gd`**: Implementa el movimiento físico 3D, dirección dependiente de la velocidad, sistema de energía (100 HP con daño proporcional al impacto y desgaste sobre el pasto), y sensores de raycasting optimizados con distancias al cuadrado ($d^2$) y multiplicación por recíproco (`INV_MAX_RANGE`).
+- **`MaxHeap.gd`**: Montículo binario genérico (`push`, `pop_max`, `sift_up`, `sift_down`, `get_top_k`) usado para clasificar el podio y seleccionar a los mejores genomas élite en **$O(k \log N)$**.
+- **`CameraRig3D.gd`**: Interpola suavemente entre vista **GTA Cenital**, **Isométrica Libre** (arrastre + zoom), **Isométrica de Auto** y **Tercera Persona**.
 
-#### `QuadTree.hpp` / `QuadTree.cpp`
-- **Propósito**: Implementa la estructura de datos jerárquica para partición espacial 2D.
-- **Responsabilidades**:
-  - Subdivisión recursiva en cuatro cuadrantes: `NW` (Noroeste), `NE` (Noreste), `SW` (Suroeste), `SE` (Sureste).
-  - Almacena los segmentos de la pista en los nodos correspondientes.
-  - Provee consultas podadas en tiempo logarítmico: `QueryRay()` para los sensores y `QueryBox()` para la colisión del vehículo.
+### 2. Puente Nativo GDExtension (`src/godot/`)
 
-#### `Track.hpp` / `Track.cpp`
-- **Propósito**: Administra el trazado, la representación visual y los límites del circuito de carreras.
-- **Responsabilidades**:
-  - Generación procedimental mediante splines cúbicos **Catmull-Rom** para garantizar curvas suaves.
-  - Genera bordes interiores, exteriores, pianos (kerbs) y la línea divisoria discontinua.
-  - Inserta los segmentos de los muros en el `QuadTree`.
-  - Establece la secuencia ordenada de **69 checkpoints anti-trampas** transversales.
+- **`GodotBrain.hpp` / `GodotBrain.cpp`**: Envuelve la clase C++ `NeuralNetwork` heredando de `godot::RefCounted`. Expone a GDScript los métodos `think(inputs)`, `get_weights()`, `set_weights()`, `crossover()` y `mutate()`, logrando ejecución nativa C++ desde Godot sin sobrecarga de scripts.
+- **`register_types.cpp`**: Registra `GodotBrain` al inicializar la librería dinámica definida en `godot_project/bin/neurogenetica.gdextension`.
 
-#### `Car.hpp` / `Car.cpp`
-- **Propósito**: Modela la entidad del vehículo autónomo o manual.
-- **Responsabilidades**:
-  - Cinemática 2D: aceleración, frenado, velocidad angular, fricción dinámica y velocidad terminal.
-  - Proyección de 5 sensores de raycasting hacia los límites de la pista.
-  - Contiene una instancia de su cerebro (`NeuralNetwork`).
-  - Detección de colisión con las paredes indexadas en el `QuadTree`.
-  - Acumulación de fitness basada en checkpoints superados y penalización por inactividad.
+### 3. Núcleo de IA en C++17 (`include/ai/`, `src/ai/`)
 
-#### `Simulation.hpp` / `Simulation.cpp`
-- **Propósito**: Clase controladora principal (Game Engine) que orquesta la aplicación.
-- **Responsabilidades**:
-  - Inicialización de la ventana gráfica y contexto de OpenGL mediante Raylib.
-  - Gestión de entrada del usuario (teclado: `WASD`, `M`, `Espacio`, `Q`, `R`).
-  - Control de modos: Modo Manual (conducción individual) vs Modo Genético (Neuroevolución de 40 agentes).
-  - Control de velocidad temporal de la simulación ($\times 1$, $\times 2$, $\times 5$).
+- **`NeuralNetwork`**: Arquitectura Feedforward densa con activación no lineal $\tanh$ en $[-1, 1]$, serialización de pesos/sesgos como genoma lineal, cruce uniforme y mutación gaussiana.
+- **`MaxHeap.hpp`**: Plantilla C++ `template <typename T, typename Compare>` con inserción y extracción en $O(\log n)$.
+- **`GeneticAlgorithm`**: Motor evolutivo poblacional validado por pruebas unitarias.
+
+### 4. Módulo Histórico 2D y Pruebas (`src/core/`, `src/graphics/`, `tests/`)
+
+- Mantiene íntegra la primera versión del proyecto en **Raylib 5.5** (`QuadTree`, `Track`, `Car`, `HUD`, `CarCamera`, `Simulation`) y sirve como base de verificación continua mediante **CTest**:
+  - `test_quadtree.cpp`
+  - `test_neural_network.cpp`
+  - `test_genetic_algorithm.cpp`
 
 ---
 
-### 2. Capa AI (`include/ai/`, `src/ai/`)
+## 🔄 Ciclo de Vida por Fotograma (`_physics_process` 3D)
 
-#### `NeuralNetwork.hpp` / `NeuralNetwork.cpp`
-- **Propósito**: Red neuronal artificial Feedforward densa.
-- **Responsabilidades**:
-  - Topología por defecto: **6 entradas** (5 distancias de sensores + 1 velocidad actual) $\to$ **8 neuronas ocultas** $\to$ **2 salidas** (ángulo de viraje y aceleración/freno).
-  - Activación no lineal mediante tangente hiperbólica ($\tanh$), garantizando salidas normalizadas en $[-1, 1]$.
-  - Métodos para serializar y deserializar los pesos y sesgos en un vector lineal (`std::vector<float>`) para operar como genoma.
-  - Operadores de mutación gaussiana continua y cruce uniforme (*Uniform Crossover*).
-
-#### `MaxHeap.hpp`
-- **Propósito**: Estructura de datos avanzada tipo **Montículo Máximo (Priority Queue)** genérica basada en plantillas (`template <typename T, typename Compare>`).
-- **Responsabilidades**:
-  - Inserción en tiempo $O(\log n)$ mediante `SiftUp`.
-  - Extracción del individuo con mayor fitness en tiempo $O(\log n)$ mediante `SiftDown`.
-  - Permite implementar selección por elitismo en tiempo $O(k \log n)$ sin el costo de ordenar el vector completo $O(n \log n)$.
-
-#### `GeneticAlgorithm.hpp` / `GeneticAlgorithm.cpp`
-- **Propósito**: Motor de neuroevolución poblacional.
-- **Responsabilidades**:
-  - Mantiene una población de 40 agentes simultáneos.
-  - Evalúa la aptitud individual según progreso en el circuito y tiempo de vida.
-  - Detecta cuándo todos los autos han colisionado o se ha alcanzado el límite de tiempo de la generación.
-  - Ejecuta la transición generacional: Selección elitista con `MaxHeap`, cruce entre los mejores individuos y mutación continua en la descendencia.
-
----
-
-### 3. Capa Graphics (`include/graphics/`, `src/graphics/`)
-
-#### `HUD.hpp` / `HUD.cpp`
-- **Propósito**: Renderizado de la interfaz de usuario y telemetría en tiempo real.
-- **Responsabilidades**:
-  - Panel flotante adaptativo integrado en el infield central del circuito.
-  - Muestra: Generación actual, número de autos activos vs colisionados, mejor fitness de la generación y récord histórico.
-  - Barra de telemetría: Velocidad del líder, ángulo de viraje y estado del QuadTree.
-  - Indicador de multiplicador de velocidad ($\times 1, \times 2, \times 5$).
-
----
-
-### 4. Capa de Pruebas Unitarias (`tests/`)
-
-- **`test_quadtree.cpp`**: Valida que la estructura subdivida correctamente los cuadrantes al superar la capacidad máxima y que `QueryRange` y `QueryRay` retornen únicamente los segmentos relevantes sin falsos negativos.
-- **`test_neural_network.cpp`**: Verifica las dimensiones del *forward pass*, los rangos válidos de salida con $\tanh$, la consistencia de aplanamiento de genoma y la correcta aplicación de la mutación.
-- **`test_genetic_algorithm.cpp`**: Valida las operaciones `Push`, `PopMax` y `PeekMax` del `MaxHeap`, el orden descendente estricto por fitness y la integridad del ciclo generativo.
-
----
-
-## 🔄 Ciclo de Vida por Cuadro (Frame Lifecycle)
-
-En cada fotograma de la simulación, el ciclo principal ejecuta el siguiente flujo ordenado:
+En cada paso físico de Godot Engine 4 (60 Hz, escalable a $\times 2$ y $\times 4$), el flujo sigue esta secuencia:
 
 ```
-                      ┌────────────────────────────┐
-                      │    Inicio de Fotograma     │
-                      └─────────────┬──────────────┘
-                                    │
-                                    ▼
-                      ┌────────────────────────────┐
-                      │   1. Procesar Input (E/S)  │
-                      │  - Teclas WASD / Flechas   │
-                      │  - Cambios de modo (M)     │
-                      │  - Velocidad (Espacio)     │
-                      └─────────────┬──────────────┘
-                                    │
-                                    ▼
-                      ┌────────────────────────────┐
-                      │    2. Update Simulación    │
-                      │ (Se repite N veces si x2/x5)
-                      │                            │
-                      │ a) Raycasting con QuadTree │
-                      │ b) Forward Pass en Redes   │
-                      │ c) Actualizar Cinemática   │
-                      │ d) Verificar Checkpoints   │
-                      │ e) Detección de Colisiones │
-                      │ f) ¿Generación terminada?  │
-                      │    --> MaxHeap Evolve      │
-                      └─────────────┬──────────────┘
-                                    │
-                                    ▼
-                      ┌────────────────────────────┐
-                      │    3. Renderizado Visual   │
-                      │  - Pista, Césped y Pianos  │
-                      │  - Checkpoints / Debug     │
-                      │  - Autos y Sensores Rayos  │
-                      │  - Panel HUD de Telemetría │
-                      └─────────────┬──────────────┘
-                                    │
-                                    ▼
-                      ┌────────────────────────────┐
-                      │     Fin de Fotograma       │
-                      │   (Sincronización 60 FPS)  │
-                      └────────────────────────────┘
+                    ┌───────────────────────────────────┐
+                    │   Inicio de Paso Físico (60 Hz)   │
+                    └─────────────────┬─────────────────┘
+                                      │
+                                      ▼
+                    ┌───────────────────────────────────┐
+                    │  1. Entrada y Estado de Carrera   │
+                    │  - Teclas (WASD, V, C, M, Q, I)   │
+                    │  - Control de Semáforo / Escala   │
+                    └─────────────────┬─────────────────┘
+                                      │
+                                      ▼
+                    ┌───────────────────────────────────┐
+                    │  2. Sensores y Consultas 3D       │
+                    │  - Track3D → SpatialTree3D        │
+                    │    is_on_track() en O(log P)      │
+                    │  - Car3D → Rayos optimizados      │
+                    │    (distancias d² y 1/R_max)      │
+                    └─────────────────┬─────────────────┘
+                                      │
+                                      ▼
+                    ┌───────────────────────────────────┐
+                    │  3. Decisión (Humano o C++ IA)    │
+                    │  - Si es IA → GodotBrain.think()  │
+                    │    (Red Neuronal C++17 nativa)    │
+                    └─────────────────┬─────────────────┘
+                                      │
+                                      ▼
+                    ┌───────────────────────────────────┐
+                    │  4. Física 3D, Daño y Ranking     │
+                    │  - Movimiento, colisiones y HP    │
+                    │  - Checkpoints y vueltas          │
+                    │  - ¿Fin de carrera?               │
+                    │    → MaxHeap.get_top_k() O(k lgN) │
+                    │    → Podio + Evolución de Ronda   │
+                    └─────────────────┬─────────────────┘
+                                      │
+                                      ▼
+                    ┌───────────────────────────────────┐
+                    │  5. Renderizado 3D y Telemetría   │
+                    │  - Escena 3D, luces, humo, pistas │
+                    │  - Wireframe SpatialTree3D (Q)    │
+                    │  - Cámara activa y HUD (I)        │
+                    └───────────────────────────────────┘
 ```
-

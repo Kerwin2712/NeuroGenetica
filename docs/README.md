@@ -1,48 +1,38 @@
-# 📚 Documentación Técnica de NeuroGenetica
+# 📚 Centro de Documentación Técnica — NeuroGenetica
 
-Bienvenido al centro de documentación técnica y arquitectónica de **NeuroGenetica**. Este conjunto de documentos detalla en profundidad el diseño de software, la experiencia de juego, los algoritmos matemáticos y las estructuras de datos avanzadas implementadas para la materia *Programación 3*.
-
----
-
-## 🎬 Recursos para Exposición y Grabación de Video
+Bienvenido a la documentación oficial de **NeuroGenetica** (**Godot Engine 4 + C++17 GDExtension**). Este conjunto de documentos explica la arquitectura híbrida 3D/C++, los fundamentos matemáticos de la neuroevolución, las estructuras de datos avanzadas implementadas para la materia *Programación 3* y la evolución histórica del proyecto desde su prototipo 2D en Raylib.
 
 > [!TIP]
-> **¿Deseas presentar el proyecto de forma interactiva en video?**  
-> Para grabar tu presentación con OBS Studio o Loom de forma profesional:
-> - 🖥️ **Visualizador Dinámico en Pantalla Completa**: Abre **[`docs/showcase.html`](showcase.html)** en tu navegador web y pulsa <kbd>F11</kbd>. Presenta diapositivas limpias (1080p sin texto distractor), simulador de QuadTree en Canvas 2D, red neuronal con sliders y árbol animado de Max-Heap.
-> - 📄 **Guion Narrativo Separado (Teleprompter / Script)**: Consulta **[`docs/GUION_VIDEO.md`](GUION_VIDEO.md)** en tu teléfono, tablet o segundo monitor con las intervenciones sugeridas por integrante (Rafael, Javier y Kerwin), tiempos cronometrados y acciones paso a paso.
+> 📖 **Lectura Interactiva en Navegador**: Abre **[`docs/showcase.html`](showcase.html)** desde un servidor local (extensión *Live Server* de VS Code o `python -m http.server 8080`) para navegar por todos los documentos con renderizado de ecuaciones **KaTeX**, tema claro aperlado / gris oscuro e índice lateral persistente.
 
 ---
 
 ## 🗺️ Mapa de Navegación
 
-| Documento | Descripción | Temas Clave |
-| :--- | :--- | :--- |
-| **[Showcase Dinámico (HTML)](showcase.html)** | Interfaz web interactiva en 1080p para captura de video y demostración en vivo. | Canvas QuadTree $O(\log n)$, Red Neuronal animada y Max-Heap $O(k \log n)$. |
-| **[Guion de Video (Markdown)](GUION_VIDEO.md)** | Guion técnico y narrativo detallado por integrantes para grabar el video. | Tiempos cronometrados, locución exacta por integrante y consejos OBS. |
-| **[Arquitectura de Software y Archivos](ARCHITECTURE.md)** | Visión integral de capas, componentes y árbol del repositorio. | Módulos Core, AI, Graphics, ciclo de vida del frame, flujo de datos. |
-| **[Estructuras de Datos Avanzadas](DATA_STRUCTURES.md)** | Análisis teórico y práctico de los árboles y colas de prioridad. | QuadTree 2D, SpatialTree3D, Max-Heap, optimización de sensores, análisis de complejidad $O$. |
-| **[Física, Red Neuronal y Neuroevolución](AI_AND_PHYSICS.md)** | Fundamentos matemáticos del simulador y del aprendizaje autónomo. | Cinemática, Raycasting optimizado, ANN Feedforward, fitness, cruce y mutación. |
-| **[Guía de Simulación 3D (Godot 4)](GUIA_GODOT.md)** | Manual de usuario y arquitectura del simulador tridimensional. | Modos Copa/Espectador, cámaras GTA/Isométrica, controles, telemetría y ejecución. |
+| Sección | Documento | Descripción | Temas Clave |
+| :--- | :--- | :--- | :--- |
+| **Proyecto** | **[Visión General (`README.md`)](../README.md)** | Punto de entrada del repositorio, línea de tiempo y ejecución rápida. | Evolución 2D $\to$ 3D, arquitectura Godot+C++, controles, ejecución, equipo y tests. |
+| **Motor 3D** | **[Guía de Simulación 3D (Godot 4)](GUIA_GODOT.md)** | Manual completo de juego y mecánicas tridimensionales. | Pista 4 carriles, daño 100 HP, Modo Copa, cámaras GTA/Isométrica, escuderías JSON y controles. |
+| **Motor 3D** | **[Arquitectura y Módulos](ARCHITECTURE.md)** | Visión de capas, puente GDExtension C++ y árbol de archivos. | Godot 4 (`Main3D`), `GodotBrain` C++, núcleo `ai/`, legado 2D Raylib y ciclo de fotograma. |
+| **Algoritmos** | **[Estructuras de Datos Avanzadas](DATA_STRUCTURES.md)** | Análisis teórico, práctico y asintótico de las estructuras del curso. | `SpatialTree3D` ($O(\log P)$), `QuadTree` 2D, `MaxHeap` ($O(k \log N)$), sensores con $d^2$. |
+| **Algoritmos** | **[Física, Red Neuronal y Neuroevolución](AI_AND_PHYSICS.md)** | Modelo matemático del movimiento y aprendizaje autónomo. | Cinemática, Raycasting optimizado, ANN Feedforward ($\tanh$), fitness, cruce y mutación. |
 
 ---
 
-## 🎯 Propuesta Actualizada del Proyecto (Programación 3)
+## 🎯 Propuesta y Estado Actual (Programación 3)
 
-**Título:** *Desarrollo de un Videojuego de Carreras en C++ con Rivales de Inteligencia Artificial Adaptativa*.
+**Título:** *Desarrollo de un Videojuego de Carreras 3D con Rivales de Inteligencia Artificial Adaptativa en Godot 4 y C++17*.
 
-1. **Experiencia de Juego de Carreras (Objetivo Principal)**:
-   - Videojuego interactivo en circuitos cerrados donde el jugador humano compite en tiempo real contra múltiples rivales controlados por IA, garantizando fluidez competitiva a 60 FPS.
+1. **Experiencia de Juego de Carreras 3D**:
+   - Circuito tridimensional de 4 carriles (parrilla de 10 autos) donde el jugador humano compite en tiempo real contra rivales controlados por redes neuronales en C++, con colisiones reales, sistema de daño (100 HP) y 4 cámaras dinámicas.
 2. **Modos de Juego (Gamificación)**:
-   - **Modo Copa**: Torneo multironda en circuitos cerrados donde los rivales acumulan puntuación y refinan sus genomas entre carreras.
-   - **Carrera Única**: Partida rápida contra el mejor modelo histórico entrenado o rivales pre-calibrados.
-   - **Carretera Vertical (Endless)**: Supervivencia en autopista esquivando tráfico con rivales IA reactivos.
-   - **Diferenciación Visual**: Rivales identificables por color (Azul Neón = Jugador, Verde/Oro = Líder Élite, Púrpura/Naranja = Rivales en aprendizaje).
-   - **Soporte Multijugador Local**: Competencia 1v1 en el mismo teclado (WASD vs Flechas) o cooperativo contra la parrilla de IA.
-3. **Evolución de Rivales (IA Adaptativa)**:
-   - Redes neuronales feedforward y algoritmos genéticos continuos que permiten a los coches rivales aprender a trazar curvas y adaptarse sin requerir rutas precalculadas (*waypoints* fijos) ni trampas.
-4. **Optimización de Físicas y Rendimiento (Estructuras de Datos)**:
-   - **QuadTree ($O(\log n)$)**: Indexación espacial 2D de los segmentos de la pista para acelerar el raycasting de sensores y las colisiones de toda la parrilla.
-   - **Max-Heap ($O(k \log n)$)**: Ranking y extracción instantánea del top-$k$ de mejores corredores para elitismo y cruce genético sin caídas de cuadros por segundo.
-5. **Arquitectura Limpia en C++17**:
-   - Programación Orientada a Objetos modular, pruebas unitarias automatizadas con **CTest** y flujo de trabajo estructurado en Git.
+   - **Modo Copa (Humano vs IAs)**: Torneo multironda con semáforo de salida, podio, tabla de puntos y evolución de rivales entre rondas.
+   - **Modo Espectador**: Análisis libre de la evolución con cámara isométrica interactiva y telemetría detallada (`Tecla I`).
+   - **Escuderías Guardables**: Selección de rivales pre-entrenados (*Novatos*, *GT Pro*, *Élite*) y exportación/importación de generaciones en `.json` (`Tecla G`).
+3. **Evolución de Rivales (IA Adaptativa en C++17)**:
+   - Redes neuronales feedforward (`NeuralNetwork` expuesta como `GodotBrain` vía GDExtension) entrenadas con Algoritmos Genéticos continuos sin rutas fijas (*waypoints*) ni trampas.
+4. **Optimización de Rendimiento (Estructuras de Datos Avanzadas)**:
+   - **`SpatialTree3D` (3D) y `QuadTree` (2D)** ($O(\log P)$): Partición espacial mediante cajas AABB que acelera las comprobaciones de pista y el raycasting de sensores, con visualización en vivo (`Tecla Q`).
+   - **`MaxHeap`** ($O(k \log N)$): Cola de prioridad para ranking de podio y extracción de élite en cada generación sin pausar los FPS.
+5. **Ingeniería de Software y Pruebas**:
+   - Arquitectura modular híbrida (Godot 4 + C++17), legado 2D compilable con CMake, pruebas unitarias automatizadas con **CTest** y flujo estructurado en Git.
