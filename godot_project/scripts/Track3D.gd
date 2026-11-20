@@ -16,6 +16,7 @@ var static_body_walls: StaticBody3D
 # Estructura de Datos Avanzada: Árbol de Partición Espacial 3D (SpatialTree3D)
 # Optimiza la localización en pista y consultas espaciales en O(log N)
 var spatial_tree: SpatialTree3D = null
+var debug_tree_mesh_instance: MeshInstance3D = null
 
 func _ready():
 	build_track()
@@ -81,6 +82,23 @@ func build_spatial_tree():
 	spatial_tree = SpatialTree3D.new(bounds, 4, 6)
 	for pt in centerline_points:
 		spatial_tree.insert(pt)
+
+	# Generar visualización 3D de las divisiones de la pista (SpatialTree3D)
+	var debug_mesh = spatial_tree.generate_debug_wireframe_mesh()
+	debug_tree_mesh_instance = MeshInstance3D.new()
+	debug_tree_mesh_instance.mesh = debug_mesh
+	var mat = StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.vertex_color_use_as_albedo = true
+	debug_tree_mesh_instance.material_override = mat
+	debug_tree_mesh_instance.visible = false
+	add_child(debug_tree_mesh_instance)
+
+func toggle_spatial_tree_debug() -> bool:
+	if debug_tree_mesh_instance:
+		debug_tree_mesh_instance.visible = not debug_tree_mesh_instance.visible
+		return debug_tree_mesh_instance.visible
+	return false
 
 func generate_road_mesh():
 	var st = SurfaceTool.new()

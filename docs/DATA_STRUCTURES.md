@@ -9,10 +9,17 @@ Este documento detalla los fundamentos teóricos, la implementación en C++ y el
 ### 📌 Justificación del Problema
 En la simulación, cada vehículo proyecta **5 rayos sensores** continuos y posee una **caja de colisión** de 4 esquinas. En una pista con $W$ segmentos de pared y una población de $N$ vehículos:
 - **Enfoque ingenuo (fuerza bruta)**: Comparar cada sensor y cada esquina contra todos los segmentos de la pista en cada fotograma requiere:
+
+  > ⏱️ **Complejidad:** `O(N × S × W)`
+
   $$\text{Complejidad} = O(N \times S \times W)$$
+
   Para 40 vehículos con 5 sensores y una pista de 300 segmentos, esto representa más de **60,000 pruebas de intersección por cuadro**, lo que destruye la tasa de fotogramas (FPS) e imposibilita acelerar la simulación a $\times 2$ o $\times 5$.
 
 - **Solución con QuadTree**: Se particiona el plano 2D recursivamente en cuadrantes. Los sensores y autos solo interrogan a los segmentos contenidos en los cuadrantes que atraviesan, reduciendo la búsqueda a tiempo logarítmico:
+
+  > ⏱️ **Complejidad:** `O(N × S × log W)`
+
   $$\text{Complejidad} = O(N \times S \times \log W)$$
 
 ---
@@ -87,11 +94,15 @@ Optimiza el raycasting de los sensores:
 Al finalizar cada generación en el **Algoritmo Genético**, se debe identificar al top $k$ de individuos con mayor aptitud (*fitness*) para aplicar **elitismo** (preservación intacta) y seleccionarlos como progenitores del cruce (*crossover*).
 - **Ordenar el vector completo con `std::sort`**:
 
+  > ⏱️ **Complejidad:** `O(N · log N)`
+
   $$\text{Complejidad} = O(N \log N)$$
 
 - **Selección mediante Max-Heap**:
-  1. Insertar los $N$ individuos en el montículo: $O(N \log N)$ (o $O(N)$ con heapify).
+  1. Insertar los $N$ individuos en el montículo: `O(N log N)` (o `O(N)` con heapify).
   2. Extraer únicamente los $k$ mejores individuos mediante `PopMax()`:
+
+     > ⏱️ **Complejidad:** `O(k · log N)`
 
      $$\text{Complejidad} = O(k \log N)$$
 
@@ -119,6 +130,8 @@ Para cualquier nodo en el índice $i$:
 
 #### Invariante del Montículo Máximo
 Para todo nodo $i > 0$:
+
+> 📐 **Invariante:** `Elemento[Padre(i)] ≥ Elemento[i]`
 
 $$\text{Elemento}[\text{Padre}(i)] \ge \text{Elemento}[i]$$
 

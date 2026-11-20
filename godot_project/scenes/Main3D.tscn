@@ -288,8 +288,8 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.88, 0.92, 0.9)
 theme_override_font_sizes/font_size = 11
-text = "🎮 [WASD]: Conducir  |  [TAB]: Modo Espectador  |  [ESC]: Menú
-💾 [G]: Guardar Generación  |  [I]: Telemetría  |  [V]: Cámara"
+text = "🎮 [WASD]: Conducir  |  [TAB]: Modo Espectador  |  [ESC]: Menú / Salir
+💾 [G]: Guardar  |  [I]: Telemetría  |  [Q]: Ver Árbol 3D  |  [F11]: Pantalla Completa"
 
 [node name="ToastBanner" type="PanelContainer" parent="CanvasLayer/HUD"]
 visible = false
@@ -450,6 +450,13 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 18
 text = "🚦 INICIAR CARRERA 🚦"
 
+[node name="BtnQuitGame" type="Button" parent="CanvasLayer/HUD/MainMenuPanel/VBox"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.4, 0.4, 1)
+theme_override_font_sizes/font_size = 13
+text = "🚪 SALIR DEL JUEGO (ESC)"
+
 [node name="ResultsPanel" type="PanelContainer" parent="CanvasLayer/HUD"]
 visible = false
 layout_mode = 1
@@ -522,3 +529,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 text = "🏠 Menú Principal"
+
+[node name="BtnQuitResults" type="Button" parent="CanvasLayer/HUD/ResultsPanel/VBox/ButtonsHBox"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.4, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+text = "🚪 Salir"

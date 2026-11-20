@@ -7,19 +7,22 @@ extends RefCounted
 # Autor / Responsable: Kerwin Quintero
 #
 # Propósito:
-#   Indexar la geometría del circuito 3D (puntos de pista, barreras y obstáculos)
+#   Indexar la geometría del circuito 3D (puntos de pista, barreras y límites)
 #   en una jerarquía de cajas envolventes alineadas a los ejes (AABB 3D).
-#   Reduce la complejidad de búsqueda de proximidad y raycasting de sensores:
-#     - Búsqueda ingenua (fuerza bruta): O(N) por consulta, O(C * S * N) por fotograma.
-#     - Búsqueda en Árbol Espacial: O(log N) por consulta mediante podado espacial.
+#   Reduce la complejidad de comprobación de pista y raycasting:
+#     - Búsqueda ingenua (fuerza bruta): O(P) por consulta, O(N * P) por fotograma.
+#     - Búsqueda en Árbol Espacial: O(log P) por consulta mediante podado espacial.
+#   Optimizado para CERO asignaciones de memoria y salida temprana O(1) en pista.
 # ==============================================================================
 
 class SpatialNode:
 	var bounds: AABB
 	var depth: int = 0
 	var points: Array[Vector3] = []
-	var children: Array[SpatialNode] = [] # 4 cuadrantes en plano X-Z (QuadTree 3D) u 8 octantes
+	var children: Array[SpatialNode] = []
 	var is_divided: bool = false
+	var mid_x: float = 0.0
+	var mid_z: float = 0.0
 
 	func _init(p_bounds: AABB, p_depth: int = 0):
 		bounds = p_bounds
@@ -27,6 +30,8 @@ class SpatialNode:
 		points = []
 		children = []
 		is_divided = false
+		mid_x = bounds.position.x + (bounds.size.x * 0.5)
+		mid_z = bounds.position.z + (bounds.size.z * 0.5)
 
 var root: SpatialNode
 var max_points_per_node: int = 4
@@ -51,8 +56,9 @@ func _init(initial_bounds: AABB = AABB(Vector3(-250, -10, -250), Vector3(500, 40
 # ------------------------------------------------------------------------------
 func insert(point: Vector3) -> bool:
 	if not root.bounds.has_point(point):
-		# Expandir caja envolvente si el punto está fuera
 		root.bounds = root.bounds.expand(point)
+		root.mid_x = root.bounds.position.x + (root.bounds.size.x * 0.5)
+		root.mid_z = root.bounds.position.z + (root.bounds.size.z * 0.5)
 
 	var success = _insert_recursive(root, point)
 	if success:
@@ -69,16 +75,13 @@ func _insert_recursive(node: SpatialNode, point: Vector3) -> bool:
 			return true
 		_subdivide(node)
 
-	# Si está dividido, propagar hacia los hijos
 	for child in node.children:
 		if child.bounds.has_point(point):
 			return _insert_recursive(child, point)
 
-	# Si cae en frontera compartida, guardar en el primer hijo que lo contenga expandido
 	node.children[0].bounds = node.children[0].bounds.expand(point)
 	return _insert_recursive(node.children[0], point)
 
-# Subdivide un nodo en 4 cuadrantes espaciales a lo largo de los ejes X y Z (plano de carrera)
 func _subdivide(node: SpatialNode):
 	var size = node.bounds.size
 	var half_x = size.x * 0.5
@@ -87,7 +90,6 @@ func _subdivide(node: SpatialNode):
 	var y = orig.y
 	var h = size.y
 
-	# 4 subdivisiones espaciales (NW, NE, SW, SE en el plano 3D horizontal)
 	var b_nw = AABB(Vector3(orig.x, y, orig.z), Vector3(half_x, h, half_z))
 	var b_ne = AABB(Vector3(orig.x + half_x, y, orig.z), Vector3(half_x, h, half_z))
 	var b_sw = AABB(Vector3(orig.x, y, orig.z + half_z), Vector3(half_x, h, half_z))
@@ -100,7 +102,6 @@ func _subdivide(node: SpatialNode):
 	node.is_divided = true
 	total_nodes += 4
 
-	# Redistribuir los puntos existentes del nodo entre los nuevos hijos
 	var old_points = node.points.duplicate()
 	node.points.clear()
 
@@ -115,44 +116,49 @@ func _subdivide(node: SpatialNode):
 			node.children[0].points.append(pt)
 
 # ------------------------------------------------------------------------------
-# Búsqueda del Punto más Cercano (Nearest Neighbor): O(log N)
-# Optimizado con distancias al cuadrado para evitar llamadas costosas a sqrt()
+# Verificación ULTRA RÁPIDA de si una posición está en pista: O(log P)
+# Cero asignaciones de memoria y salida temprana en O(1) para puntos en pista
 # ------------------------------------------------------------------------------
-func get_nearest_distance_squared(query_pos: Vector3) -> float:
+func is_within_track(pos: Vector3, max_half_width: float) -> bool:
 	total_queries += 1
-	var best_dist_sq = [INF]
-	_nearest_recursive(root, query_pos, best_dist_sq)
-	return best_dist_sq[0]
+	var threshold_sq = max_half_width * max_half_width
+	return _check_within_track_fast(root, pos, threshold_sq)
 
-func _nearest_recursive(node: SpatialNode, query_pos: Vector3, best_dist_sq: Array):
-	# Poda espacial: si la distancia mínima de query_pos al AABB del nodo es mayor
-	# o igual que la mejor distancia ya encontrada, podar esta rama completa
-	var box_dist_sq = _aabb_distance_squared(node.bounds, query_pos)
-	if box_dist_sq >= best_dist_sq[0]:
+func _check_within_track_fast(node: SpatialNode, pos: Vector3, threshold_sq: float) -> bool:
+	# Poda AABB: si la caja completa está más lejos que threshold_sq, podar rama
+	if _aabb_distance_squared(node.bounds, pos) > threshold_sq:
 		pruned_branches += 1
-		return
+		return false
 
-	# Evaluar los puntos contenidos en este nodo
+	# Comprobar puntos locales del nodo (2 a 4 puntos)
 	for pt in node.points:
 		evaluated_points += 1
-		var dx = query_pos.x - pt.x
-		var dz = query_pos.z - pt.z
-		var d2 = dx * dx + dz * dz
-		if d2 < best_dist_sq[0]:
-			best_dist_sq[0] = d2
+		var dx = pos.x - pt.x
+		var dz = pos.z - pt.z
+		if (dx * dx + dz * dz) <= threshold_sq:
+			return true # ¡Éxito temprano! Retorna de inmediato
 
 	if node.is_divided:
-		# Ordenar los hijos por proximidad para visitar primero la rama más prometedora
-		# lo que maximiza las oportunidades de podar las demás ramas
-		var sorted_children = node.children.duplicate()
-		sorted_children.sort_custom(func(a, b):
-			return _aabb_distance_squared(a.bounds, query_pos) < _aabb_distance_squared(b.bounds, query_pos)
-		)
+		# Indexación directa del cuadrante contenedor en O(1) sin ordenamientos
+		var is_east = 1 if pos.x >= node.mid_x else 0
+		var is_south = 2 if pos.z >= node.mid_z else 0
+		var primary_idx = is_east + is_south
 
-		for child in sorted_children:
-			_nearest_recursive(child, query_pos, best_dist_sq)
+		# Evaluar primero el cuadrante donde se encuentra el auto
+		if _check_within_track_fast(node.children[primary_idx], pos, threshold_sq):
+			return true
 
-# Distancia euclidiana mínima al cuadrado desde un punto hasta un AABB
+		# Si no estuvo en el cuadrante primario, revisar los vecinos adyacentes
+		for i in range(4):
+			if i != primary_idx:
+				if _check_within_track_fast(node.children[i], pos, threshold_sq):
+					return true
+
+	return false
+
+# ------------------------------------------------------------------------------
+# Distancia euclidiana mínima al cuadrado desde un punto hasta una caja AABB
+# ------------------------------------------------------------------------------
 func _aabb_distance_squared(box: AABB, pos: Vector3) -> float:
 	var dx = 0.0
 	if pos.x < box.position.x:
@@ -169,34 +175,47 @@ func _aabb_distance_squared(box: AABB, pos: Vector3) -> float:
 	return dx * dx + dz * dz
 
 # ------------------------------------------------------------------------------
-# Verificación ultra-rápida de si una posición está en pista: O(log N)
+# Generador de Malla 3D de Líneas para Visualizar las Divisiones de la Pista (Tecla Q)
 # ------------------------------------------------------------------------------
-func is_within_track(pos: Vector3, max_half_width: float) -> bool:
-	var threshold_sq = max_half_width * max_half_width
-	var dist_sq = get_nearest_distance_squared(pos)
-	return dist_sq <= threshold_sq
+func generate_debug_wireframe_mesh() -> ArrayMesh:
+	var st = SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_LINES)
 
-# ------------------------------------------------------------------------------
-# Consulta de Candidatos en Rango (Sphere / Box Query): O(log N)
-# ------------------------------------------------------------------------------
-func query_radius(center: Vector3, radius: float, result_points: Array[Vector3]):
-	var r2 = radius * radius
-	_query_radius_recursive(root, center, r2, result_points)
+	var col_leaf = Color(0.1, 0.9, 1.0, 0.85)  # Cyan brillante para cuadrantes hoja
+	var col_branch = Color(1.0, 0.8, 0.1, 0.7) # Ámbar para subdivisiones intermedias
 
-func _query_radius_recursive(node: SpatialNode, center: Vector3, r2: float, result_points: Array[Vector3]):
-	if _aabb_distance_squared(node.bounds, center) > r2:
-		pruned_branches += 1
-		return
+	_draw_node_bounds(st, root, col_leaf, col_branch)
+	return st.commit()
 
-	for pt in node.points:
-		var dx = center.x - pt.x
-		var dz = center.z - pt.z
-		if (dx * dx + dz * dz) <= r2:
-			result_points.append(pt)
+func _draw_node_bounds(st: SurfaceTool, node: SpatialNode, col_leaf: Color, col_branch: Color):
+	var b = node.bounds
+	var col = col_leaf if not node.is_divided else col_branch
+	var y = 0.35 # Ligeramente sobre el asfalto para máxima visibilidad
+
+	var p0 = Vector3(b.position.x, y, b.position.z)
+	var p1 = Vector3(b.end.x, y, b.position.z)
+	var p2 = Vector3(b.end.x, y, b.end.z)
+	var p3 = Vector3(b.position.x, y, b.end.z)
+
+	st.set_color(col)
+	st.add_vertex(p0)
+	st.add_vertex(p1)
+
+	st.set_color(col)
+	st.add_vertex(p1)
+	st.add_vertex(p2)
+
+	st.set_color(col)
+	st.add_vertex(p2)
+	st.add_vertex(p3)
+
+	st.set_color(col)
+	st.add_vertex(p3)
+	st.add_vertex(p0)
 
 	if node.is_divided:
 		for child in node.children:
-			_query_radius_recursive(child, center, r2, result_points)
+			_draw_node_bounds(st, child, col_leaf, col_branch)
 
 # ------------------------------------------------------------------------------
 # Métricas y Resumen de Eficiencia

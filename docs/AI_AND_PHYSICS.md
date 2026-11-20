@@ -21,9 +21,10 @@ El movimiento del vehículo se calcula mediante cinemática 2D en tiempo discret
 1. **Aceleración y Fricción**:  
    Dado el comando de aceleración $u_a \in [-1, 1]$:
 
-   $$v_{t+1} = (v_t + u_a \cdot a_{\text{max}}) \cdot (1 - \mu)$$
+   > 📐 **Fórmula:** `v(t+1) = (v(t) + u_a · a_max) · (1 - μ)`  
+   > 🚦 **Límites:** `-v_max_rev ≤ v(t+1) ≤ v_max`
 
-   La velocidad está acotada entre una velocidad máxima de reversa y avance:
+   $$v_{t+1} = (v_t + u_a \cdot a_{\text{max}}) \cdot (1 - \mu)$$
 
    $$-v_{\text{max\_rev}} \le v_{t+1} \le v_{\text{max}}$$
 
@@ -31,9 +32,15 @@ El movimiento del vehículo se calcula mediante cinemática 2D en tiempo discret
    Dado el comando de viraje $u_s \in [-1, 1]$:  
    Un vehículo real no puede rotar sobre su propio eje si está detenido. Por ende, la velocidad angular es proporcional a la velocidad lineal:
 
+   > 📐 **Fórmula:** `θ(t+1) = θ(t) + u_s · ω · (v(t+1) / v_max)`
+
    $$\theta_{t+1} = \theta_t + u_s \cdot \omega \cdot \left(\frac{v_{t+1}}{v_{\text{max}}}\right)$$
 
 3. **Integración de Posición**:
+
+   > 📐 **Fórmula:**  
+   > `pos_x(t+1) = pos_x(t) + [v(t+1) · cos(θ(t+1))] · Δt`  
+   > `pos_y(t+1) = pos_y(t) + [v(t+1) · sin(θ(t+1))] · Δt`
 
    $$\vec{p}_{t+1} = \vec{p}_t + \begin{pmatrix} v_{t+1} \cos(\theta_{t+1}) \\ v_{t+1} \sin(\theta_{t+1}) \end{pmatrix} \cdot \Delta t$$
 
@@ -59,6 +66,8 @@ Cada vehículo cuenta con **5 sensores de distancia ultrasónicos/ópticos simul
 - **Normalización**:  
   Para cada rayo $i$, la lectura entregada a la red neuronal es:
 
+  > 📐 **Fórmula:** `d_i = distancia_impacto / R_max ∈ [0.0, 1.0]`
+
   $$d_i = \frac{\text{distancia\_impacto}}{R_{\text{max}}} \in [0.0, 1.0]$$
 
   Donde:
@@ -77,7 +86,7 @@ Cada agente es controlado por una **Red Neuronal Artificial (ANN)** multicapa co
    │ Sensor -60° (d0)│───┐   │                 │   ┌───│ Viraje [-1, 1]  │
    │ Sensor -30° (d1)│───┼──►│  Neuronas con   │───┤   └─────────────────┘
    │ Sensor   0° (d2)│───┼──►│   Activación    │   │   ┌─────────────────┐
-   │ Sensor +30° (d3)│───┼──►│  Tanh(z) en R   │───┴──►│Acel/Freno [-1, 1│]
+   │ Sensor +30° (d3)│───┼──►│  Tanh(z) en R   │───┴──►│Acel/Freno [-1, 1]
    │ Sensor +60° (d4)│───┼──►│                 │       └─────────────────┘
    │ Velocidad norm  │───┘   └─────────────────┘
    └─────────────────┘
@@ -87,6 +96,8 @@ Cada agente es controlado por una **Red Neuronal Artificial (ANN)** multicapa co
 
 1. **Capa Oculta**:
 
+   > 📐 **Fórmula:** `z_h = W_1 · x + b_1`  |  `a_h = tanh(z_h)`
+
    $$\vec{z}_h = \mathbf{W}_1 \cdot \vec{x} + \vec{b}_1$$
 
    $$\vec{a}_h = \tanh(\vec{z}_h)$$
@@ -94,6 +105,8 @@ Cada agente es controlado por una **Red Neuronal Artificial (ANN)** multicapa co
    Donde $\mathbf{W}_1 \in \mathbb{R}^{8 \times 6}$ y $\vec{b}_1 \in \mathbb{R}^8$.
 
 2. **Capa de Salida**:
+
+   > 📐 **Fórmula:** `z_o = W_2 · a_h + b_2`  |  `y = tanh(z_o)`
 
    $$\vec{z}_o = \mathbf{W}_2 \cdot \vec{a}_h + \vec{b}_2$$
 
@@ -107,6 +120,8 @@ Cada agente es controlado por una **Red Neuronal Artificial (ANN)** multicapa co
 
 ### Genoma Lineal
 Todas las matrices de pesos y vectores de sesgo se serializan en un único vector continuo unidimensional:
+
+> 📐 **Fórmula:** `Genoma = [W_1, b_1, W_2, b_2] ∈ R^74`
 
 $$\text{Genoma} = [\mathbf{W}_1, \vec{b}_1, \mathbf{W}_2, \vec{b}_2] \in \mathbb{R}^{74}$$
 
@@ -125,6 +140,8 @@ A diferencia del entrenamiento supervisado tradicional con retropropagación (*B
 ### 1. Función de Aptitud (Fitness)
 El fitness mide el progreso real a lo largo del circuito:
 
+> 📐 **Fórmula:** `Fitness = (Checkpoints_Superados × 1000) + Distancia_Recorrida - Penalización_Inactividad`
+
 $$\text{Fitness} = (\text{Checkpoints Superados} \times 1000) + \text{Distancia Recorrida} - \text{Penalización por Inactividad}$$
 
 #### Mecanismos Anti-Trampas
@@ -138,12 +155,16 @@ $$\text{Fitness} = (\text{Checkpoints Superados} \times 1000) + \text{Distancia 
 ### 3. Cruce Genético (Uniform Crossover)
 Para engendrar nuevos individuos a partir de los progenitores élite $P_A$ y $P_B$:
 
+> 📐 **Fórmula:** `Hijo[i] = P_A[i] si r < 0.5, sino P_B[i]`
+
 $$\text{Hijo}_i = \begin{cases} P_{A, i} & \text{si } r < 0.5 \\ P_{B, i} & \text{si } r \ge 0.5 \end{cases}$$
 
 Donde $r \sim \mathcal{U}(0, 1)$ se genera aleatoriamente para cada uno de los 74 genes.
 
 ### 4. Mutación Gaussiana Continua
 Con una tasa de mutación del **10%** por gen:
+
+> 📐 **Fórmula:** `Gen' = Gen + Ruido_Gaussiano(media=0, std=0.30)`
 
 $$\text{Gen}' = \text{Gen} + \mathcal{N}(0, \sigma^2)$$
 

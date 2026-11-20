@@ -101,11 +101,13 @@ var car_colors = [
 @onready var btn_spectator_mode: Button = $CanvasLayer/HUD/MainMenuPanel/VBox/ModesHBox/BtnSpectator
 @onready var btn_team_select: OptionButton = $CanvasLayer/HUD/MainMenuPanel/VBox/TeamHBox/TeamOptionBtn
 @onready var btn_start_race: Button = $CanvasLayer/HUD/MainMenuPanel/VBox/BtnStartRace
+@onready var btn_quit_game: Button = $CanvasLayer/HUD/MainMenuPanel/VBox/BtnQuitGame
 
 # Botones de la Pantalla de Resultados
 @onready var btn_next_round: Button = $CanvasLayer/HUD/ResultsPanel/VBox/ButtonsHBox/BtnNextRound
 @onready var btn_retry_race: Button = $CanvasLayer/HUD/ResultsPanel/VBox/ButtonsHBox/BtnRetryRace
 @onready var btn_menu_return: Button = $CanvasLayer/HUD/ResultsPanel/VBox/ButtonsHBox/BtnReturnMenu
+@onready var btn_quit_results: Button = $CanvasLayer/HUD/ResultsPanel/VBox/ButtonsHBox/BtnQuitResults
 
 var time_scales = [1.0, 2.0, 4.0]
 var time_scale_idx = 0
@@ -157,6 +159,8 @@ func setup_menu_ui():
 		btn_spectator_mode.pressed.connect(_on_btn_spectator_mode_pressed)
 	if btn_start_race and not btn_start_race.pressed.is_connected(_on_btn_start_race_pressed):
 		btn_start_race.pressed.connect(_on_btn_start_race_pressed)
+	if btn_quit_game and not btn_quit_game.pressed.is_connected(_on_btn_quit_pressed):
+		btn_quit_game.pressed.connect(_on_btn_quit_pressed)
 
 	# Llenar dropdown de equipos
 	if btn_team_select:
@@ -174,6 +178,20 @@ func setup_menu_ui():
 		btn_retry_race.pressed.connect(retry_current_race)
 	if btn_menu_return and not btn_menu_return.pressed.is_connected(switch_to_menu_state):
 		btn_menu_return.pressed.connect(switch_to_menu_state)
+	if btn_quit_results and not btn_quit_results.pressed.is_connected(_on_btn_quit_pressed):
+		btn_quit_results.pressed.connect(_on_btn_quit_pressed)
+
+func _on_btn_quit_pressed():
+	get_tree().quit()
+
+func toggle_fullscreen():
+	var mode = DisplayServer.window_get_mode()
+	if mode == DisplayServer.WINDOW_MODE_FULLSCREEN or mode == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		show_toast("🪟 Modo Ventana activado [F11 para pantalla completa]")
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+		show_toast("🖥️ Pantalla Completa activada [F11 para ventana]")
 
 func _on_btn_cup_mode_pressed():
 	current_game_mode = GameMode.CUP_PLAYER
@@ -635,11 +653,23 @@ func _unhandled_input(event: InputEvent):
 
 	var key = (event as InputEventKey).keycode
 
-	# Escape: Volver al Menú Principal
+	# Escape: Volver al Menú Principal o Salir del juego si ya está en el menú
 	if key == KEY_ESCAPE:
 		if match_state != MatchState.MENU:
 			switch_to_menu_state()
+		else:
+			get_tree().quit()
 		return
+
+	# F11: Pantalla completa / Ventana
+	elif key == KEY_F11:
+		toggle_fullscreen()
+
+	# Q: Visualizar u ocultar las divisiones del Árbol de Partición Espacial (SpatialTree3D)
+	elif key == KEY_Q:
+		if track:
+			var is_vis = track.toggle_spatial_tree_debug()
+			show_toast("🔲 Divisiones de Pista 3D: " + ("ACTIVADAS (Visualizando cuadrantes en tiempo real)" if is_vis else "DESACTIVADAS") + " [Tecla Q]")
 
 	# TAB: Alternar entre MODO JUGADOR y ESPECTADOR
 	if key == KEY_TAB:
