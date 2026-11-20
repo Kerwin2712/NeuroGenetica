@@ -1,1043 +1,1150 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full">
+<html lang="es" class="h-full dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NeuroGenetica · NeuroSystems</title>
-  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <title>NeuroGenetica · Portal de Documentación Oficial y Simuladores</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a',
+              950: '#0f172a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Marked.js para renderizado Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- KaTeX para renderizado de fórmulas matemáticas LaTeX ($ y $$) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
   <style>
-    /* Bloqueo estricto de scroll para formato de diapositiva y presentación */
-    html, body {
-      height: 100%;
-      overflow: hidden;
-      user-select: none;
+    /* Estilos personalizados de tipografía y documentación tipo VitePress / Tailwind Docs */
+    .doc-prose {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      line-height: 1.75;
+    }
+    .doc-prose h1 {
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 2.25rem;
+      margin-top: 0;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #334155;
+      letter-spacing: -0.025em;
+    }
+    .doc-prose h2 {
+      color: #f1f5f9;
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #1e293b;
+      letter-spacing: -0.02em;
+    }
+    .doc-prose h3 {
+      color: #e2e8f0;
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin-top: 1.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .doc-prose h4 {
+      color: #94a3b8;
+      font-weight: 600;
+      font-size: 1rem;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .doc-prose p {
+      margin-bottom: 1.15rem;
+    }
+    .doc-prose ul {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .doc-prose ol {
+      list-style-type: decimal;
+      padding-left: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .doc-prose li {
+      margin-bottom: 0.4rem;
+    }
+    .doc-prose strong {
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .doc-prose a {
+      color: #60a5fa;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color 0.15s;
+    }
+    .doc-prose a:hover {
+      color: #93c5fd;
+    }
+    .doc-prose code:not(pre code) {
+      background-color: #1e293b;
+      color: #38bdf8;
+      padding: 0.2rem 0.45rem;
+      border-radius: 0.375rem;
+      font-size: 0.85em;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      border: 1px solid #334155;
+    }
+    .doc-prose pre {
+      background-color: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+      position: relative;
+    }
+    .doc-prose blockquote {
+      border-left: 4px solid #3b82f6;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 0.75rem 1.25rem;
+      border-radius: 0 0.5rem 0.5rem 0;
+      margin-bottom: 1.25rem;
+      color: #94a3b8;
+    }
+    .doc-prose table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+    .doc-prose th {
+      background-color: #1e293b;
+      color: #ffffff;
+      text-align: left;
+      padding: 0.75rem 1rem;
+      border: 1px solid #334155;
+      font-weight: 600;
+    }
+    .doc-prose td {
+      padding: 0.7rem 1rem;
+      border: 1px solid #1e293b;
+      background-color: rgba(15, 23, 42, 0.4);
+    }
+    .doc-prose tr:nth-child(even) td {
+      background-color: rgba(30, 41, 59, 0.25);
+    }
+    .doc-prose hr {
+      border: 0;
+      border-top: 1px solid #334155;
+      margin: 2rem 0;
+    }
+
+    /* GitHub Alert Cards */
+    .alert-card {
+      border-radius: 0.75rem;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      gap: 0.85rem;
+      border-width: 1px;
+    }
+    .alert-tip {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+    }
+    .alert-note {
+      background: rgba(59, 130, 246, 0.08);
+      border-color: rgba(59, 130, 246, 0.3);
+      color: #93c5fd;
+    }
+    .alert-important {
+      background: rgba(168, 85, 247, 0.08);
+      border-color: rgba(168, 85, 247, 0.3);
+      color: #d8b4fe;
+    }
+    .alert-warning {
+      background: rgba(245, 158, 11, 0.08);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: #fcd34d;
+    }
+
+    /* Scrollbar personalizada */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b0f19;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 flex flex-col h-full font-sans antialiased selection:bg-blue-600 selection:text-white">
+<body class="bg-slate-950 text-slate-100 flex flex-col h-full font-sans antialiased overflow-hidden selection:bg-blue-600 selection:text-white">
 
-  <!-- BARRA SUPERIOR SLIM (SOLO BRANDING Y SELECTOR DE PESTAÑAS) -->
-  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur px-6 py-2.5 flex items-center justify-between shrink-0">
-    <!-- BRANDING LIMPIO -->
-    <div class="flex items-center gap-2.5">
+  <!-- ======================================================== -->
+  <!-- BARRA DE NAVEGACIÓN SUPERIOR GLOBAL                     -->
+  <!-- ======================================================== -->
+  <header class="border-b border-slate-800 bg-slate-900/95 backdrop-blur px-5 py-2.5 flex items-center justify-between shrink-0 z-50">
+    <!-- BRANDING -->
+    <div class="flex items-center gap-3">
       <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-emerald-400 flex items-center justify-center text-base shadow-sm">
         🏎️
       </div>
       <div class="flex items-center gap-2">
-        <span class="font-bold text-sm text-white tracking-wide">NeuroSystems</span>
+        <span class="font-bold text-sm text-white tracking-wide">NeuroGenetica</span>
         <span class="text-slate-600 text-xs">/</span>
-        <span class="text-xs font-semibold text-blue-400">NeuroGenetica</span>
+        <span id="header-subtitle" class="text-xs font-semibold text-blue-400">Documentación Oficial</span>
       </div>
     </div>
 
-    <!-- PESTAÑAS DIRECTAS -->
-    <nav class="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-medium">
-      <button onclick="setTab('diapos')" id="btn-tab-diapos" class="tab-btn px-3 py-1.5 rounded-lg transition-all bg-blue-600 text-white font-semibold">
-        Diapositivas
+    <!-- SELECTOR DE VISTA: DOCUMENTACIÓN vs SIMULADORES -->
+    <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-medium">
+      <button onclick="setMainView('docs')" id="btn-view-docs" class="px-4 py-1.5 rounded-lg transition-all bg-blue-600 text-white font-semibold flex items-center gap-1.5">
+        <span>📚</span> Documentación Oficial
       </button>
-      <button onclick="setTab('quadtree')" id="btn-tab-quadtree" class="tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
-        QuadTree en Vivo
+      <button onclick="setMainView('simulators')" id="btn-view-simulators" class="px-4 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5">
+        <span>🎮</span> Simuladores Interactivos
       </button>
-      <button onclick="setTab('nn')" id="btn-tab-nn" class="tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
-        Red Neuronal
-      </button>
-      <button onclick="setTab('heap')" id="btn-tab-heap" class="tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
-        Max-Heap
-      </button>
-      <button onclick="setTab('modes')" id="btn-tab-modes" class="tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
-        Modos de Juego
-      </button>
-      <button onclick="setTab('poo')" id="btn-tab-poo" class="tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
-        Programación Orientada a Objetos
-      </button>
-    </nav>
+    </div>
 
-    <!-- INDICADOR DE LÁMINA (SOLO VISIBLE EN DIAPOSITIVAS) -->
-    <div id="slide-indicator-badge" class="flex items-center gap-2">
-      <span id="slide-indicator" class="text-xs font-mono font-bold bg-slate-950 px-3 py-1 rounded-md border border-slate-800 text-blue-400">1 / 6</span>
+    <!-- ACCIONES RÁPIDAS -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleFullscreen()" title="Pantalla Completa (F11)" class="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs flex items-center gap-1">
+        <span>⛶</span> <span class="hidden md:inline font-mono">F11</span>
+      </button>
+      <a href="https://github.com/Kerwin2712/NeuroGenetica" target="_blank" class="p-1.5 px-2.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs flex items-center gap-1.5 font-medium">
+        <span>GitHub</span> ↗
+      </a>
     </div>
   </header>
 
-  <!-- CONTENEDOR PRINCIPAL (100% PANTALLA COMPLETA SIN SCROLL) -->
-  <main class="flex-1 p-5 flex flex-col justify-center items-center overflow-hidden max-w-7xl w-full mx-auto">
-
-    <!-- ========================================== -->
-    <!-- PESTAÑA 1: DIAPOSITIVAS LIMPIAS (FLECHAS DEL TECLADO) -->
-    <!-- ========================================== -->
-    <section id="tab-diapos" class="tab-content w-full h-full flex flex-col justify-center items-center">
-      <div class="w-full max-w-4xl max-h-[82vh] bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-8 shadow-2xl relative flex flex-col justify-between overflow-hidden aspect-[16/9]">
-        <div class="absolute -right-20 -top-20 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div id="slide-content-area" class="w-full flex-1 flex flex-col justify-center">
-          <!-- Contenido inyectado dinámicamente por JavaScript -->
-        </div>
-
-        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
-          <span>Grupo NeuroSystems</span>
-          <span>Programación 3 · Universidad de Los Andes</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================== -->
-    <!-- PESTAÑA 2: QUADTREE EN VIVO (SENSORES Y PISTA FLUIDA) -->
-    <!-- ========================================== -->
-    <section id="tab-quadtree" class="tab-content hidden w-full h-full flex items-center justify-center gap-6">
-      <!-- Canvas de la Pista (Izquierda) -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center shrink-0">
-        <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
-          <canvas id="quadTreeCanvas" width="740" height="440" class="block"></canvas>
-          <div class="absolute bottom-3 left-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-xs flex gap-4 text-slate-300">
-            <div><span class="inline-block w-2 h-2 bg-cyan-400 rounded-full mr-1.5"></span>5 Rayos de Visión</div>
-            <div><span class="inline-block w-2 h-2 bg-amber-400 rounded-full mr-1.5"></span>Cuadrante Cercano (QuadTree)</div>
-            <div><span class="inline-block w-2 h-2 bg-red-500 rounded-full mr-1.5"></span>Límites de la Pista</div>
-          </div>
+  <!-- ======================================================== -->
+  <!-- VISTA 1: MOTOR DE LECTURA DE DOCUMENTACIÓN OFICIAL (.MD) -->
+  <!-- ======================================================== -->
+  <div id="view-docs-container" class="flex-1 flex overflow-hidden w-full">
+    
+    <!-- SIDEBAR IZQUIERDO: ÍNDICE DE ARCHIVOS .MD -->
+    <aside class="w-72 bg-slate-900/60 border-r border-slate-800 flex flex-col shrink-0 overflow-hidden">
+      <!-- Buscador de Documentos -->
+      <div class="p-3.5 border-b border-slate-800">
+        <div class="relative">
+          <input type="text" id="doc-search-input" oninput="filterDocuments()" placeholder="Buscar en documentación..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 pl-8 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition">
+          <span class="absolute left-2.5 top-2 text-xs text-slate-500">🔍</span>
         </div>
       </div>
 
-      <!-- Panel Lateral (Derecha) -->
-      <div class="w-80 flex flex-col justify-between h-[470px] bg-slate-900 border border-slate-800 rounded-2xl p-5 shrink-0">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-blue-400 block mb-1">Visión del Auto</span>
-          <h3 class="font-bold text-white text-base mb-3">Detección de Muros (QuadTree)</h3>
+      <!-- Lista de Documentos por Categorías -->
+      <nav id="doc-menu-container" class="flex-1 overflow-y-auto p-3 space-y-4">
+        <!-- Generado dinámicamente -->
+      </nav>
 
-          <div class="space-y-3.5 text-xs">
-            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-              <span class="text-slate-400 block mb-1">Muros revisados con QuadTree:</span>
-              <span id="stat-qt-checks" class="text-emerald-400 font-mono font-bold text-lg">8 muros</span>
-              <span class="text-[11px] text-slate-500 block mt-0.5">Solo consulta el cuadrante cercano</span>
-            </div>
+      <!-- Pie del Sidebar -->
+      <div class="p-3 border-t border-slate-800 bg-slate-950/60 text-[11px] text-slate-500 flex items-center justify-between">
+        <span>Programación 3</span>
+        <span class="font-mono text-emerald-400">ULA · 2026</span>
+      </div>
+    </aside>
 
-            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-              <span class="text-slate-400 block mb-1">Sin optimización (Toda la pista):</span>
-              <span id="stat-naive-checks" class="text-red-400 font-mono font-bold text-lg">96 muros</span>
-              <span class="text-[11px] text-slate-500 block mt-0.5">Revisaría muros lejanos e innecesarios</span>
-            </div>
-
-            <div class="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-300">
-              ⚡ <strong><span id="stat-speedup">12.0x</span> más rápido:</strong> Permite tener 40 coches en pista corriendo a 60 FPS sin ralentizaciones.
-            </div>
+    <!-- ÁREA CENTRAL DE LECTURA DE DOCUMENTO -->
+    <main id="doc-content-wrapper" class="flex-1 overflow-y-auto px-8 py-8 lg:px-12 bg-slate-950">
+      <div class="max-w-4xl mx-auto">
+        <!-- Breadcrumbs y metadatos -->
+        <div class="flex items-center justify-between text-xs text-slate-500 mb-4 pb-3 border-b border-slate-900">
+          <div class="flex items-center gap-2">
+            <span id="doc-category-badge" class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium">Inicio</span>
+            <span>/</span>
+            <span id="doc-filename-label" class="font-mono text-slate-400">README.md</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="window.print()" class="hover:text-slate-300 text-[11px]">🖨️ Imprimir</button>
+            <span>•</span>
+            <button onclick="copyDocContent()" id="btn-copy-doc" class="hover:text-slate-300 text-[11px]">📋 Copiar Markdown</button>
           </div>
         </div>
 
-        <div class="space-y-3 pt-3 border-t border-slate-800">
-          <div class="flex items-center justify-between text-xs text-slate-400 font-mono">
-            <span>Velocidad: <strong id="car-speed-val" class="text-white">0.0</strong> px/s</span>
-            <span>Manejo: <strong class="text-blue-400 font-bold">WASD</strong></span>
-          </div>
-          <button onclick="resetQuadTreeSim()" class="w-full text-xs py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium rounded-lg border border-slate-700 transition">
-            Centrar Vehículo
+        <!-- Contenedor del documento parseado por Marked + KaTeX -->
+        <article id="doc-article-body" class="doc-prose">
+          <!-- Markdown renderizado aquí -->
+        </article>
+
+        <!-- Navegación inferior entre documentos -->
+        <div class="mt-12 pt-6 border-t border-slate-800 flex items-center justify-between text-xs">
+          <button id="btn-prev-doc" onclick="navPrevDoc()" class="p-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center gap-2 transition">
+            <span>←</span> Anterior
+          </button>
+          <button id="btn-next-doc" onclick="navNextDoc()" class="p-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center gap-2 transition">
+            Siguiente <span>→</span>
           </button>
         </div>
       </div>
-    </section>
+    </main>
 
-    <!-- ========================================== -->
-    <!-- PESTAÑA 3: RED NEURONAL (CEREBRO DEL RIVAL) -->
-    <!-- ========================================== -->
-    <section id="tab-nn" class="tab-content hidden w-full h-full flex items-center justify-center gap-6">
-      <!-- Canvas de la Red (Izquierda) -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center shrink-0">
-        <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
-          <canvas id="neuralCanvas" width="740" height="440" class="block"></canvas>
-        </div>
+    <!-- SIDEBAR DERECHO: ÍNDICE DE LA PÁGINA (ON THIS PAGE) -->
+    <aside class="w-64 bg-slate-900/30 border-l border-slate-800/80 p-5 hidden xl:flex flex-col shrink-0 overflow-y-auto">
+      <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-3 flex items-center gap-1.5">
+        <span>📑</span> En esta página
+      </span>
+      <nav id="table-of-contents" class="space-y-1.5 text-xs text-slate-400">
+        <!-- Enlaces a secciones generados automáticamente -->
+      </nav>
+    </aside>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- VISTA 2: SIMULADORES INTERACTIVOS Y DIAPOSITIVAS         -->
+  <!-- ======================================================== -->
+  <div id="view-simulators-container" class="hidden flex-1 flex flex-col overflow-hidden w-full">
+    <!-- SUB-BARRA DE PESTAÑAS DE SIMULADORES -->
+    <div class="bg-slate-900 border-b border-slate-800 px-6 py-2 flex items-center justify-between shrink-0">
+      <nav class="flex items-center gap-1 text-xs font-medium">
+        <button onclick="setSimTab('diapos')" id="btn-tab-diapos" class="sim-tab-btn px-3 py-1.5 rounded-lg transition-all bg-blue-600 text-white font-semibold">
+          Diapositivas
+        </button>
+        <button onclick="setSimTab('quadtree')" id="btn-tab-quadtree" class="sim-tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
+          QuadTree en Vivo
+        </button>
+        <button onclick="setSimTab('nn')" id="btn-tab-nn" class="sim-tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
+          Red Neuronal
+        </button>
+        <button onclick="setSimTab('heap')" id="btn-tab-heap" class="sim-tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
+          Max-Heap
+        </button>
+        <button onclick="setSimTab('modes')" id="btn-tab-modes" class="sim-tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800">
+          Modos de Juego
+        </button>
+      </nav>
+
+      <div id="slide-indicator-badge" class="flex items-center gap-2">
+        <span id="slide-indicator" class="text-xs font-mono font-bold bg-slate-950 px-3 py-1 rounded-md border border-slate-800 text-blue-400">1 / 6</span>
       </div>
+    </div>
 
-      <!-- Deslizadores y Respuestas (Derecha) -->
-      <div class="w-80 flex flex-col justify-between h-[470px] bg-slate-900 border border-slate-800 rounded-2xl p-5 shrink-0">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-indigo-400 block mb-1">Cerebro Conductor</span>
-          <h3 class="font-bold text-white text-base mb-3">Red Neuronal en Vivo</h3>
+    <!-- CONTENEDOR DE PESTAÑAS INTERACTIVAS -->
+    <div class="flex-1 p-5 flex flex-col justify-center items-center overflow-hidden max-w-7xl w-full mx-auto">
+      
+      <!-- Pestaña 1: Diapositivas -->
+      <section id="tab-diapos" class="sim-tab-content w-full h-full flex flex-col justify-center items-center">
+        <div class="w-full max-w-4xl max-h-[80vh] bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-8 shadow-2xl relative flex flex-col justify-between overflow-hidden aspect-[16/9]">
+          <div class="absolute -right-20 -top-20 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div id="slide-content-area" class="w-full flex-1 flex flex-col justify-center"></div>
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
+            <span>Grupo NeuroSystems</span>
+            <span>Programación 3 · Universidad de Los Andes</span>
+          </div>
+        </div>
+      </section>
 
-          <!-- Sliders de Sensores -->
-          <div class="space-y-2.5 text-xs">
-            <div>
-              <div class="flex justify-between mb-0.5 text-slate-300">
-                <span>Sensor Izq Lejano (-60°):</span>
-                <span id="val-s0" class="font-mono text-cyan-400">0.80</span>
-              </div>
-              <input type="range" id="slider-s0" min="0" max="1" step="0.05" value="0.80" oninput="updateNeuralFromSliders()" class="w-full h-1 bg-slate-800 rounded-lg accent-cyan-400 cursor-pointer">
-            </div>
-
-            <div>
-              <div class="flex justify-between mb-0.5 text-slate-300">
-                <span>Sensor Izq Frontal (-30°):</span>
-                <span id="val-s1" class="font-mono text-cyan-400">0.90</span>
-              </div>
-              <input type="range" id="slider-s1" min="0" max="1" step="0.05" value="0.90" oninput="updateNeuralFromSliders()" class="w-full h-1 bg-slate-800 rounded-lg accent-cyan-400 cursor-pointer">
-            </div>
-
-            <div>
-              <div class="flex justify-between mb-0.5 text-slate-300">
-                <span>Sensor Frontal (0°):</span>
-                <span id="val-s2" class="font-mono text-cyan-400">0.45</span>
-              </div>
-              <input type="range" id="slider-s2" min="0" max="1" step="0.05" value="0.45" oninput="updateNeuralFromSliders()" class="w-full h-1 bg-slate-800 rounded-lg accent-cyan-400 cursor-pointer">
-            </div>
-
-            <div>
-              <div class="flex justify-between mb-0.5 text-slate-300">
-                <span>Sensor Der Frontal (+30°):</span>
-                <span id="val-s3" class="font-mono text-cyan-400">0.70</span>
-              </div>
-              <input type="range" id="slider-s3" min="0" max="1" step="0.05" value="0.70" oninput="updateNeuralFromSliders()" class="w-full h-1 bg-slate-800 rounded-lg accent-cyan-400 cursor-pointer">
-            </div>
-
-            <div>
-              <div class="flex justify-between mb-0.5 text-slate-300">
-                <span>Sensor Der Lejano (+60°):</span>
-                <span id="val-s4" class="font-mono text-cyan-400">0.85</span>
-              </div>
-              <input type="range" id="slider-s4" min="0" max="1" step="0.05" value="0.85" oninput="updateNeuralFromSliders()" class="w-full h-1 bg-slate-800 rounded-lg accent-cyan-400 cursor-pointer">
+      <!-- Pestaña 2: QuadTree en Vivo -->
+      <section id="tab-quadtree" class="sim-tab-content hidden w-full h-full flex items-center justify-center gap-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center shrink-0">
+          <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+            <canvas id="quadTreeCanvas" width="740" height="440" class="block"></canvas>
+            <div class="absolute bottom-3 left-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-xs flex gap-4 text-slate-300">
+              <div><span class="inline-block w-2 h-2 bg-cyan-400 rounded-full mr-1.5"></span>5 Rayos de Visión</div>
+              <div><span class="inline-block w-2 h-2 bg-amber-400 rounded-full mr-1.5"></span>Cuadrante Cercano</div>
+              <div><span class="inline-block w-2 h-2 bg-red-500 rounded-full mr-1.5"></span>Límites de Pista</div>
             </div>
           </div>
         </div>
-
-        <div class="space-y-3 pt-3 border-t border-slate-800">
-          <div class="grid grid-cols-2 gap-2 text-xs">
-            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
-              <span class="text-slate-500 block text-[11px]">Giro del Volante</span>
-              <strong id="nn-out-steer-label" class="text-blue-400 block text-xs truncate">0.00</strong>
-            </div>
-            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
-              <span class="text-slate-500 block text-[11px]">Pedal de Conducción</span>
-              <strong id="nn-out-accel-label" class="text-emerald-400 block text-xs truncate">+0.85</strong>
-            </div>
-          </div>
-
-          <button onclick="randomizeNeuralWeights()" class="w-full text-xs py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg transition shadow-sm">
-            🎲 Probar Otra IA (Mutar Cerebro)
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================== -->
-    <!-- PESTAÑA 4: MAX-HEAP (PODIO DE GANADORES) -->
-    <!-- ========================================== -->
-    <section id="tab-heap" class="tab-content hidden w-full h-full flex items-center justify-center gap-6">
-      <!-- Árbol de Heap (Izquierda) -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center shrink-0">
-        <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
-          <canvas id="heapCanvas" width="740" height="440" class="block"></canvas>
-        </div>
-      </div>
-
-      <!-- Podio de Selección (Derecha) -->
-      <div class="w-80 flex flex-col justify-between h-[470px] bg-slate-900 border border-slate-800 rounded-2xl p-5 shrink-0">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-amber-400 block mb-1">Clasificación Rápida</span>
-          <h3 class="font-bold text-white text-base mb-2">Podio con Max-Heap</h3>
-          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
-            La raíz conserva al coche con mayor puntuación. Se extrae al ganador al instante sin necesidad de ordenar toda la lista.
-          </p>
-
-          <div class="space-y-2">
-            <span class="text-xs font-bold text-slate-300 block">🏆 Podio de Clasificados:</span>
-            <div id="heap-extracted-list" class="space-y-2 text-xs">
-              <!-- Inyectado por JS -->
-            </div>
-          </div>
-        </div>
-
-        <div class="space-y-2.5 pt-3 border-t border-slate-800">
-          <button onclick="heapPopMaxAnimated()" class="w-full text-xs py-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-lg transition shadow-sm">
-            🏆 PopMax() [Extraer Líder]
-          </button>
-          <button onclick="heapResetRandom()" class="w-full text-xs py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition">
-            🔄 Nueva Parrilla de Carrera
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================== -->
-    <!-- PESTAÑA 5: MODOS DE JUEGO -->
-    <!-- ========================================== -->
-    <section id="tab-modes" class="tab-content hidden w-full h-full flex flex-col justify-center items-center max-w-5xl">
-      <!-- 3 TARJETAS PRINCIPALES -->
-      <div class="grid grid-cols-3 gap-6 w-full mb-5">
-        <!-- Modo Copa -->
-        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+        <div class="w-80 flex flex-col justify-between h-[470px] bg-slate-900 border border-slate-800 rounded-2xl p-5 shrink-0">
           <div>
-            <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center text-2xl mb-3">
-              🏆
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-400 block mb-1">Visión del Auto</span>
+            <h3 class="font-bold text-white text-base mb-3">Detección de Muros (QuadTree)</h3>
+            <div class="space-y-3.5 text-xs">
+              <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                <span class="text-slate-400 block mb-1">Muros revisados con QuadTree:</span>
+                <span id="stat-qt-checks" class="text-emerald-400 font-mono font-bold text-lg">8 muros</span>
+                <span class="text-[11px] text-slate-500 block mt-0.5">Solo consulta el cuadrante cercano</span>
+              </div>
+              <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                <span class="text-slate-400 block mb-1">Sin optimización (Fuerza bruta):</span>
+                <span id="stat-naive-checks" class="text-red-400 font-mono font-bold text-lg">96 muros</span>
+                <span class="text-[11px] text-slate-500 block mt-0.5">Revisaría toda la pista innecesariamente</span>
+              </div>
+              <div class="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-300">
+                ⚡ <strong><span id="stat-speedup">12.0x</span> más rápido:</strong> Permite 40 coches a 60 FPS sin caídas.
+              </div>
             </div>
-            <h3 class="font-bold text-white text-base mb-2">Modo Copa</h3>
-            <p class="text-xs text-slate-300 leading-relaxed">
-              Torneo multironda en varios circuitos. Los coches rivales de IA acumulan puntos y refinan sus cerebros entre carreras, aumentando su dificultad.
-            </p>
           </div>
-          <div class="pt-4 border-t border-slate-800 text-xs text-blue-400 font-semibold">
-            Usuario vs N Rivales Evolutivos
+          <div class="space-y-3 pt-3 border-t border-slate-800">
+            <div class="flex items-center justify-between text-xs text-slate-400 font-mono">
+              <span>Velocidad: <strong id="car-speed-val" class="text-white">0.0</strong> px/s</span>
+              <span>Manejo: <strong class="text-blue-400 font-bold">WASD</strong></span>
+            </div>
+            <button onclick="resetQuadTreeSim()" class="w-full text-xs py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium rounded-lg border border-slate-700 transition">
+              Centrar Vehículo
+            </button>
           </div>
         </div>
+      </section>
 
-        <!-- Carrera Única -->
-        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+      <!-- Pestaña 3: Red Neuronal -->
+      <section id="tab-nn" class="sim-tab-content hidden w-full h-full flex items-center justify-center gap-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center shrink-0">
+          <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+            <canvas id="neuralCanvas" width="740" height="440" class="block"></canvas>
+          </div>
+        </div>
+        <div class="w-80 flex flex-col justify-between h-[470px] bg-slate-900 border border-slate-800 rounded-2xl p-5 shrink-0">
           <div>
-            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-2xl mb-3">
-              🏁
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-400 block mb-1">Cerebro Conductor</span>
+            <h3 class="font-bold text-white text-base mb-3">Red Neuronal en Vivo</h3>
+            <div class="space-y-2.5 text-xs">
+              <div>
+                <div class="flex justify-between mb-0.5 text-slate-300">
+                  <span>Sensor -60°:</span>
+                  <span id="val-s0" class="font-mono text-cyan-400">0.80</span>
+                </div>
+                <input type="range" id="slider-s0" min="0" max="1" step="0.05" value="0.80" oninput="updateNeuralFromSliders()" class="w-full h-1 bg-slate-800 rounded-lg accent-cyan-400 cursor-pointer">
+              </div>
+              <div>
+                <div class="flex justify-between mb-0.5 text-slate-300">
+                  <span>Sensor -30°:</span>
+                  <span id="val-s1" class="font-mono text-cyan-400">0.90</span>
+                </div>
+                <input type="range" id="slider-s1" min="0" max="1" step="0.05" value="0.90" oninput="updateNeuralFromSliders()" class="w-full h-1 bg-slate-800 rounded-lg accent-cyan-400 cursor-pointer">
+              </div>
+              <div>
+                <div class="flex justify-between mb-0.5 text-slate-300">
+                  <span>Sensor 0°:</span>
+                  <span id="val-s2" class="font-mono text-cyan-400">0.45</span>
+                </div>
+                <input type="range" id="slider-s2" min="0" max="1" step="0.05" value="0.45" oninput="updateNeuralFromSliders()" class="w-full h-1 bg-slate-800 rounded-lg accent-cyan-400 cursor-pointer">
+              </div>
+              <div>
+                <div class="flex justify-between mb-0.5 text-slate-300">
+                  <span>Sensor +30°:</span>
+                  <span id="val-s3" class="font-mono text-cyan-400">0.70</span>
+                </div>
+                <input type="range" id="slider-s3" min="0" max="1" step="0.05" value="0.70" oninput="updateNeuralFromSliders()" class="w-full h-1 bg-slate-800 rounded-lg accent-cyan-400 cursor-pointer">
+              </div>
+              <div>
+                <div class="flex justify-between mb-0.5 text-slate-300">
+                  <span>Sensor +60°:</span>
+                  <span id="val-s4" class="font-mono text-cyan-400">0.85</span>
+                </div>
+                <input type="range" id="slider-s4" min="0" max="1" step="0.05" value="0.85" oninput="updateNeuralFromSliders()" class="w-full h-1 bg-slate-800 rounded-lg accent-cyan-400 cursor-pointer">
+              </div>
             </div>
-            <h3 class="font-bold text-white text-base mb-2">Carrera Única</h3>
-            <p class="text-xs text-slate-300 leading-relaxed">
-              Partida rápida y directa contra la mejor IA entrenada históricamente. El jugador elige el circuito y compite por marcar el récord de vuelta.
-            </p>
           </div>
-          <div class="pt-4 border-t border-slate-800 text-xs text-emerald-400 font-semibold">
-            Desafío Rápido al Mejor Tiempo
+          <div class="space-y-3 pt-3 border-t border-slate-800">
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
+                <span class="text-slate-500 block text-[11px]">Viraje</span>
+                <strong id="nn-out-steer-label" class="text-blue-400 block text-xs truncate">0.00</strong>
+              </div>
+              <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
+                <span class="text-slate-500 block text-[11px]">Acelerador</span>
+                <strong id="nn-out-accel-label" class="text-emerald-400 block text-xs truncate">+0.85</strong>
+              </div>
+            </div>
+            <button onclick="randomizeNeuralWeights()" class="w-full text-xs py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg transition shadow-sm">
+              🎲 Mutar Cerebro
+            </button>
           </div>
         </div>
+      </section>
 
-        <!-- Carretera Vertical -->
-        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+      <!-- Pestaña 4: Max-Heap -->
+      <section id="tab-heap" class="sim-tab-content hidden w-full h-full flex items-center justify-center gap-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center shrink-0">
+          <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+            <canvas id="heapCanvas" width="740" height="440" class="block"></canvas>
+          </div>
+        </div>
+        <div class="w-80 flex flex-col justify-between h-[470px] bg-slate-900 border border-slate-800 rounded-2xl p-5 shrink-0">
           <div>
-            <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center text-2xl mb-3">
-              🛣️
-            </div>
-            <h3 class="font-bold text-white text-base mb-2">Carretera Vertical</h3>
-            <p class="text-xs text-slate-300 leading-relaxed">
-              Modalidad de autopista infinita. El jugador esquiva tráfico dinámico y compite contra oleadas de vehículos IA que aprenden a adelantar limpiamente.
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-400 block mb-1">Clasificación Rápida</span>
+            <h3 class="font-bold text-white text-base mb-2">Podio con Max-Heap</h3>
+            <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+              La raíz conserva al coche con mayor puntuación. Se extrae al ganador en tiempo O(log N) sin necesidad de ordenar toda la lista.
             </p>
-          </div>
-          <div class="pt-4 border-t border-slate-800 text-xs text-purple-400 font-semibold">
-            Supervivencia & Tráfico Reactivo
-          </div>
-        </div>
-      </div>
-
-      <!-- BARRAS INFERIORES: COLORES Y 2 JUGADORES -->
-      <div class="grid grid-cols-2 gap-6 w-full">
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between text-xs">
-          <span class="font-bold text-white">🎨 Rivales por Color:</span>
-          <div class="flex items-center gap-4">
-            <span class="flex items-center gap-1.5"><strong class="w-3 h-3 rounded bg-blue-500 inline-block"></strong> Jugador</span>
-            <span class="flex items-center gap-1.5"><strong class="w-3 h-3 rounded bg-amber-400 inline-block"></strong> Campeón Élite</span>
-            <span class="flex items-center gap-1.5"><strong class="w-3 h-3 rounded bg-purple-500 inline-block"></strong> En Aprendizaje</span>
-          </div>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between text-xs">
-          <span class="font-bold text-white">👥 Modo Multijugador:</span>
-          <span class="text-slate-300">Soporte local en un mismo teclado (WASD vs Flechas)</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================== -->
-    <!-- PESTAÑA 6: PROGRAMACIÓN ORIENTADA A OBJETOS -->
-    <!-- ========================================== -->
-    <section id="tab-poo" class="tab-content hidden w-full h-full flex flex-col justify-center items-center max-w-5xl">
-      <div class="grid grid-cols-3 gap-6 w-full">
-        <!-- Físicas y Pista -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-          <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <span class="text-2xl">🏎️</span>
-            <div>
-              <h3 class="font-bold text-white text-sm">Física y Circuito (Core)</h3>
-              <span class="text-[11px] text-slate-500">Mundo de simulación</span>
+            <div class="space-y-2">
+              <span class="text-xs font-bold text-slate-300 block">🏆 Podio de Clasificados:</span>
+              <div id="heap-extracted-list" class="space-y-2 text-xs"></div>
             </div>
           </div>
-          <ul class="text-xs space-y-3 text-slate-300">
-            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-              <strong class="text-blue-400 font-mono block mb-1">Car:</strong>
-              Control del vehículo, aceleración, frenado y 5 rayos de visión.
-            </li>
-            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-              <strong class="text-blue-400 font-mono block mb-1">Track:</strong>
-              Circuito cerrado, pianos bicolores y 69 checkpoints anti-trampas.
-            </li>
-            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-              <strong class="text-blue-400 font-mono block mb-1">QuadTree:</strong>
-              Partición del circuito para comprobar solo los muros cercanos.
-            </li>
-          </ul>
+          <div class="space-y-2.5 pt-3 border-t border-slate-800">
+            <button onclick="heapPopMaxAnimated()" class="w-full text-xs py-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-lg transition shadow-sm">
+              🏆 PopMax() [Extraer Líder]
+            </button>
+            <button onclick="heapResetRandom()" class="w-full text-xs py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition">
+              🔄 Nueva Parrilla
+            </button>
+          </div>
         </div>
+      </section>
 
-        <!-- Cerebro e IA -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-          <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <span class="text-2xl">🧠</span>
+      <!-- Pestaña 5: Modos de Juego -->
+      <section id="tab-modes" class="sim-tab-content hidden w-full h-full flex flex-col justify-center items-center max-w-5xl">
+        <div class="grid grid-cols-3 gap-6 w-full mb-5">
+          <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
             <div>
-              <h3 class="font-bold text-white text-sm">Rivales Autónomos (AI)</h3>
-              <span class="text-[11px] text-slate-500">Neuroevolución</span>
+              <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center text-2xl mb-3">
+                🏆
+              </div>
+              <h3 class="font-bold text-white text-base mb-2">Modo Copa</h3>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Torneo multironda en circuitos cerrados. Los coches rivales acumulan puntos y refinan sus genomas con neuroevolución entre carreras.
+              </p>
+            </div>
+            <div class="pt-4 border-t border-slate-800 text-xs text-blue-400 font-semibold">
+              Humano vs 9 IAs Evolutivas
             </div>
           </div>
-          <ul class="text-xs space-y-3 text-slate-300">
-            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-              <strong class="text-indigo-400 font-mono block mb-1">NeuralNetwork:</strong>
-              Cerebro que evalúa sensores y decide dirección y velocidad.
-            </li>
-            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-              <strong class="text-indigo-400 font-mono block mb-1">GeneticAlgorithm:</strong>
-              Población de rivales que evolucionan mediante cruce y mutación.
-            </li>
-            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-              <strong class="text-indigo-400 font-mono block mb-1">MaxHeap:</strong>
-              Cola de prioridad para premiar y extraer a los campeones de la ronda.
-            </li>
-          </ul>
-        </div>
 
-        <!-- Gráficos y Simulación -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-          <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <span class="text-2xl">🖥️</span>
+          <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
             <div>
-              <h3 class="font-bold text-white text-sm">Motor Gráfico (Graphics)</h3>
-              <span class="text-[11px] text-slate-500">Raylib y CTest</span>
+              <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-2xl mb-3">
+                🏁
+              </div>
+              <h3 class="font-bold text-white text-base mb-2">Carrera Única</h3>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Partida rápida y directa contra la mejor IA entrenada históricamente. Ideal para marcar récords de vuelta.
+              </p>
+            </div>
+            <div class="pt-4 border-t border-slate-800 text-xs text-emerald-400 font-semibold">
+              Desafío al Mejor Tiempo
             </div>
           </div>
-          <ul class="text-xs space-y-3 text-slate-300">
-            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-              <strong class="text-emerald-400 font-mono block mb-1">Simulation:</strong>
-              Ciclo del juego a 60 FPS, control manual y modos de velocidad.
-            </li>
-            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-              <strong class="text-emerald-400 font-mono block mb-1">HUD:</strong>
-              Telemetría central con vueltas, récords y tiempos de carrera.
-            </li>
-            <li class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-              <strong class="text-emerald-400 font-mono block mb-1">Pruebas CTest:</strong>
-              Validación matemática del árbol, red y podio antes de la carrera.
-            </li>
-          </ul>
+
+          <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center text-2xl mb-3">
+                🛣️
+              </div>
+              <h3 class="font-bold text-white text-base mb-2">Carretera Vertical</h3>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Supervivencia en autopista esquivando tráfico reactivo y rivales adaptativos.
+              </p>
+            </div>
+            <div class="pt-4 border-t border-slate-800 text-xs text-purple-400 font-semibold">
+              Tráfico y Supervivencia
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-  </main>
+    </div>
+  </div>
 
-  <!-- JAVASCRIPT: LÓGICA DE DIAPOSITIVAS Y SIMULACIÓN FÍSICA FLUIDA -->
+  <!-- ======================================================== -->
+  <!-- DATOS EMBEBIDOS Y SCRIPTS DE CONTROL                     -->
+  <!-- ======================================================== -->
   <script>
-    // ==========================================
-    // SISTEMA DE PESTAÑAS
-    // ==========================================
-    function setTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'text-white', 'font-semibold');
-        btn.classList.add('text-slate-400');
+    // DOCUMENTOS OFICIALES EMBEBIDOS PARA LECTURA OFFLINE / LOCAL (SIN PROBLEMAS DE CORS)
+    const EMBEDDED_DOCS = {"docs_readme": {"id": "docs_readme", "filename": "README.md", "title": "Visión General e Índice", "icon": "🏠", "category": "Inicio", "badge": "Core", "content": "# 📚 Documentación Técnica de NeuroGenetica\n\nBienvenido al centro de documentación técnica y arquitectónica de **NeuroGenetica**. Este conjunto de documentos detalla en profundidad el diseño de software, la experiencia de juego, los algoritmos matemáticos y las estructuras de datos avanzadas implementadas para la materia *Programación 3*.\n\n---\n\n## 🎬 Recursos para Exposición y Grabación de Video\n\n> [!TIP]\n> **¿Deseas presentar el proyecto de forma interactiva en video?**  \n> Para grabar tu presentación con OBS Studio o Loom de forma profesional:\n> - 🖥️ **Visualizador Dinámico en Pantalla Completa**: Abre **[`docs/showcase.html`](showcase.html)** en tu navegador web y pulsa <kbd>F11</kbd>. Presenta diapositivas limpias (1080p sin texto distractor), simulador de QuadTree en Canvas 2D, red neuronal con sliders y árbol animado de Max-Heap.\n> - 📄 **Guion Narrativo Separado (Teleprompter / Script)**: Consulta **[`docs/GUION_VIDEO.md`](GUION_VIDEO.md)** en tu teléfono, tablet o segundo monitor con las intervenciones sugeridas por integrante (Rafael, Javier y Kerwin), tiempos cronometrados y acciones paso a paso.\n\n---\n\n## 🗺️ Mapa de Navegación\n\n| Documento | Descripción | Temas Clave |\n| :--- | :--- | :--- |\n| **[Showcase Dinámico (HTML)](showcase.html)** | Interfaz web interactiva en 1080p para captura de video y demostración en vivo. | Canvas QuadTree $O(\\log n)$, Red Neuronal animada y Max-Heap $O(k \\log n)$. |\n| **[Guion de Video (Markdown)](GUION_VIDEO.md)** | Guion técnico y narrativo detallado por integrantes para grabar el video. | Tiempos cronometrados, locución exacta por integrante y consejos OBS. |\n| **[Arquitectura de Software y Archivos](ARCHITECTURE.md)** | Visión integral de capas, componentes y árbol del repositorio. | Módulos Core, AI, Graphics, ciclo de vida del frame, flujo de datos. |\n| **[Estructuras de Datos Avanzadas](DATA_STRUCTURES.md)** | Análisis teórico y práctico de los árboles y colas de prioridad. | QuadTree 2D, SpatialTree3D, Max-Heap, optimización de sensores, análisis de complejidad $O$. |\n| **[Física, Red Neuronal y Neuroevolución](AI_AND_PHYSICS.md)** | Fundamentos matemáticos del simulador y del aprendizaje autónomo. | Cinemática, Raycasting optimizado, ANN Feedforward, fitness, cruce y mutación. |\n| **[Guía de Simulación 3D (Godot 4)](GUIA_GODOT.md)** | Manual de usuario y arquitectura del simulador tridimensional. | Modos Copa/Espectador, cámaras GTA/Isométrica, controles, telemetría y ejecución. |\n\n---\n\n## 🎯 Propuesta Actualizada del Proyecto (Programación 3)\n\n**Título:** *Desarrollo de un Videojuego de Carreras en C++ con Rivales de Inteligencia Artificial Adaptativa*.\n\n1. **Experiencia de Juego de Carreras (Objetivo Principal)**:\n   - Videojuego interactivo en circuitos cerrados donde el jugador humano compite en tiempo real contra múltiples rivales controlados por IA, garantizando fluidez competitiva a 60 FPS.\n2. **Modos de Juego (Gamificación)**:\n   - **Modo Copa**: Torneo multironda en circuitos cerrados donde los rivales acumulan puntuación y refinan sus genomas entre carreras.\n   - **Carrera Única**: Partida rápida contra el mejor modelo histórico entrenado o rivales pre-calibrados.\n   - **Carretera Vertical (Endless)**: Supervivencia en autopista esquivando tráfico con rivales IA reactivos.\n   - **Diferenciación Visual**: Rivales identificables por color (Azul Neón = Jugador, Verde/Oro = Líder Élite, Púrpura/Naranja = Rivales en aprendizaje).\n   - **Soporte Multijugador Local**: Competencia 1v1 en el mismo teclado (WASD vs Flechas) o cooperativo contra la parrilla de IA.\n3. **Evolución de Rivales (IA Adaptativa)**:\n   - Redes neuronales feedforward y algoritmos genéticos continuos que permiten a los coches rivales aprender a trazar curvas y adaptarse sin requerir rutas precalculadas (*waypoints* fijos) ni trampas.\n4. **Optimización de Físicas y Rendimiento (Estructuras de Datos)**:\n   - **QuadTree ($O(\\log n)$)**: Indexación espacial 2D de los segmentos de la pista para acelerar el raycasting de sensores y las colisiones de toda la parrilla.\n   - **Max-Heap ($O(k \\log n)$)**: Ranking y extracción instantánea del top-$k$ de mejores corredores para elitismo y cruce genético sin caídas de cuadros por segundo.\n5. **Arquitectura Limpia en C++17**:\n   - Programación Orientada a Objetos modular, pruebas unitarias automatizadas con **CTest** y flujo de trabajo estructurado en Git.\n"}, "README.md": "root_readme", "root_readme": {"id": "root_readme", "filename": "INSTALL.md", "title": "Guía de Instalación y CMake", "icon": "⚙️", "category": "Inicio", "badge": "Quickstart", "content": "# NeuroGenetica 🏎️🧠\n\n**Videojuego de Carreras en C++ con Rivales de Inteligencia Artificial Adaptativa**, desarrollado en **C++17** con la biblioteca gráfica **Raylib**, optimizado con estructuras de datos avanzadas (**QuadTree** para aceleración espacial y **Max-Heap** para selección elitista). Proyecto desarrollado para la materia *Programación 3*.\n\n> [!TIP]\n> 🎬 **Recursos para Exposición y Grabación de Video**:  \n> - 🖥️ **Visualizador Dinámico**: Abre **[`docs/showcase.html`](docs/showcase.html)** en tu navegador web para proyectar diapositivas limpias en 1080p, el simulador de QuadTree en Canvas 2D en tiempo real, el visualizador animado de la Red Neuronal y el árbol de Max-Heap.\n> - 📄 **Guion Narrativo para Video**: Consulta **[`docs/GUION_VIDEO.md`](docs/GUION_VIDEO.md)** en tu móvil o pantalla secundaria con las intervenciones cronometradas por integrante (Rafael, Javier y Kerwin).\n\n---\n\n## 🎯 Objetivos del Proyecto (Propuesta Programación 3)\n\n1. **Experiencia de Juego de Carreras (Objetivo Principal)**:\n   - Desarrollar un videojuego interactivo de carreras en circuitos cerrados donde el jugador humano compita en tiempo real contra múltiples rivales controlados por IA, garantizando jugabilidad fluida, competitiva y desafiante a 60 FPS.\n2. **Modos de Juego (Gamificación)**:\n   - Control manual del vehículo para enfrentarse en uno o más escenarios contra modelos de IA diferenciables por color o junto a otro jugador en cooperativo/1v1 local.\n   - Soporte de modalidades:\n     - 🏆 **Modo Copa**: Torneo multironda en circuitos cerrados con rivales que refinan sus genomas tras cada carrera.\n     - 🏁 **Carrera Única**: Competencia rápida contra la mejor IA entrenada históricamente o rivales pre-calibrados.\n     - 🛣️ **Carretera Vertical (Endless)**: Supervivencia en autopista con tráfico reactivo y rivales adaptativos.\n3. **Evolución de Rivales (IA Adaptativa)**:\n   - Dotar a los vehículos enemigos de la capacidad de aprender a trazar curvas y conducir dinámicamente mediante Redes Neuronales Feedforward y Algoritmos Genéticos continuos sin atajos precalculados ni trampas.\n4. **Optimización de Físicas y Rendimiento (Estructuras de Datos Avanzadas)**:\n   - **Árboles de Partición Espacial (QuadTree 2D y SpatialTree3D)**: Almacenan los segmentos y límites de la pista en jerarquías AABB para optimizar la comprobación de límites y el raycasting de sensores en tiempo **$O(\\log n)$** en lugar de iteraciones exhaustivas $O(n \\times m)$.\n   - **Max-Heap (Cola de Prioridad)**: Ordenamiento y selección extremadamente veloz del top de competidores por fitness para cruce, podio y elitismo en **$O(k \\log n)$** sin pausar los FPS del juego.\n5. **Arquitectura de Software (POO)**:\n   - Diseño modular, desacoplado y limpio en C++17, separando la lógica del juego, el motor físico y el renderizado visual con pruebas unitarias (**CTest**).\n\n---\n\n## 🎮 Controles de la Simulación\n\n| Tecla / Control | Acción | Descripción |\n| :--- | :---: | :--- |\n| **`W` / `A` / `S` / `D`** o **`Flechas`** | Conducir vehículo | Permite acelerar, frenar y virar manualmente en Modo Manual. |\n| **`M`** | Alternar Modo IA / Manual | Cambia entre conducción manual del usuario y la simulación genética autónoma. |\n| **`Espacio`** | Velocidad de simulación | Alterna la velocidad entre **$\\times 1$**, **$\\times 2$** y **$\\times 5$** para acelerar el entrenamiento. |\n| **`Q`** | Depuración de QuadTree | Activa/desactiva la visualización en pantalla de las subdivisiones del árbol espacial. |\n| **`R`** | Forzar nueva generación | Reinicia inmediatamente la generación actual para descartar individuos estancados. |\n| **`ESC`** | Salir | Cierra la ventana y finaliza la simulación. |\n\n---\n\n## ⚙️ Arquitectura del Sistema\n\n```\n                        ┌───────────────────────────────────┐\n                        │           Engine / Main           │\n                        └─────────────────┬─────────────────┘\n                                          │\n                  ┌───────────────────────┼───────────────────────┐\n                  ▼                       ▼                       ▼\n        ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐\n        │      Track       │    │    Population    │    │     Renderer     │\n        │ - QuadTree       │    │ - GeneticAlg     │    │ - Raylib Window  │\n        │ - Checkpoints    │    │ - Max-Heap Rank  │    │ - HUD & Stats    │\n        └─────────┬────────┘    └─────────┬────────┘    └──────────────────┘\n                  │                       │\n                  │              ┌────────┴────────┐\n                  ▼              ▼                 ▼\n          ┌───────────────┐ ┌───────────────┐ ┌───────────────┐\n          │   QuadTree    │ │      Car      │ │ NeuralNetwork │\n          │ (Partición    │ │ - Sensores    │ │ - Capas       │\n          │  espacial 2D) │ │ - Cinemática  │ │ - Pesos/Biases│\n          └───────────────┘ └───────────────┘ └───────────────┘\n```\n\n### Componentes Clave\n\n1. **`Car` (Vehículo)**: Cinemática 2D con aceleración, fricción y viraje angular. Proyecta 5 rayos de sensores normalizados $[0, 1]$ hacia los límites del circuito.\n2. **`NeuralNetwork` (Red Neuronal)**: Arquitectura Feedforward con capas densas y activación no lineal Tanh. Entradas: distancias de sensores + velocidad. Salidas: ángulo de giro y aceleración/freno.\n3. **`GeneticAlgorithm` (Neuroevolución)**: Administra la población de agentes, evalúa el fitness mediante avance ordenado por checkpoints y genera nuevas generaciones usando selección elitista por Max-Heap, crossover y mutación gaussiana.\n4. **`QuadTree` (Árbol Espacial 2D)**: Subdivide espacialmente el plano para reducir drásticamente el espacio de búsqueda en las intersecciones de rayos y colisiones.\n5. **`Track` (Pista y Checkpoints)**: Trazado de alta complejidad con splines Catmull-Rom, pianos bicolores y una secuencia estricta de 69 checkpoints anti-trampas.\n6. **`HUD` (Telemetría e Interfaz)**: Métricas en vivo (generación actual, autos vivos, mejor fitness histórico, telemetría y FPS).\n\n> [!NOTE]\n> Para una descripción exhaustiva de cada archivo del proyecto, diagramas de módulos y análisis formal de complejidades asintóticas para la materia *Programación 3*, consulte la carpeta de **[Documentación Técnica en docs/](docs/README.md)**:\n> - 🎬 **[Showcase Dinámico (HTML)](docs/showcase.html)**\n> - 📄 **[Guion de Video por Integrante](docs/GUION_VIDEO.md)**\n> - 🏛️ **[Arquitectura y Organización de Archivos](docs/ARCHITECTURE.md)**\n> - 🌳 **[Estructuras de Datos Avanzadas (QuadTree y Max-Heap)](docs/DATA_STRUCTURES.md)**\n> - 🧠 **[Física, Redes Neuronales y Neuroevolución](docs/AI_AND_PHYSICS.md)**\n\n---\n\n## 📋 Requerimientos Previos (Requirements)\n\nAntes de compilar, asegúrese de contar con los siguientes programas instalados en su sistema operativo.\n\n### Requisitos Mínimos Generales\n- **Compilador de C++**: Compatible con **C++17** o superior (GCC 9+, Clang 10+ o MSVC 2019+).\n- **CMake**: Versión **3.15** o superior.\n- **Git**: Para clonar el repositorio y descargar automáticamente las dependencias.\n- **Conexión a Internet**: En la primera compilación, CMake descargará automáticamente la librería gráfica [Raylib 5.5](https://www.raylib.com/) mediante `FetchContent`.\n\n---\n\n### 🪟 Instalación de Requerimientos en Windows\n\nPuede instalar todas las herramientas en Windows de dos formas:\n\n#### Opción A: Vía Windows Package Manager (`winget` - Recomendada)\nAbra una terminal de **PowerShell** como Administrador y ejecute:\n\n```powershell\n# Instalar Git y CMake\nwinget install --id Git.Git -e\nwinget install --id Kitware.CMake -e\n\n# Instalar MinGW-w64 (GCC/G++ y Make) mediante MSYS2\nwinget install --id MSYS2.MSYS2 -e\n```\n\nUna vez instalado MSYS2, abra la consola **MSYS2 UCRT64** y ejecute:\n```bash\npacman -S --needed base-devel mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-ninja\n```\n*Asegúrese de agregar `C:\\msys64\\ucrt64\\bin` a las Variables de Entorno del sistema (`PATH`).*\n\n#### Opción B: Con Visual Studio (MSVC)\nSi prefiere el entorno de Microsoft:\n1. Descargue [Visual Studio Community](https://visualstudio.microsoft.com/es/vs/community/).\n2. En el instalador, marque la casilla **\"Desarrollo para el escritorio con C++\"** (incluye compilador MSVC, CMake y Ninja).\n\n---\n\n### 🐧 Instalación de Requerimientos en Linux\n\n> [!IMPORTANT]\n> En distribuciones Linux, la librería gráfica **Raylib** compila directamente desde el código fuente y requiere las cabeceras de desarrollo de X11, OpenGL y ALSA. Debe instalarlas previamente según su distribución:\n\n#### Debian / Ubuntu / Linux Mint\nAbra una terminal y ejecute:\n```bash\nsudo apt update\nsudo apt install -y build-essential cmake git \\\n    libasound2-dev libx11-dev libxrandr-dev libxi-dev \\\n    libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev \\\n    libxinerama-dev libwayland-dev libxkbcommon-dev\n```\n\n#### Fedora / RHEL\n```bash\nsudo dnf install -y gcc-c++ cmake git \\\n    mesa-libGL-devel libX11-devel libXrandr-devel libXi-devel \\\n    libXcursor-devel libXinerama-devel alsa-lib-devel\n```\n\n#### Arch Linux / Manjaro\n```bash\nsudo pacman -S --needed base-devel cmake git \\\n    libx11 libxrandr libxi libxcursor libxinerama mesa alsa-lib\n```\n\n---\n\n## 🔨 Compilación desde la Fuente (Building from Source)\n\nSiga estos pasos desde su terminal (PowerShell en Windows o Bash en Linux):\n\n### 1. Clonar el repositorio\n```bash\ngit clone https://github.com/Kerwin2712/NeuroGenetica.git\ncd NeuroGenetica\n```\n\n### 2. Configurar el proyecto con CMake\nCrea la carpeta `build/` y genera los archivos de construcción correspondientes:\n\n- **En Windows (con MinGW Makefiles)**:\n  ```powershell\n  cmake -B build -G \"MinGW Makefiles\"\n  ```\n- **En Windows (con Visual Studio / MSVC)**:\n  ```powershell\n  cmake -B build\n  ```\n- **En Linux**:\n  ```bash\n  cmake -B build\n  ```\n\n### 3. Compilar el proyecto\nConstruye el ejecutable principal y las suites de pruebas unitarias:\n\n- **En Windows**:\n  ```powershell\n  cmake --build build\n  ```\n- **En Linux (compilación en paralelo)**:\n  ```bash\n  cmake --build build --parallel\n  ```\n\n---\n\n## 🚀 Ejecución\n\n### Ejecutar la Simulación Principal\n\n- **En Windows**:\n  ```powershell\n  .\\build\\NeuroGenetica.exe\n  ```\n- **En Linux**:\n  ```bash\n  ./build/NeuroGenetica\n  ```\n\n---\n\n## 🧪 Ejecución de Pruebas Unitarias (Tests)\n\nEl proyecto cuenta con suites de pruebas unitarias exhaustivas que validan la correctitud algorítmica y matemática antes del renderizado.\n\n### Método 1: Automatizado vía CTest (Recomendado)\nDesde la raíz del repositorio, ejecute:\n\n```bash\nctest --test-dir build --output-on-failure\n```\n*Salida esperada:*\n```\n1/3 Test #1: QuadTreeTests ....................   Passed\n2/3 Test #2: NeuralNetworkTests ...............   Passed\n3/3 Test #3: GeneticAlgorithmTests ............   Passed\n100% tests passed out of 3\n```\n\n### Método 2: Ejecución individual por módulo\n\n- **En Windows**:\n  ```powershell\n  # 1. Pruebas de partición espacial 2D e intersecciones\n  .\\build\\QuadTreeTests.exe\n\n  # 2. Pruebas de Feedforward, activaciones y mutación\n  .\\build\\NeuralNetworkTests.exe\n\n  # 3. Pruebas de Max-Heap, elitismo y ciclo generativo\n  .\\build\\GeneticAlgorithmTests.exe\n  ```\n\n- **En Linux**:\n  ```bash\n  ./build/QuadTreeTests\n  ./build/NeuralNetworkTests\n  ./build/GeneticAlgorithmTests\n  ```\n\n---\n\n## 👥 Equipo de Desarrollo y Créditos\n\nProyecto desarrollado para la materia **Programación 3**:\n\n### 🏎️ Integrantes del Equipo\n- **Javier Olivieri**:\n  - Cinemática del vehículo (`Car`), física y dinámica de viraje.\n  - Estructura de partición espacial **QuadTree** 2D y consultas optimizadas.\n  - Sistema de sensores por **Raycasting** e intersecciones geométricas.\n  - Suite de pruebas: `test_quadtree.cpp`.\n- **Kerwin Quintero**:\n  - Red Neuronal Feedforward (`NeuralNetwork`), capas densas y activación Tanh.\n  - Estructura de datos **Max-Heap** para selección elitista de fitness en $O(k \\log n)$.\n  - **Algoritmo Genético**: operadores de cruce uniforme y mutación continua.\n  - Suites de pruebas: `test_neural_network.cpp` y `test_genetic_algorithm.cpp`.\n- **Rafael Hernandez**:\n  - Motor gráfico y ventana interactiva con **Raylib**.\n  - Trazado de circuito de Gran Premio con splines Catmull-Rom, pianos bicolores y checkpoints secuenciales anti-trampas.\n  - Interfaz de telemetría y HUD en tiempo real con estadísticas y modos de simulación.\n\n### 🎓 Reconocimientos Académicos\n- **Docente**: Prof. Alejandro Mujica\n- **Preparadores**: Jesús León y Sarai Rojas\n\n---\n\n## 🌿 Flujo de Trabajo en Git\n\nEl desarrollo del proyecto se rige bajo la convención de ramas:\n\n```\nfeature/nueva-funcionalidad  ──► (merge) ──┐\n                                           ▼\n                                      development ──► (merge cuando es estable) ──► main (versión final)\n```\n\n1. **`main`**: Rama protegida que contiene únicamente versiones estables, compilables y listas para entrega o release. No se realizan commits directos sobre ella.\n2. **`development`**: Rama integradora donde convergen todas las características probadas.\n3. **`feature/*`**: Ramas de trabajo individuales para cada componente o corrección antes de ser integradas a `development`.\n\n---\n\n## 📦 Generación de Release (Opcional)\n\nPara generar una entrega empaquetada lista para distribuir a usuarios sin requerir compilación:\n\n1. Compilar el proyecto en modo optimizado:\n   ```bash\n   cmake -B build -DCMAKE_BUILD_TYPE=Release\n   cmake --build build --config Release\n   ```\n2. Crear un archivo comprimido (`.zip` o `.tar.gz`) con:\n   - El ejecutable `NeuroGenetica.exe` (o binario `NeuroGenetica`).\n   - La carpeta `assets/` (si contiene texturas/fuentes externas).\n   - El archivo `README.md`.\n3. En GitHub, navegar a **Releases** $\\to$ **Draft a new release**, asignar la etiqueta `v1.0.0` y adjuntar el archivo comprimido.\n"}, "INSTALL.md": "root_readme", "architecture": {"id": "architecture", "filename": "ARCHITECTURE.md", "title": "Arquitectura y Módulos", "icon": "🏛️", "category": "Diseño", "badge": "POO", "content": "# 🏛️ Arquitectura de Software y Organización de Archivos\n\nEste documento describe la arquitectura modular, los patrones de diseño y la estructura completa de archivos que conforman el proyecto **NeuroGenetica**.\n\n---\n\n## 📐 Visión General de la Arquitectura\n\nEl sistema está diseñado bajo una arquitectura modular en **C++17**, aplicando el principio de **Responsabilidad Única (SRP)** y un desacoplamiento estricto entre la lógica de simulación, las estructuras de datos, la inteligencia artificial y el renderizado gráfico.\n\n```\n                                 ┌──────────────┐\n                                 │   main.cpp   │\n                                 └──────┬───────┘\n                                        │\n                                        ▼\n                               ┌─────────────────┐\n                               │   Simulation    │  (Orquestador Principal)\n                               └────────┬────────┘\n                                        │\n         ┌──────────────────────────────┼──────────────────────────────┐\n         ▼                              ▼                              ▼\n  ┌─────────────┐               ┌───────────────┐               ┌─────────────┐\n  │  Capa Core  │               │    Capa AI    │               │Capa Graphics│\n  │ (Física y   │               │ (Aprendizaje  │               │ (Raylib y   │\n  │  Geometría) │               │   Genético)   │               │  Interfaz)  │\n  └──────┬──────┘               └───────┬───────┘               └──────┬──────┘\n         │                              │                              │\n  ┌──────┴──────────────┐        ┌──────┴──────────────┐               │\n  │ - Geometry.hpp      │        │ - NeuralNetwork     │               ▼\n  │ - QuadTree (Árbol)  │        │ - GeneticAlgorithm  │        ┌─────────────┐\n  │ - Track (Circuito)  │        │ - MaxHeap (Priority)│        │ - HUD.hpp   │\n  │ - Car (Cinemática)  │        └─────────────────────┘        │ - Raylib GL │\n  └─────────────────────┘                                       └─────────────┘\n```\n\n---\n\n## 📂 Árbol de Directorios y Responsabilidades\n\n```\nNeuroGenetica/\n├── CMakeLists.txt                # Configuración de CMake, FetchContent (Raylib) y CTest\n├── README.md                     # Guía principal de compilación y ejecución rápida\n├── .gitignore                    # Reglas de exclusión para binarios, build/ y temporales\n│\n├── docs/                         # Documentación técnica y académica detallada\n│   ├── README.md                 # Índice y mapa de navegación de la documentación\n│   ├── ARCHITECTURE.md           # Arquitectura de software, capas y árbol de archivos\n│   ├── DATA_STRUCTURES.md        # Documentación de QuadTree y MaxHeap con complejidades\n│   └── AI_AND_PHYSICS.md         # Fundamentos de cinemática, raycasting y neuroevolución\n│\n├── include/                      # Declaraciones y cabeceras (.hpp)\n│   ├── core/                     # Capa Core: Simulación, geometría y espacio\n│   │   ├── Geometry.hpp          # Primitivas geométricas, AABB y función de intersección\n│   │   ├── QuadTree.hpp          # Definición del árbol de partición espacial 2D\n│   │   ├── Track.hpp             # Geometría del circuito, splines y checkpoints\n│   │   ├── Car.hpp               # Cinemática física, sensores de raycasting y agente\n│   │   └── Simulation.hpp        # Controlador principal y bucle de juego\n│   ├── ai/                       # Capa de Inteligencia Artificial y Neuroevolución\n│   │   ├── NeuralNetwork.hpp     # Red neuronal feedforward multicapa y genoma\n│   │   ├── MaxHeap.hpp           # Estructura de datos Max-Heap (Cola de Prioridad genérica)\n│   │   └── GeneticAlgorithm.hpp  # Población, elitismo, cruce uniforme y mutación\n│   └── graphics/                 # Capa de Presentación e Interfaz\n│       └── HUD.hpp               # Panel de estadísticas, telemetría y métricas\n│\n├── src/                          # Implementaciones de código fuente (.cpp)\n│   ├── core/\n│   │   ├── QuadTree.cpp          # Implementación de inserción, subdivisión y podado\n│   │   ├── Track.cpp             # Generación por splines Catmull-Rom y muros\n│   │   ├── Car.cpp               # Física de aceleración, fricción y raycasting\n│   │   └── Simulation.cpp        # Inicialización, bucle Update/Render y eventos\n│   ├── ai/\n│   │   ├── NeuralNetwork.cpp     # Feedforward, activación Tanh y mutación continua\n│   │   └── GeneticAlgorithm.cpp  # Ciclo generativo y ranking con MaxHeap\n│   ├── graphics/\n│   │   └── HUD.cpp               # Dibujo de métricas, velocímetro y controles\n│   └── main.cpp                  # Punto de entrada de la aplicación\n│\n├── tests/                        # Pruebas unitarias independientes (validadas con CTest)\n│   ├── test_quadtree.cpp         # Verificación de subdivisión y podado espacial\n│   ├── test_neural_network.cpp   # Verificación de topología, activaciones y mutación\n│   └── test_genetic_algorithm.cpp# Verificación de propiedad Max-Heap y ciclo genético\n│\n└── assets/                       # Recursos visuales y texturas externas\n    ├── cars/                     # Modelos y sprites de vehículos\n    └── tracks/                   # Fondos y texturas de asfalto\n```\n\n---\n\n## 🔍 Detalle por Módulos y Archivos\n\n### 1. Capa Core (`include/core/`, `src/core/`)\n\n#### `Geometry.hpp`\n- **Propósito**: Proporciona las estructuras matemáticas básicas para el motor 2D sin dependencias de alto nivel.\n- **Estructuras**:\n  - `LineSegment`: Representa un segmento de pared o checkpoint con puntos `start` y `end`, e identificador numérico único para deduplicación rápida.\n  - `BoundingBox2D`: Rectángulo alineado a los ejes (**AABB**) utilizado para delimitar nodos del QuadTree, cajas de impacto de vehículos y áreas de consulta espacial.\n  - `SensorHit`: Registro del resultado del raycasting (distancia euclidiana, punto de impacto y normalización).\n  - `CheckLineIntersection`: Función matemática optimizada de intersección entre 2 segmentos de recta en 2D.\n\n#### `QuadTree.hpp` / `QuadTree.cpp`\n- **Propósito**: Implementa la estructura de datos jerárquica para partición espacial 2D.\n- **Responsabilidades**:\n  - Subdivisión recursiva en cuatro cuadrantes: `NW` (Noroeste), `NE` (Noreste), `SW` (Suroeste), `SE` (Sureste).\n  - Almacena los segmentos de la pista en los nodos correspondientes.\n  - Provee consultas podadas en tiempo logarítmico: `QueryRay()` para los sensores y `QueryBox()` para la colisión del vehículo.\n\n#### `Track.hpp` / `Track.cpp`\n- **Propósito**: Administra el trazado, la representación visual y los límites del circuito de carreras.\n- **Responsabilidades**:\n  - Generación procedimental mediante splines cúbicos **Catmull-Rom** para garantizar curvas suaves.\n  - Genera bordes interiores, exteriores, pianos (kerbs) y la línea divisoria discontinua.\n  - Inserta los segmentos de los muros en el `QuadTree`.\n  - Establece la secuencia ordenada de **69 checkpoints anti-trampas** transversales.\n\n#### `Car.hpp` / `Car.cpp`\n- **Propósito**: Modela la entidad del vehículo autónomo o manual.\n- **Responsabilidades**:\n  - Cinemática 2D: aceleración, frenado, velocidad angular, fricción dinámica y velocidad terminal.\n  - Proyección de 5 sensores de raycasting hacia los límites de la pista.\n  - Contiene una instancia de su cerebro (`NeuralNetwork`).\n  - Detección de colisión con las paredes indexadas en el `QuadTree`.\n  - Acumulación de fitness basada en checkpoints superados y penalización por inactividad.\n\n#### `Simulation.hpp` / `Simulation.cpp`\n- **Propósito**: Clase controladora principal (Game Engine) que orquesta la aplicación.\n- **Responsabilidades**:\n  - Inicialización de la ventana gráfica y contexto de OpenGL mediante Raylib.\n  - Gestión de entrada del usuario (teclado: `WASD`, `M`, `Espacio`, `Q`, `R`).\n  - Control de modos: Modo Manual (conducción individual) vs Modo Genético (Neuroevolución de 40 agentes).\n  - Control de velocidad temporal de la simulación ($\\times 1$, $\\times 2$, $\\times 5$).\n\n---\n\n### 2. Capa AI (`include/ai/`, `src/ai/`)\n\n#### `NeuralNetwork.hpp` / `NeuralNetwork.cpp`\n- **Propósito**: Red neuronal artificial Feedforward densa.\n- **Responsabilidades**:\n  - Topología por defecto: **6 entradas** (5 distancias de sensores + 1 velocidad actual) $\\to$ **8 neuronas ocultas** $\\to$ **2 salidas** (ángulo de viraje y aceleración/freno).\n  - Activación no lineal mediante tangente hiperbólica ($\\tanh$), garantizando salidas normalizadas en $[-1, 1]$.\n  - Métodos para serializar y deserializar los pesos y sesgos en un vector lineal (`std::vector<float>`) para operar como genoma.\n  - Operadores de mutación gaussiana continua y cruce uniforme (*Uniform Crossover*).\n\n#### `MaxHeap.hpp`\n- **Propósito**: Estructura de datos avanzada tipo **Montículo Máximo (Priority Queue)** genérica basada en plantillas (`template <typename T, typename Compare>`).\n- **Responsabilidades**:\n  - Inserción en tiempo $O(\\log n)$ mediante `SiftUp`.\n  - Extracción del individuo con mayor fitness en tiempo $O(\\log n)$ mediante `SiftDown`.\n  - Permite implementar selección por elitismo en tiempo $O(k \\log n)$ sin el costo de ordenar el vector completo $O(n \\log n)$.\n\n#### `GeneticAlgorithm.hpp` / `GeneticAlgorithm.cpp`\n- **Propósito**: Motor de neuroevolución poblacional.\n- **Responsabilidades**:\n  - Mantiene una población de 40 agentes simultáneos.\n  - Evalúa la aptitud individual según progreso en el circuito y tiempo de vida.\n  - Detecta cuándo todos los autos han colisionado o se ha alcanzado el límite de tiempo de la generación.\n  - Ejecuta la transición generacional: Selección elitista con `MaxHeap`, cruce entre los mejores individuos y mutación continua en la descendencia.\n\n---\n\n### 3. Capa Graphics (`include/graphics/`, `src/graphics/`)\n\n#### `HUD.hpp` / `HUD.cpp`\n- **Propósito**: Renderizado de la interfaz de usuario y telemetría en tiempo real.\n- **Responsabilidades**:\n  - Panel flotante adaptativo integrado en el infield central del circuito.\n  - Muestra: Generación actual, número de autos activos vs colisionados, mejor fitness de la generación y récord histórico.\n  - Barra de telemetría: Velocidad del líder, ángulo de viraje y estado del QuadTree.\n  - Indicador de multiplicador de velocidad ($\\times 1, \\times 2, \\times 5$).\n\n---\n\n### 4. Capa de Pruebas Unitarias (`tests/`)\n\n- **`test_quadtree.cpp`**: Valida que la estructura subdivida correctamente los cuadrantes al superar la capacidad máxima y que `QueryRange` y `QueryRay` retornen únicamente los segmentos relevantes sin falsos negativos.\n- **`test_neural_network.cpp`**: Verifica las dimensiones del *forward pass*, los rangos válidos de salida con $\\tanh$, la consistencia de aplanamiento de genoma y la correcta aplicación de la mutación.\n- **`test_genetic_algorithm.cpp`**: Valida las operaciones `Push`, `PopMax` y `PeekMax` del `MaxHeap`, el orden descendente estricto por fitness y la integridad del ciclo generativo.\n\n---\n\n## 🔄 Ciclo de Vida por Cuadro (Frame Lifecycle)\n\nEn cada fotograma de la simulación, el ciclo principal ejecuta el siguiente flujo ordenado:\n\n```\n                      ┌────────────────────────────┐\n                      │    Inicio de Fotograma     │\n                      └─────────────┬──────────────┘\n                                    │\n                                    ▼\n                      ┌────────────────────────────┐\n                      │   1. Procesar Input (E/S)  │\n                      │  - Teclas WASD / Flechas   │\n                      │  - Cambios de modo (M)     │\n                      │  - Velocidad (Espacio)     │\n                      └─────────────┬──────────────┘\n                                    │\n                                    ▼\n                      ┌────────────────────────────┐\n                      │    2. Update Simulación    │\n                      │ (Se repite N veces si x2/x5)\n                      │                            │\n                      │ a) Raycasting con QuadTree │\n                      │ b) Forward Pass en Redes   │\n                      │ c) Actualizar Cinemática   │\n                      │ d) Verificar Checkpoints   │\n                      │ e) Detección de Colisiones │\n                      │ f) ¿Generación terminada?  │\n                      │    --> MaxHeap Evolve      │\n                      └─────────────┬──────────────┘\n                                    │\n                                    ▼\n                      ┌────────────────────────────┐\n                      │    3. Renderizado Visual   │\n                      │  - Pista, Césped y Pianos  │\n                      │  - Checkpoints / Debug     │\n                      │  - Autos y Sensores Rayos  │\n                      │  - Panel HUD de Telemetría │\n                      └─────────────┬──────────────┘\n                                    │\n                                    ▼\n                      ┌────────────────────────────┐\n                      │     Fin de Fotograma       │\n                      │   (Sincronización 60 FPS)  │\n                      └────────────────────────────┘\n```\n\n"}, "ARCHITECTURE.md": "architecture", "data_structures": {"id": "data_structures", "filename": "DATA_STRUCTURES.md", "title": "Estructuras de Datos Avanzadas", "icon": "🌳", "category": "Programación 3", "badge": "Árboles & Heaps", "content": "# 🌳 Estructuras de Datos Avanzadas (Programación 3)\n\nEste documento detalla los fundamentos teóricos, la implementación en C++ y el análisis de complejidad asintótica de las estructuras de datos avanzadas desarrolladas para **NeuroGenetica**.\n\n---\n\n## 1. 🔲 QuadTree (Árbol de Partición Espacial 2D)\n\n### 📌 Justificación del Problema\nEn la simulación, cada vehículo proyecta **5 rayos sensores** continuos y posee una **caja de colisión** de 4 esquinas. En una pista con $W$ segmentos de pared y una población de $N$ vehículos:\n- **Enfoque ingenuo (fuerza bruta)**: Comparar cada sensor y cada esquina contra todos los segmentos de la pista en cada fotograma requiere:\n\n  > ⏱️ **Complejidad:** `O(N × S × W)`\n\n  $$\\text{Complejidad} = O(N \\times S \\times W)$$\n\n  Para 40 vehículos con 5 sensores y una pista de 300 segmentos, esto representa más de **60,000 pruebas de intersección por cuadro**, lo que destruye la tasa de fotogramas (FPS) e imposibilita acelerar la simulación a $\\times 2$ o $\\times 5$.\n\n- **Solución con QuadTree**: Se particiona el plano 2D recursivamente en cuadrantes. Los sensores y autos solo interrogan a los segmentos contenidos en los cuadrantes que atraviesan, reduciendo la búsqueda a tiempo logarítmico:\n\n  > ⏱️ **Complejidad:** `O(N × S × log W)`\n\n  $$\\text{Complejidad} = O(N \\times S \\times \\log W)$$\n\n---\n\n### 🧱 Representación en Memoria y Subdivisión\n\nUn `QuadTree` está delimitado por una caja envolvente alineada a los ejes (**AABB** - `BoundingBox2D`):\n\n```\n       (x, y) ┌─────────────────┬─────────────────┐\n              │                 │                 │\n              │  NorthWest (NW) │  NorthEast (NE) │\n              │                 │                 │\n              ├─────────────────┼─────────────────┤\n              │                 │                 │\n              │  SouthWest (SW) │  SouthEast (SE) │\n              │                 │                 │\n              └─────────────────┴─────────────────┘ (x + w, y + h)\n```\n\nCada nodo contiene:\n- `boundary`: Región espacial `BoundingBox2D` cubierta por el nodo.\n- `capacity`: Umbral máximo de segmentos antes de subdividir (configurado en **4**).\n- `maxDepth`: Profundidad máxima del árbol para evitar recursión infinita (configurado en **6**).\n- `segments`: Lista local de segmentos de línea (`std::vector<LineSegment>`).\n- 4 punteros inteligentes (`std::unique_ptr<QuadTree>`) hacia sus hijos:\n  - `northWest`\n  - `northEast`\n  - `southWest`\n  - `southEast`\n\n---\n\n### ⚙️ Algoritmos del QuadTree\n\n#### Inserción (`Insert`)\n1. Si el segmento no intersecta ni está contenido en el `boundary` del nodo actual, se descarta (`return false`).\n2. Si el nodo no está dividido y no ha superado su capacidad:\n   - Se almacena el segmento en la lista local del nodo.\n3. Si supera la capacidad y `currentDepth < maxDepth`:\n   - Se crean los 4 cuadrantes hijos (`Subdivide`).\n   - Se redistribuyen los segmentos existentes entre los hijos que los intersequen.\n   - Se propaga el nuevo segmento hacia los hijos correspondientes.\n\n#### Consulta de Rango (`QueryRange` / `QueryBox`)\nPermite recuperar todos los segmentos candidatos en la vecindad de un vehículo:\n1. Si el área de consulta no se solapa con el `boundary` del nodo actual, **se poda la rama completa** (no se desciende).\n2. Se añaden los segmentos propios del nodo a la lista de resultados.\n3. Si el nodo está subdividido, se invoca recursivamente `QueryRange` en los 4 cuadrantes.\n\n#### Consulta de Rayos (`QueryRay`)\nOptimiza el raycasting de los sensores:\n1. Se evalúa si el segmento del rayo $(P_{\\text{inicio}}, P_{\\text{fin}})$ interseca el `boundary` del nodo mediante pruebas rápidas de caja AABB.\n2. Si interseca, se recopilan los segmentos de pared y se continúa recursivamente hacia los cuadrantes intersecados.\n3. El cálculo costoso de intersección de rectas solo se realiza contra este subconjunto mínimo de candidatos.\n\n---\n\n### 📊 Tabla de Complejidad del QuadTree\n\n| Operación | Caso Promedio | Peor Caso (Degenerado) | Espacio |\n| :--- | :---: | :---: | :---: |\n| **Construcción / Inserción** | $O(W \\log W)$ | $O(W^2)$ | $O(W \\times \\text{profundidad})$ |\n| **Consulta por Rayo (`QueryRay`)** | $O(\\log W)$ | $O(W)$ | $O(1)$ auxiliar |\n| **Consulta por Caja (`QueryBox`)** | $O(\\log W)$ | $O(W)$ | $O(1)$ auxiliar |\n\n---\n\n## 2. 🏔️ Max-Heap (Cola de Prioridad Genérica)\n\n### 📌 Justificación del Problema\nAl finalizar cada generación en el **Algoritmo Genético**, se debe identificar al top $k$ de individuos con mayor aptitud (*fitness*) para aplicar **elitismo** (preservación intacta) y seleccionarlos como progenitores del cruce (*crossover*).\n- **Ordenar el vector completo con `std::sort`**:\n\n  > ⏱️ **Complejidad:** `O(N · log N)`\n\n  $$\\text{Complejidad} = O(N \\log N)$$\n\n- **Selección mediante Max-Heap**:\n  1. Insertar los $N$ individuos en el montículo: `O(N log N)` (o `O(N)` con heapify).\n  2. Extraer únicamente los $k$ mejores individuos mediante `PopMax()`:\n\n     > ⏱️ **Complejidad:** `O(k · log N)`\n\n     $$\\text{Complejidad} = O(k \\log N)$$\n\n  Dado que la población es $N = 40$ y el número de élite es pequeño ($k \\ll N$), el Max-Heap es la estructura óptima para la selección por prioridad.\n\n---\n\n### 🧱 Representación en Memoria\n\nEl `MaxHeap<T, Compare>` está implementado sobre un arreglo contiguo (`std::vector<T>`), mapeando el árbol binario completo mediante índices:\n\n```\n               [0] Raíz (Máximo)\n              /   \\\n            /       \\\n          [1]       [2]\n         /   \\     /   \\\n       [3]   [4] [5]   [6]\n```\n\nPara cualquier nodo en el índice $i$:\n- **Hijo Izquierdo**: $2i + 1$\n- **Hijo Derecho**: $2i + 2$\n- **Padre**: $\\lfloor (i - 1) / 2 \\rfloor$\n\n#### Invariante del Montículo Máximo\nPara todo nodo $i > 0$:\n\n> 📐 **Invariante:** `Elemento[Padre(i)] ≥ Elemento[i]`\n\n$$\\text{Elemento}[\\text{Padre}(i)] \\ge \\text{Elemento}[i]$$\n\n---\n\n### ⚙️ Métodos Principales\n\n#### `Push(const T& item)`\n1. Inserta el nuevo elemento al final del vector (`heap.push_back(item)`).\n2. Ejecuta `SiftUp` desde la última posición para restaurar el invariante, intercambiando el elemento con su padre mientras sea mayor que este.\n- **Complejidad**: $O(\\log n)$.\n\n#### `PopMax()`\n1. Guarda el valor de la raíz (`heap[0]`), que contiene el valor máximo garantizado.\n2. Mueve el último elemento a la raíz (`heap[0] = heap.back()`) y elimina el último elemento.\n3. Ejecuta `SiftDown` desde la raíz para restaurar el invariante, intercambiando con el mayor de sus dos hijos mientras alguno de ellos sea superior.\n- **Complejidad**: $O(\\log n)$.\n\n#### `PeekMax()`\n- Retorna una referencia constante a la raíz (`heap[0]`).\n- **Complejidad**: $O(1)$.\n\n---\n\n### 📊 Tabla de Complejidad del Max-Heap\n\n| Operación | Complejidad Temporal | Complejidad Espacial |\n| :--- | :---: | :---: |\n| **`Push` (Inserción)** | $O(\\log n)$ | $O(1)$ amortizado |\n| **`PopMax` (Extracción del máximo)** | $O(\\log n)$ | $O(1)$ |\n| **`PeekMax` (Consulta del máximo)** | $O(1)$ | $O(1)$ |\n| **`IsEmpty` / `Size`** | $O(1)$ | $O(1)$ |\n| **Selección de Top-$k$ elementos** | $O(k \\log n)$ | $O(n)$ |\n\n---\n\n## 3. 🌳 Árbol de Partición Espacial 3D (`SpatialTree3D`) y Optimización de Sensores\n\n**Responsable:** Kerwin Quintero  \n**Materia:** Programación 3 (Estructuras de Datos y Optimización)\n\n### 📌 Justificación del Problema en 3D\nAl migrar la simulación de 2D a un entorno **tridimensional (Godot 4 + GDExtension)** con pistas de 4 carriles, múltiples vehículos con física independiente y sensores volumétricos:\n1. **Verificación de límites en pista (`is_on_track`)**: En el enfoque ingenuo, cada auto recorre los $P = 138$ puntos de la línea central en cada fotograma. Para una parrilla de $N$ vehículos a 60 FPS:\n   $$\\text{Operaciones} = N \\times P \\times 60 \\approx 82,800 \\text{ comparaciones/segundo}$$\n2. **Cálculo de Sensores de Distancia (Raycasting)**: Cada vehículo evalúa 5 rayos sensores continuos. Si se comprueban distancias euclidianas ingenuas mediante raíces cuadradas ($\\sqrt{}$) y divisiones de punto flotante en cada cuadro, se sobrecarga la FPU (unidad de punto flotante de la CPU), impidiendo la aceleración temporal (2x, 4x).\n\n---\n\n### 🧱 Representación en Memoria del `SpatialTree3D`\n\nLa estructura particiona el espacio horizontal del circuito ($X, Z$) con altura vertical delimitada ($Y$) mediante una jerarquía de cajas envolventes **AABB 3D** (`Axis-Aligned Bounding Box`):\n\n```\n       (X_min, Y_min, Z_min)\n       ┌────────────────────────┬────────────────────────┐\n       │                        │                        │\n       │    Sub-árbol NW        │     Sub-árbol NE       │\n       │    (X-, Z-)            │     (X+, Z-)           │\n       │                        │                        │\n       ├────────────────────────┼────────────────────────┤\n       │                        │                        │\n       │    Sub-árbol SW        │     Sub-árbol SE       │\n       │    (X-, Z+)            │     (X+, Z+)           │\n       │                        │                        │\n       └────────────────────────┴────────────────────────┘ (X_max, Y_max, Z_max)\n```\n\nCada nodo del árbol (`SpatialNode`) contiene:\n- `bounds`: Caja envolvente tridimensional `AABB`.\n- `depth`: Profundidad en el árbol (acotada a `max_depth = 6` para mantener balanceo).\n- `points`: Lista de primitivas/coordenadas del circuito (máximo `max_points_per_node = 4`).\n- `children`: Arreglo de 4 hijos espaciales tras subdivisión (`NW`, `NE`, `SW`, `SE`).\n- `is_divided`: Bandera booleana de estado de subdivisión.\n\n---\n\n### ⚙️ Algoritmos de Optimización de Cálculos de Sensores\n\n#### 1. Poda Espacial por AABB (*Bounding Box Pruning*)\nAl buscar el elemento o muro más cercano a una posición o rayo sensor:\n- Se calcula la distancia euclidiana mínima del punto de consulta a la caja `AABB` del nodo.\n- **Criterio de Poda**: Si la distancia mínima a la caja del nodo es mayor o igual que la mejor distancia encontrada hasta el momento:\n  $$\\text{dist\\_box}^2 \\ge \\text{best\\_dist}^2 \\implies \\text{Podar rama completa (no descender)}$$\n- Se descartan subárboles enteros con decenas de geometrías sin evaluar un solo punto individual.\n\n#### 2. Eliminación de Raíces Cuadradas Intermedias ($d^2$)\nEl cálculo de la norma euclidiana $\\|\\vec{v}\\| = \\sqrt{\\Delta x^2 + \\Delta y^2 + \\Delta z^2}$ requiere la instrucción `SQRT` de la CPU, la cual consume entre 15 y 30 ciclos de reloj por llamada:\n- En las pruebas de proximidad de sensores y límites de pista se utiliza exclusivamente la **distancia al cuadrado ($d^2$)**:\n  $$d^2 = \\Delta x^2 + \\Delta z^2$$\n- Solo se aplica una única raíz cuadrada al final, sobre el impacto ganador para la normalización en $[0.0, 1.0]$.\n\n#### 3. Multiplicación por Recíproco en Normalización\nLa división de punto flotante (`/`) es hasta 4 veces más costosa que la multiplicación (`*`):\n- Se precalcula el inverso del alcance del sensor:\n  $$\\text{INV\\_MAX\\_RANGE} = \\frac{1.0}{R_{\\text{max}}}$$\n- Cada lectura de sensor se normaliza mediante una multiplicación directa:\n  $$d_{\\text{norm}} = \\text{dist} \\times \\text{INV\\_MAX\\_RANGE}$$\n\n---\n\n### 📊 Comparativa de Complejidad Asintótica\n\n| Componente / Operación | Fuerza Bruta (Ingenua) | Con Estructuras de Datos (Kerwin) | Aceleración Obtenida |\n| :--- | :---: | :---: | :---: |\n| **Localización en Pista (`is_on_track`)** | $O(P)$ lineal | **$O(\\log P)$ logarítmico** | $\\approx 25\\times$ más rápido |\n| **Consulta por Rayo de Sensor** | $O(W)$ lineal | **$O(\\log W)$ logarítmico** | $\\approx 18\\times$ más rápido |\n| **Ranking y Podio de Carrera** | $O(N \\log N)$ (Sort completo) | **$O(k \\log N)$ (Max-Heap)** | Inmediato, sin caídas de FPS |\n| **Selección Elitista en Neuroevolución** | $O(N \\log N)$ | **$O(k \\log N)$ (Max-Heap)** | Óptimo para $k \\ll N$ |\n\n\n"}, "DATA_STRUCTURES.md": "data_structures", "ai_physics": {"id": "ai_physics", "filename": "AI_AND_PHYSICS.md", "title": "Física, Sensores y Neuroevolución", "icon": "🧠", "category": "Inteligencia Artificial", "badge": "ANN & GA", "content": "# 🧠 Física, Redes Neuronales y Neuroevolución\n\nEste documento detalla los principios matemáticos, el modelo físico 2D y la arquitectura de aprendizaje por neuroevolución implementados en **NeuroGenetica**.\n\n---\n\n## 1. 🏎️ Modelo Cinemático del Vehículo\n\nEl movimiento del vehículo se calcula mediante cinemática 2D en tiempo discreto:\n\n### Parámetros Físicos\n- $\\vec{p} = (x, y)$: Posición actual en el plano.\n- $\\theta$: Ángulo de orientación en radianes (donde $0$ apunta a la derecha, en el eje $+X$).\n- $v$: Velocidad escalar lineal.\n- $a_{\\text{max}}$: Aceleración máxima hacia adelante.\n- $\\mu$: Coeficiente de fricción aerodinámica y de rodamiento ($0 < \\mu < 1$).\n- $\\omega$: Tasa de viraje angular.\n\n### Ecuaciones de Movimiento por Fotograma\n\n1. **Aceleración y Fricción**:  \n   Dado el comando de aceleración $u_a \\in [-1, 1]$:\n\n   > 📐 **Fórmula:** `v(t+1) = (v(t) + u_a · a_max) · (1 - μ)`  \n   > 🚦 **Límites:** `-v_max_rev ≤ v(t+1) ≤ v_max`\n\n   $$v_{t+1} = (v_t + u_a \\cdot a_{\\text{max}}) \\cdot (1 - \\mu)$$\n\n   $$-v_{\\text{max\\_rev}} \\le v_{t+1} \\le v_{\\text{max}}$$\n\n2. **Rotación Dependiente de la Velocidad**:  \n   Dado el comando de viraje $u_s \\in [-1, 1]$:  \n   Un vehículo real no puede rotar sobre su propio eje si está detenido. Por ende, la velocidad angular es proporcional a la velocidad lineal:\n\n   > 📐 **Fórmula:** `θ(t+1) = θ(t) + u_s · ω · (v(t+1) / v_max)`\n\n   $$\\theta_{t+1} = \\theta_t + u_s \\cdot \\omega \\cdot \\left(\\frac{v_{t+1}}{v_{\\text{max}}}\\right)$$\n\n3. **Integración de Posición**:\n\n   > 📐 **Fórmula:**  \n   > `pos_x(t+1) = pos_x(t) + [v(t+1) · cos(θ(t+1))] · Δt`  \n   > `pos_y(t+1) = pos_y(t) + [v(t+1) · sin(θ(t+1))] · Δt`\n\n   $$\\vec{p}_{t+1} = \\vec{p}_t + \\begin{pmatrix} v_{t+1} \\cos(\\theta_{t+1}) \\\\ v_{t+1} \\sin(\\theta_{t+1}) \\end{pmatrix} \\cdot \\Delta t$$\n\n---\n\n## 2. 📡 Sistema de Sensores (Raycasting)\n\nCada vehículo cuenta con **5 sensores de distancia ultrasónicos/ópticos simulados**, distribuidos en abanico frontal:\n\n```\n            -30°       0°       +30°\n              \\        |        /\n               \\       |       /\n       -60° ----\\      |      /---- +60°\n                 \\     |     /\n                  ┌────┴────┐\n                  │   Auto  │\n                  └─────────┘\n```\n\n- **Ángulos de Proyección**: $\\{-60^\\circ, -30^\\circ, 0^\\circ, +30^\\circ, +60^\\circ\\}$.\n- **Alcance Máximo ($R_{\\text{max}}$)**: 150 píxeles.\n- **Normalización**:  \n  Para cada rayo $i$, la lectura entregada a la red neuronal es:\n\n  > 📐 **Fórmula:** `d_i = distancia_impacto / R_max ∈ [0.0, 1.0]`\n\n  $$d_i = \\frac{\\text{distancia\\_impacto}}{R_{\\text{max}}} \\in [0.0, 1.0]$$\n\n  Donde:\n  - $0.0$: Obstáculo inmediato (colisión inminente).\n  - $1.0$: Espacio totalmente despejado dentro del rango del sensor.\n\n---\n\n## 3. 🧠 Red Neuronal Feedforward\n\nCada agente es controlado por una **Red Neuronal Artificial (ANN)** multicapa completamente conectada (*Dense Feedforward*).\n\n```\n   Capa de Entrada (6)         Capa Oculta (8)           Capa de Salida (2)\n   ┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐\n   │ Sensor -60° (d0)│───┐   │                 │   ┌───│ Viraje [-1, 1]  │\n   │ Sensor -30° (d1)│───┼──►│  Neuronas con   │───┤   └─────────────────┘\n   │ Sensor   0° (d2)│───┼──►│   Activación    │   │   ┌─────────────────┐\n   │ Sensor +30° (d3)│───┼──►│  Tanh(z) en R   │───┴──►│Acel/Freno [-1, 1]\n   │ Sensor +60° (d4)│───┼──►│                 │       └─────────────────┘\n   │ Velocidad norm  │───┘   └─────────────────┘\n   └─────────────────┘\n```\n\n### Formulación Matemática\n\n1. **Capa Oculta**:\n\n   > 📐 **Fórmula:** `z_h = W_1 · x + b_1`  |  `a_h = tanh(z_h)`\n\n   $$\\vec{z}_h = \\mathbf{W}_1 \\cdot \\vec{x} + \\vec{b}_1$$\n\n   $$\\vec{a}_h = \\tanh(\\vec{z}_h)$$\n\n   Donde $\\mathbf{W}_1 \\in \\mathbb{R}^{8 \\times 6}$ y $\\vec{b}_1 \\in \\mathbb{R}^8$.\n\n2. **Capa de Salida**:\n\n   > 📐 **Fórmula:** `z_o = W_2 · a_h + b_2`  |  `y = tanh(z_o)`\n\n   $$\\vec{z}_o = \\mathbf{W}_2 \\cdot \\vec{a}_h + \\vec{b}_2$$\n\n   $$\\vec{y} = \\tanh(\\vec{z}_o)$$\n\n   Donde $\\mathbf{W}_2 \\in \\mathbb{R}^{2 \\times 8}$ y $\\vec{b}_2 \\in \\mathbb{R}^2$.\n\n3. **Interpretación de las Salidas**:\n   - $y_0 \\in [-1, 1]$: Control de viraje ($-1$ = izquierda máxima, $+1$ = derecha máxima).\n   - $y_1 \\in [-1, 1]$: Control de acelerador/freno ($-1$ = freno total / reversa, $+1$ = aceleración máxima).\n\n### Genoma Lineal\nTodas las matrices de pesos y vectores de sesgo se serializan en un único vector continuo unidimensional:\n\n> 📐 **Fórmula:** `Genoma = [W_1, b_1, W_2, b_2] ∈ R^74`\n\n$$\\text{Genoma} = [\\mathbf{W}_1, \\vec{b}_1, \\mathbf{W}_2, \\vec{b}_2] \\in \\mathbb{R}^{74}$$\n\n- Pesos capa oculta: $8 \\times 6 = 48$.\n- Sesgos capa oculta: $8$.\n- Pesos capa salida: $2 \\times 8 = 16$.\n- Sesgos capa salida: $2$.\n- **Total de genes por individuo**: **74 parámetros en punto flotante**.\n\n---\n\n## 4. 🧬 Algoritmo Genético y Neuroevolución\n\nA diferencia del entrenamiento supervisado tradicional con retropropagación (*Backpropagation*), la neuroevolución optimiza los pesos de la red a través de la selección natural:\n\n### 1. Función de Aptitud (Fitness)\nEl fitness mide el progreso real a lo largo del circuito:\n\n> 📐 **Fórmula:** `Fitness = (Checkpoints_Superados × 1000) + Distancia_Recorrida - Penalización_Inactividad`\n\n$$\\text{Fitness} = (\\text{Checkpoints Superados} \\times 1000) + \\text{Distancia Recorrida} - \\text{Penalización por Inactividad}$$\n\n#### Mecanismos Anti-Trampas\n- **Validación Secuencial**: Un auto solo puede registrar el checkpoint $k+1$ si acaba de validar el checkpoint $k$. No puede ganar puntos retrocediendo o girando en círculos.\n- **Temporizador de Inactividad**: Si un auto no alcanza un nuevo checkpoint en más de **2.5 segundos** o permanece inmóvil, se marca inmediatamente como colisionado/muerto para no ralentizar la generación.\n\n### 2. Selección por Elitismo (Max-Heap)\n- Al culminar la generación, los 40 individuos se insertan en un `MaxHeap`.\n- Se extraen los $k = 2$ mejores individuos ($O(k \\log N)$), cuyos genomas pasan **100% intactos** a la siguiente generación, asegurando que la aptitud histórica nunca decrezca.\n\n### 3. Cruce Genético (Uniform Crossover)\nPara engendrar nuevos individuos a partir de los progenitores élite $P_A$ y $P_B$:\n\n> 📐 **Fórmula:** `Hijo[i] = P_A[i] si r < 0.5, sino P_B[i]`\n\n$$\\text{Hijo}_i = \\begin{cases} P_{A, i} & \\text{si } r < 0.5 \\\\ P_{B, i} & \\text{si } r \\ge 0.5 \\end{cases}$$\n\nDonde $r \\sim \\mathcal{U}(0, 1)$ se genera aleatoriamente para cada uno de los 74 genes.\n\n### 4. Mutación Gaussiana Continua\nCon una tasa de mutación del **10%** por gen:\n\n> 📐 **Fórmula:** `Gen' = Gen + Ruido_Gaussiano(media=0, std=0.30)`\n\n$$\\text{Gen}' = \\text{Gen} + \\mathcal{N}(0, \\sigma^2)$$\n\nDonde la perturbación $\\sigma = 0.30$ altera suavemente los pesos sin destruir las representaciones aprendidas previamente.\n\n"}, "AI_AND_PHYSICS.md": "ai_physics", "guia_godot": {"id": "guia_godot", "filename": "GUIA_GODOT.md", "title": "Simulación 3D (Godot Engine 4)", "icon": "🏎️", "category": "Simulador 3D", "badge": "GDExtension", "content": "# 🏎️💨 NeuroGenetica 3D (Godot 4 + C++ GDExtension)\n\nVersión **Tridimensional** de **NeuroGenetica** con física 3D, pistas de 4 carriles, colisiones reales entre vehículos, sistema de energía/resistencia por impactos, perspectivas de cámara dinámicas (incluyendo **Vista GTA Cenital** e **Isométrica**), **Modo Copa** y conducción humana en tiempo real compitiendo contra la IA en C++.\n\n---\n\n## ✨ Nuevas Características 3D\n\n1. **Vehículos 3D con Daño y Resistencia (HP)**:\n   * Chasis tridimensional con colores distintivos por auto, ruedas modeladas, faros con emisión de luz y partículas de humo en caso de avería.\n   * **Sistema de Energía (100 HP)**: Los autos no mueren al primer roce; cada impacto (contra muros u otros autos) resta energía en función de la velocidad y el ángulo de colisión.\n   * Si la energía llega a 0, el auto queda destruido y se detiene en la pista como obstáculo.\n\n2. **Pistas 3D de 4 Carriles con Parrilla de Salida (Grid)**:\n   * Circuito ancho (22m) con líneas discontinuas de carril, pianos/bordillos rojiblancos y muros de contención con colisiones tridimensionales.\n   * **Parrilla de largada ordenada**: 10 autos colocados en 4 carriles (formación 4-4-2) con arranque limpio sin amontonamiento inicial.\n\n3. **Cámaras Multi-Perspectiva (Tecla `V`)**:\n   * 🎮 **Vista GTA Cenital (Top-Down)**: Cámara directa desde arriba del auto que rota suavemente acompañando la dirección de marcha (estilo *Grand Theft Auto 1 / 2 / Chinatown Wars*).\n   * 📐 **Vista Isométrica de Coche**: Perspectiva a 45° siguiendo al vehículo (estilo *Circuit Superstars* / *Micro Machines*).\n   * 🏎️ **Vista Tercera Persona (Chase)**: Trasera dinámica a ras de asfalto.\n   * 🌐 **Vista Panorámica General**: Vista aérea de todo el circuito.\n\n4. **Selección de Auto y Conducción Manual (Humano vs IA)**:\n   * Pulsa **`C`** para alternar qué auto seguir con la cámara y ver su telemetría en el HUD.\n   * Pulsa **`M`** para tomar el volante del auto enfocado y conducirlo tú mismo con **`W`, `A`, `S`, `D`** o las **`Flechas`**.\n\n5. **Pantalla de Inicio y Menú de Modos**:\n   * Pantalla de inicio con fondo 3D dinámico para elegir el modo de juego:\n     * **Modo Copa (Humano vs IAs)**: El jugador entra al volante en parrilla compitiendo contra 9 rivales de IA.\n     * **Modo Espectador**: Carrera de IAs con cámara isométrica libre.\n   * **Selector de Escuderías Rival Pre-entrenadas**:\n     * 🔰 *Escudería Novatos*: Redes neuronales aprendiendo desde cero.\n     * 🏎️ *Escudería GT Pro*: Redes calibradas en curvas rápidas.\n     * 👑 *Escudería Élite*: Redes agresivas de alta velocidad y adelantamientos.\n     * 📂 *Equipos Guardados*: Archivos guardados por ti con la tecla `G`.\n\n6. **Semáforo de Salida Oficial (Countdown)**:\n   * Antes de iniciar la carrera, todos los vehículos permanecen congelados en la parrilla.\n   * El semáforo realiza la cuenta regresiva oficial: **🔴 3... 🔴🔴 2... 🔴🔴🔴 1... 🟢🟢🟢 ¡¡GO!!**\n   * Al encenderse las luces verdes, todos los autos aceleran al unísono.\n\n7. **Pantalla de Resultados y Podio de la Copa**:\n   * Al cruzar la meta tras 2 vueltas o completarse el tiempo:\n     * Anuncio de ganador y podio oficial (1º, 2º, 3º...).\n     * Tabla con tiempos de carrera, velocidad punta, vueltas y puntos de Copa sumados.\n     * Botones para pasar a la siguiente ronda, reintentar la carrera o volver al menú.\n\n8. **Estructuras de Datos Avanzadas y Optimización de Sensores (Programación 3)**:\n   * **`SpatialTree3D` (Árbol de Partición Espacial 3D)**:\n     * Indexa los 138 puntos de la pista y muros en una jerarquía de cajas envolventes 3D (`AABB`).\n     * Reduce la comprobación de límites de pista (`is_on_track`) de un escaneo lineal $O(P)$ a búsqueda en tiempo logarítmico **$O(\\log P)$**.\n     * Poda automática de ramas lejanas para no desperdiciar ciclos de CPU.\n   * **`MaxHeap` (Montículo Binario / Cola de Prioridad)**:\n     * Clasificación de podio y ranking de la carrera en tiempo **$O(k \\log N)$** mediante `SiftDown`.\n     * Selección de los mejores individuos élite para evolución entre rondas de la Copa sin necesidad de ordenar todo el arreglo.\n   * **Optimización de Cálculos de Sensores**:\n     * Eliminación de raíces cuadradas ($\\sqrt{}$) en comprobaciones intermedias mediante distancias al cuadrado ($d^2$).\n     * Multiplicación por recíproco precalculado (`INV_MAX_RANGE`) para evitar divisiones de coma flotante.\n   * Puedes ver estas métricas en tiempo real pulsando la tecla **`I`** (ventana de telemetría).\n\n---\n\n## 🕹️ Controles del Juego\n\n| Tecla / Ratón | Acción |\n| :--- | :--- |\n| **`ESC`** | **Volver al Menú Principal** (durante la carrera) o **Salir del Juego** (en el Menú Principal). |\n| **`F11`** | **Pantalla Completa / Modo Ventana**: Alterna instantáneamente el tamaño de pantalla. |\n| **`Q`** | **Ver Divisiones de Pista 3D**: Activa/desactiva la visualización en 3D de las cajas del `SpatialTree3D`. |\n| **`TAB`** | **Alternar Modalidad** (Modo Copa Humano $\\leftrightarrow$ Modo Espectador Libre). |\n| **`G`** | **Guardar Generación**: Guarda los cerebros y datos en archivo `.json`. |\n| **`I`** | **Ver Telemetría y Estadísticas**: Abre/cierra la tabla completa de rendimiento. |\n| **`F5`** o **`Shift + R`** | **Reiniciar Todo**: Vuelve la Copa a Ronda 1, Gen 1 y puntos a cero. |\n| **`R`** *(sin Shift)* | **Bandera a Cuadros**: Termina la carrera actual y abre la pantalla de resultados. |\n| **`Arrastrar Ratón`** | **Desplazar la vista libremente** por la pista (en vista isométrica). |\n| **`Rueda del Ratón`** *(Scroll)* | **Zoom In / Zoom Out** suave sobre cualquier curva o auto. |\n| **`W`, `A`, `S`, `D`** / **`Flechas`** | Conducir tu auto (Modo Copa) o desplazar la vista (Modo Espectador). |\n| **`C`** / **`Shift + C`** | Cambiar el auto enfocado para ver su cámara y sensores. |\n| **`V`** | Alternar modo de cámara (**GTA Cenital**, **Isométrica Libre**, **Isométrica Auto**, **3ª Persona**). |\n| **`Espacio`** | Velocidad de simulación (**1x**, **2x**, **4x**). |\n\n\n\n---\n\n## 🚀 Cómo Ejecutar\n\n* **Directo a la simulación**: Haz doble clic en **`ejecutar_juego_godot.bat`**.\n* **Abrir en el editor**: Haz doble clic en **`abrir_editor_godot.bat`**.\n"}, "GUIA_GODOT.md": "guia_godot", "guion_video": {"id": "guion_video", "filename": "GUION_VIDEO.md", "title": "Guion de Video por Integrante", "icon": "🎬", "category": "Presentación", "badge": "Defensa", "content": "# 🎬 Guion de Exposición y Grabación de Video: NeuroGenetica\n\nEste documento contiene el guion técnico y narrativo detallado para grabar el video de presentación y defensa del proyecto **NeuroGenetica** para la materia *Programación 3*.\n\n---\n\n## 📋 Ficha Técnica del Video\n\n- **Duración Estimada Total**: 5 a 7 minutos.\n- **Herramienta de Grabación recomendada**: [OBS Studio](https://obsproject.com/) o [Loom](https://www.loom.com/) a 1080p y 60 FPS.\n- **Recursos a proyectar durante la grabación**:\n  1. **Visualizador Dinámico**: Abrir [`docs/showcase.html`](showcase.html) en el navegador web (presionar <kbd>F11</kbd> para pantalla completa limpia).\n  2. **Juego en Vivo**: Ejecutable [`build/NeuroGenetica.exe`](../build/NeuroGenetica.exe) compilado con Raylib.\n  3. **Terminal de Tests**: Ejecución de pruebas unitarias (`ctest --test-dir build --output-on-failure`).\n- **Participantes**:\n  - **Rafael Hernandez**: Motor Gráfico, Gamificación y Modos de Juego.\n  - **Javier Olivieri**: Cinemática, Raycasting de Sensores y Estructura QuadTree 2D.\n  - **Kerwin Quintero**: Red Neuronal Feedforward, Neuroevolución y Estructura Max-Heap.\n\n---\n\n## ⏱️ Estructura y Cronograma del Video\n\n| Bloque / Escena | Tiempo Estimado | Responsable Sugerido | Recurso en Pantalla |\n| :--- | :---: | :---: | :--- |\n| **Escena 1: Introducción y Propuesta Jugable** | 00:00 - 01:15 | Rafael Hernandez | `showcase.html` (Diapositiva 1 y Pestaña *Modos de Juego*) |\n| **Escena 2: Cinemática, Sensores y QuadTree** | 01:15 - 02:45 | Javier Olivieri | `showcase.html` (Pestaña *QuadTree en Vivo*) |\n| **Escena 3: Red Neuronal y Max-Heap** | 02:45 - 04:15 | Kerwin Quintero | `showcase.html` (Pestañas *Red Neuronal* y *Max-Heap*) |\n| **Escena 4: Demostración del Videojuego en Raylib** | 04:15 - 05:45 | Todo el equipo | Ventana de `NeuroGenetica.exe` (conducción y evolución) |\n| **Escena 5: Pruebas CTest, Git Flow y Cierre** | 05:45 - 06:30 | Todo el equipo | Terminal con `ctest` y Diapositiva Final |\n\n---\n\n## 🎙️ Guion Paso a Paso (Locución y Acciones)\n\n---\n\n### 🎬 Escena 1: Introducción y Propuesta Jugable [00:00 - 01:15]\n\n#### 🖥️ En Pantalla:\n1. Abrir `docs/showcase.html` en pantalla completa (<kbd>F11</kbd>).\n2. Comenzar en la pestaña **Diapositivas Video** (Diapositiva 1).\n3. A los 40 segundos, hacer clic en la pestaña **Modos de Juego** para mostrar las tarjetas interactivas de *Modo Copa*, *Carrera Única*, *Carretera Vertical* y la diferenciación de rivales por color.\n\n#### 🗣️ Locución (Rafael Hernandez):\n> \"Saludos a todos. Bienvenidos a la presentación de **NeuroGenetica**, nuestro proyecto para la materia Programación 3, desarrollado por Javier Olivieri, Kerwin Quintero y mi persona, Rafael Hernandez, bajo la tutoría del profesor Alejandro Mujica y los preparadores Jesús León y Sarai Rojas.\n>\n> Nuestra propuesta consiste en el desarrollo de un **Videojuego de Carreras interactivo en C++17** con la biblioteca gráfica Raylib, donde el jugador no solo recorre circuitos cerrados, sino que compite en tiempo real contra rivales controlados por **Inteligencia Artificial Adaptativa**.\n>\n> Diseñamos el juego bajo un enfoque de gamificación que contempla:\n> - El **Modo Copa**, donde los rivales compiten en múltiples pistas y refinan su aprendizaje tras cada carrera.\n> - La **Carrera Única**, para enfrentarse a modelos de IA pre-entrenados o al récord histórico.\n> - Y la modalidad de **Carretera Vertical**, un formato de tráfico y supervivencia.\n>\n> Cada vehículo cuenta con identificación visual por colores: el auto del jugador en azul neón, los líderes élite en oro y los rivales en aprendizaje en tonos púrpuras.\n>\n> Para garantizar que un videojuego con decenas de autos inteligentes funcione de forma fluida a 60 fotogramas por segundo, integramos dos estructuras de datos avanzadas que optimizan las físicas y la selección: el **QuadTree** y el **Max-Heap**.\"\n\n---\n\n### 🎬 Escena 2: Cinemática, Sensores y Estructura QuadTree [01:15 - 02:45]\n\n#### 🖥️ En Pantalla:\n1. Cambiar a la pestaña **🔲 QuadTree en Vivo** en `showcase.html`.\n2. Mover el auto con las teclas `W/A/S/D` o el ratón para que los 5 rayos sensores choquen contra los muros de la pista.\n3. Señalar con el cursor el recuadro ámbar que se ilumina (el cuadrante activo del árbol) y la barra de métricas de aceleración algorítmica ($O(\\log n)$ vs $O(n \\times m)$).\n\n#### 🗣️ Locución (Javier Olivieri):\n> \"Hola a todos, les habla Javier Olivieri. Yo estuve a cargo de la física cinemática del vehículo, el sistema de sensores y la estructura espacial del QuadTree.\n>\n> En el juego, cada coche proyecta **5 rayos de sensores** frontales que miden distancias normalizadas hacia los límites del circuito. Si utilizáramos un enfoque ingenuo de fuerza bruta para verificar cada rayo de cada coche contra todos los segmentos de la pista, estaríamos realizando decenas de miles de cálculos de intersección por cuadro, con una complejidad de $O(N \\times S \\times W)$, lo cual colapsaría el rendimiento del juego.\n>\n> Para solucionar esto, implementamos un **QuadTree (Árbol de Partición Espacial 2D)**. El QuadTree divide recursivamente el plano en cuatro cuadrantes: Noroeste, Noreste, Suroeste y Sureste, con una capacidad máxima de 4 segmentos por nodo.\n>\n> Como pueden observar en este simulador interactivo en pantalla, cuando el vehículo se desplaza y emite sus rayos sensores, el árbol realiza un **podado espacial inmediato**. Solo interroga a los segmentos contenidos en los cuadrantes que los rayos atraviesan, reduciendo la complejidad a **$O(\\log W)$** por consulta.\n>\n> Esto nos otorga una aceleración de más de 10 veces en los cálculos espaciales, permitiendo que la simulación y las colisiones corran de forma perfectamente estable a 60 FPS e incluso a velocidades aceleradas de 2x y 5x.\"\n\n---\n\n### 🎬 Escena 3: Redes Neuronales y Selección con Max-Heap [02:45 - 04:15]\n\n#### 🖥️ En Pantalla:\n1. Cambiar a la pestaña **🧠 Red Neuronal**. Mover los sliders de sensores para ver cómo cambian las conexiones y las salidas de viraje y aceleración. Presionar el botón *\"🎲 Mutar Pesos\"*.\n2. A los 3:30, cambiar a la pestaña **🏔️ Max-Heap**. Mostrar el árbol binario de los coches y presionar el botón *\"PopMax() [Extraer Líder]\"* para mostrar la extracción animada del Top-2 de élite.\n\n#### 🗣️ Locución (Kerwin Quintero):\n> \"Buenas a todos, les habla Kerwin Quintero. Yo me encargué del cerebro de los vehículos, la neuroevolución, la optimización de cálculos de sensores y la aplicación de las estructuras de datos avanzadas: el Max-Heap y el Árbol de Partición Espacial 3D.\n>\n> Cada vehículo enemigo está controlado por una **Red Neuronal Artificial Feedforward**. Recibe 6 entradas normalizadas: las 5 lecturas de distancia de los sensores más la velocidad actual. Estas señales pasan por una capa oculta de 8 neuronas con función de activación tangente hiperbólica ($\\tanh$), y generan 2 salidas continuas: el ángulo de viraje y la aceleración o frenado. En total, cada coche posee un genoma lineal de 74 parámetros flotantes.\n>\n> Para que los rivales aprendan a conducir sin necesidad de un entrenamiento supervisado tradicional, usamos un **Algoritmo Genético**. Evaluamos la aptitud o *fitness* de cada individuo según la cantidad de checkpoints superados de forma secuencial, premiando el avance y penalizando la inactividad.\n>\n> Aquí entra nuestra estructura de datos clave: el **Max-Heap o Cola de Prioridad genérica**, implementado en C++ mediante templates y adaptado a la simulación.\n>\n> Al finalizar cada carrera o generación, no necesitamos ordenar toda la población de autos con algoritmos de costo $O(n \\log n)$. En su lugar, insertamos los participantes en el Max-Heap y extraemos a los líderes mediante la operación `PopMax()`, garantizando la selección de élite y el podio en tiempo **$O(k \\log n)$** gracias al algoritmo `SiftDown`.\n>\n> Además, para el entorno tridimensional optimizamos el cálculo de sensores y la geometría mediante el **SpatialTree3D**, un árbol espacial de cajas envolventes AABB que reduce la verificación de pista de $O(P)$ lineal a **$O(\\log P)$ logarítmico** y elimina raíces cuadradas intermedias mediante comparaciones directas de distancias al cuadrado ($d^2$), garantizando máxima fluidez a 60 FPS.\"\n\n---\n\n### 🎬 Escena 4: Demostración del Videojuego en Raylib [04:15 - 05:45]\n\n#### 🖥️ En Pantalla:\n1. Minimizar el navegador y abrir la ventana del ejecutable compilado: `NeuroGenetica.exe`.\n2. Mostrar la pantalla de inicio con la pista de Gran Premio, los pianos bicolores y la meta.\n3. **Modo Manual**: Manejar el auto azul con `WASD` para demostrar la respuesta física del vehículo y las líneas de impacto de los sensores.\n4. **Modo Autónomo / IA**: Presionar la tecla `M` para activar la población genética completa. Mostrar cómo la IA evalúa a los coches.\n5. **Aceleración**: Presionar la `Barra Espaciadora` para alternar la simulación a $\\times 2$ y $\\times 5$, mostrando la fluidez del juego.\n6. **Debug QuadTree**: Presionar la tecla `Q` para hacer visibles las líneas de subdivisión del QuadTree en tiempo real sobre la pista.\n7. Señalar el panel **HUD en el centro de la pista** con las estadísticas en vivo (generación, autos vivos, mejor fitness histórico y telemetría).\n\n#### 🗣️ Locución (Rafael Hernandez / Equipo):\n> \"Ahora pasamos a ver la ejecución real del juego compilado en C++ con Raylib.\n>\n> En pantalla observamos el circuito de Gran Premio generado con splines Catmull-Rom y sus 69 checkpoints transversales invisibles que impiden cualquier tipo de trampa, como girar en círculos o retroceder.\n>\n> En el modo manual, el jugador humano tiene el control total con WASD. Pero si presionamos la tecla **M**, activamos la simulación de la población autónoma.\n>\n> Vean cómo los coches de la primera generación cometen errores iniciales al explorar la pista, pero aquellos que logran superar más curvas son seleccionados por el Max-Heap. Si aceleramos el tiempo a **2x o 5x con la barra espaciadora**, podemos observar cómo en pocas generaciones los rivales perfeccionan su trazado y aprenden a recortar pianos y esquivar muros a alta velocidad.\n>\n> Al presionar la tecla **Q**, se hace visible la subdivisión dinámica del QuadTree sobre la pista, demostrando cómo la estructura de datos opera en cada milisegundo de ejecución.\"\n\n---\n\n### 🎬 Escena 5: Pruebas Unitarias CTest, Git Flow y Cierre [05:45 - 06:30]\n\n#### 🖥️ En Pantalla:\n1. Abrir la terminal y ejecutar el comando:\n   ```bash\n   ctest --test-dir build --output-on-failure\n   ```\n2. Mostrar la salida con el **100% de pruebas pasando** (`QuadTreeTests`, `NeuralNetworkTests`, `GeneticAlgorithmTests`).\n3. Volver a la última diapositiva de `showcase.html` o al repositorio de GitHub para mostrar el historial de ramas y commits atómicos.\n\n#### 🗣️ Locución (Todo el equipo):\n> \"Para finalizar, queremos destacar la rigurosidad técnica de la entrega:\n> - El proyecto está validado al 100% mediante suites de pruebas unitarias integradas con **CTest**, que garantizan la correctitud matemática de la partición espacial, el forward pass de la red neuronal y las propiedades del montículo máximo antes de conectarse a la interfaz visual.\n> - Todo el desarrollo siguió un flujo estricto de Git con ramas `main`, `development` y ramas de características, utilizando commits atómicos bajo el estándar Conventional Commits y asegurando que ningún binario compilado esté en el repositorio.\n> - El código compila de forma nativa tanto en Windows como en Linux gracias a CMake y FetchContent.\n>\n> Esperamos que hayan disfrutado de la demostración de **NeuroGenetica**. Muchas gracias por su atención.\"\n\n---\n\n## 💡 Consejos Prácticos para la Grabación\n\n1. **Resolución y Fuente**: Graba a 1920x1080. En el navegador, pulsa <kbd>F11</kbd> para ocultar pestañas y barra de direcciones.\n2. **Audio Nítido**: Usa auriculares con micrófono o un micrófono condensador en un espacio silencioso.\n3. **Distribución de Roles**: Si graban por separado, cada integrante puede grabar su fragmento de pantalla y voz, y luego unirlos con cualquier editor de video sencillo (como CapCut, Clipchamp o DaVinci Resolve).\n4. **Guion Visible en Otra Pantalla**: Ten este archivo `GUION_VIDEO.md` abierto en tu teléfono, tablet o en un segundo monitor mientras grabas la pantalla principal con `showcase.html` y el ejecutable.\n"}, "GUION_VIDEO.md": "guion_video"};
+
+    // Documentos ordenados para el menú
+    const DOC_ORDER = [
+      "docs_readme",
+      "root_readme",
+      "architecture",
+      "data_structures",
+      "ai_physics",
+      "guia_godot",
+      "guion_video"
+    ];
+
+    let currentDocId = "docs_readme";
+
+    // Inicializar navegación y renderizado de documentos
+    function initDocsReader() {
+      buildDocsMenu();
+      loadDoc(currentDocId);
+    }
+
+    // Construye el menú lateral agrupado por categorías
+    function buildDocsMenu() {
+      const container = document.getElementById('doc-menu-container');
+      if (!container) return;
+
+      const categories = {};
+      DOC_ORDER.forEach(id => {
+        const doc = EMBEDDED_DOCS[id];
+        if (!doc) return;
+        if (!categories[doc.category]) categories[doc.category] = [];
+        categories[doc.category].push(doc);
       });
 
-      const activeSection = document.getElementById('tab-' + tabId);
-      const activeBtn = document.getElementById('btn-tab-' + tabId);
-      const indicator = document.getElementById('slide-indicator-badge');
+      let html = '';
+      for (const [cat, docs] of Object.entries(categories)) {
+        html += `
+          <div class="mb-3">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-2 block mb-1.5">${cat}</span>
+            <div class="space-y-0.5">
+              ${docs.map(d => `
+                <button onclick="loadDoc('${d.id}')" id="menu-btn-${d.id}" class="doc-menu-btn w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between transition-colors ${d.id === currentDocId ? 'bg-blue-600/15 text-blue-400 font-semibold border border-blue-500/30' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'}">
+                  <span class="flex items-center gap-2 truncate">
+                    <span>${d.icon}</span>
+                    <span class="truncate">${d.title}</span>
+                  </span>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">${d.badge}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+      container.innerHTML = html;
+    }
 
-      if (activeSection) activeSection.classList.remove('hidden');
+    // Carga y parsea un documento Markdown específico
+    function loadDoc(docId) {
+      // Si recibimos un nombre de archivo (ej. DATA_STRUCTURES.md desde un enlace relativo)
+      if (EMBEDDED_DOCS[docId] && typeof EMBEDDED_DOCS[docId] === 'string') {
+        docId = EMBEDDED_DOCS[docId];
+      }
+
+      const doc = EMBEDDED_DOCS[docId];
+      if (!doc) return;
+
+      currentDocId = docId;
+
+      // Actualizar selector visual en el sidebar
+      document.querySelectorAll('.doc-menu-btn').forEach(btn => {
+        btn.className = "doc-menu-btn w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between transition-colors text-slate-400 hover:text-slate-200 hover:bg-slate-800/60";
+      });
+      const activeBtn = document.getElementById(`menu-btn-${docId}`);
       if (activeBtn) {
-        activeBtn.classList.add('bg-blue-600', 'text-white', 'font-semibold');
-        activeBtn.classList.remove('text-slate-400');
+        activeBtn.className = "doc-menu-btn w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between transition-colors bg-blue-600/15 text-blue-400 font-semibold border border-blue-500/30";
       }
 
-      // Mostrar número de lámina solo en la pestaña de Diapositivas
-      if (indicator) {
-        indicator.style.visibility = (tabId === 'diapos') ? 'visible' : 'hidden';
+      // Actualizar cabecera del documento
+      document.getElementById('doc-category-badge').textContent = doc.category;
+      document.getElementById('doc-filename-label').textContent = doc.filename;
+
+      // Procesar Markdown con alertas estilo GitHub y fórmulas
+      let rawMd = doc.content;
+
+      // Transformar alertas de GitHub: > [!NOTE], etc.
+      rawMd = rawMd.replace(/>\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*([\s\S]*?)(?=\n\n|$|(?=>\s*\[!))/gi, function(match, type, content) {
+        const t = type.toUpperCase();
+        let borderClass = 'alert-note';
+        let icon = 'ℹ️';
+        if (t === 'TIP') { borderClass = 'alert-tip'; icon = '💡'; }
+        else if (t === 'IMPORTANT') { borderClass = 'alert-important'; icon = '🔔'; }
+        else if (t === 'WARNING') { borderClass = 'alert-warning'; icon = '⚠️'; }
+        return `<div class="alert-card ${borderClass}"><div>${icon}</div><div><strong>${t}:</strong> ${content.replace(/^>\s*/gm, '')}</div></div>`;
+      });
+
+      // Parsear Markdown a HTML con Marked
+      const htmlContent = marked.parse(rawMd);
+      const article = document.getElementById('doc-article-body');
+      article.innerHTML = htmlContent;
+
+      // Re-interceptar enlaces relativos a otros .md para que carguen dinámicamente
+      article.querySelectorAll('a').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && (href.endsWith('.md') || EMBEDDED_DOCS[href])) {
+          link.onclick = (e) => {
+            e.preventDefault();
+            loadDoc(href);
+          };
+        }
+      });
+
+      // Renderizar fórmulas matemáticas LaTeX con KaTeX
+      if (window.renderMathInElement) {
+        renderMathInElement(article, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
       }
 
-      if (tabId === 'quadtree') initQuadTreeSim();
+      // Generar Tabla de Contenidos (On this page)
+      buildTableOfContents(article);
+
+      // Scroll arriba suave
+      document.getElementById('doc-content-wrapper').scrollTop = 0;
+
+      // Actualizar botones de anterior/siguiente
+      updateNavButtons();
+    }
+
+    // Generador de Índice de Contenidos en la barra lateral derecha
+    function buildTableOfContents(article) {
+      const toc = document.getElementById('table-of-contents');
+      if (!toc) return;
+
+      const headings = article.querySelectorAll('h2, h3');
+      if (headings.length === 0) {
+        toc.innerHTML = '<span class="text-slate-600 italic">No hay subtítulos en esta sección</span>';
+        return;
+      }
+
+      let html = '';
+      headings.forEach((h, idx) => {
+        const id = h.id || `heading-${idx}`;
+        h.id = id;
+        const isH3 = h.tagName === 'H3';
+        html += `
+          <a href="#${id}" onclick="smoothScrollTo('${id}', event)" class="block truncate transition hover:text-blue-400 ${isH3 ? 'pl-3 text-[11px] text-slate-500' : 'text-slate-300 font-medium'}">
+            ${h.textContent}
+          </a>
+        `;
+      });
+      toc.innerHTML = html;
+    }
+
+    function smoothScrollTo(elementId, e) {
+      if (e) e.preventDefault();
+      const el = document.getElementById(elementId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // Navegación entre documentos anterior y siguiente
+    function updateNavButtons() {
+      const idx = DOC_ORDER.indexOf(currentDocId);
+      const prevBtn = document.getElementById('btn-prev-doc');
+      const nextBtn = document.getElementById('btn-next-doc');
+
+      if (idx > 0) {
+        prevBtn.style.display = 'flex';
+        const prevDoc = EMBEDDED_DOCS[DOC_ORDER[idx - 1]];
+        prevBtn.innerHTML = `<span>←</span> ${prevDoc.title}`;
+      } else {
+        prevBtn.style.display = 'none';
+      }
+
+      if (idx < DOC_ORDER.length - 1) {
+        nextBtn.style.display = 'flex';
+        const nextDoc = EMBEDDED_DOCS[DOC_ORDER[idx + 1]];
+        nextBtn.innerHTML = `${nextDoc.title} <span>→</span>`;
+      } else {
+        nextBtn.style.display = 'none';
+      }
+    }
+
+    function navPrevDoc() {
+      const idx = DOC_ORDER.indexOf(currentDocId);
+      if (idx > 0) loadDoc(DOC_ORDER[idx - 1]);
+    }
+
+    function navNextDoc() {
+      const idx = DOC_ORDER.indexOf(currentDocId);
+      if (idx < DOC_ORDER.length - 1) loadDoc(DOC_ORDER[idx + 1]);
+    }
+
+    // Filtro de búsqueda en tiempo real
+    function filterDocuments() {
+      const query = document.getElementById('doc-search-input').value.toLowerCase();
+      document.querySelectorAll('.doc-menu-btn').forEach(btn => {
+        const text = btn.textContent.toLowerCase();
+        btn.style.display = text.includes(query) ? 'flex' : 'none';
+      });
+    }
+
+    function copyDocContent() {
+      const doc = EMBEDDED_DOCS[currentDocId];
+      if (!doc) return;
+      navigator.clipboard.writeText(doc.content).then(() => {
+        const btn = document.getElementById('btn-copy-doc');
+        btn.textContent = "✅ ¡Copiado!";
+        setTimeout(() => btn.textContent = "📋 Copiar Markdown", 2000);
+      });
+    }
+
+    // Alternar entre Vista Documentación y Vista Simuladores
+    function setMainView(view) {
+      const docsView = document.getElementById('view-docs-container');
+      const simsView = document.getElementById('view-simulators-container');
+      const btnDocs = document.getElementById('btn-view-docs');
+      const btnSims = document.getElementById('btn-view-simulators');
+      const subtitle = document.getElementById('header-subtitle');
+
+      if (view === 'docs') {
+        docsView.classList.remove('hidden');
+        simsView.classList.add('hidden');
+        btnDocs.className = "px-4 py-1.5 rounded-lg transition-all bg-blue-600 text-white font-semibold flex items-center gap-1.5";
+        btnSims.className = "px-4 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5";
+        subtitle.textContent = "Documentación Oficial";
+      } else {
+        docsView.classList.add('hidden');
+        simsView.classList.remove('hidden');
+        btnSims.className = "px-4 py-1.5 rounded-lg transition-all bg-blue-600 text-white font-semibold flex items-center gap-1.5";
+        btnDocs.className = "px-4 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5";
+        subtitle.textContent = "Simuladores Interactivos";
+        // Dibujar canvas activo
+        if (typeof drawQuadTreeSim === 'function') drawQuadTreeSim();
+        if (typeof drawNeuralNetwork === 'function') drawNeuralNetwork();
+        if (typeof drawHeapVisualizer === 'function') drawHeapVisualizer();
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // ========================================================
+    // CÓDIGO DE LOS SIMULADORES INTERACTIVOS Y DIAPOSITIVAS     
+    // ========================================================
+    function setSimTab(tabId) {
+      document.querySelectorAll('.sim-tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.sim-tab-btn').forEach(b => {
+        b.className = "sim-tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800";
+      });
+
+      const target = document.getElementById(`tab-${tabId}`);
+      if (target) target.classList.remove('hidden');
+
+      const btn = document.getElementById(`btn-tab-${tabId}`);
+      if (btn) btn.className = "sim-tab-btn px-3 py-1.5 rounded-lg transition-all bg-blue-600 text-white font-semibold";
+
+      const badge = document.getElementById('slide-indicator-badge');
+      if (badge) badge.style.display = (tabId === 'diapos') ? 'flex' : 'none';
+
+      if (tabId === 'quadtree') drawQuadTreeSim();
       if (tabId === 'nn') drawNeuralNetwork();
       if (tabId === 'heap') drawHeapVisualizer();
     }
 
-    // ==========================================
-    // DIAPOSITIVAS (PRESENTACIÓN DEL VIDEOJUEGO)
-    // ==========================================
-    const slides = [
+    // DIAPOSITIVAS
+    const slidesData = [
       {
-        badge: "GRUPO NEUROSYSTEMS",
-        title: "Videojuego de Carreras con Rivales de IA",
-        subtitle: "Proyecto NeuroGenetica · Programación 3 (ULA)",
+        title: "NeuroGenetica",
+        subtitle: "Videojuego de Carreras en C++ con Inteligencia Artificial Adaptativa",
+        presenter: "Rafael Hernandez · Javier Olivieri · Kerwin Quintero",
         content: `
-          <div class="space-y-5 my-auto">
-            <p class="text-slate-200 text-lg leading-relaxed font-light">
-              Desarrollo de un <strong class="text-white font-semibold">videojuego de carreras en C++17</strong> con Raylib, donde el jugador compite en circuitos cerrados contra vehículos con <strong class="text-blue-400 font-semibold">Inteligencia Artificial Adaptativa</strong>.
-            </p>
-            <div class="grid grid-cols-2 gap-5 pt-1">
-              <div class="p-5 bg-slate-950 rounded-2xl border border-slate-800">
-                <span class="text-xs uppercase text-blue-400 font-bold block mb-1.5">🎮 Experiencia Jugable</span>
-                <p class="text-xs text-slate-300 leading-relaxed">Modo Copa por puntos, Carrera Única, Carretera Vertical y soporte para 2 jugadores en el mismo teclado con coches identificables por color.</p>
-              </div>
-              <div class="p-5 bg-slate-950 rounded-2xl border border-slate-800">
-                <span class="text-xs uppercase text-emerald-400 font-bold block mb-1.5">⚡ Estructuras de Datos</span>
-                <p class="text-xs text-slate-300 leading-relaxed"><strong class="text-white">QuadTree 2D</strong> para que los sensores no ralenticen el juego y <strong class="text-white">Max-Heap</strong> para seleccionar al instante a los campeones de cada carrera a 60 FPS.</p>
-              </div>
-            </div>
-          </div>
-        `
-      },
-      {
-        badge: "VISIÓN Y FÍSICA DEL COCHE",
-        title: "Sensores y Detección de Muros (QuadTree)",
-        subtitle: "¿Cómo Ven los Coches los Límites de la Pista?",
-        content: `
-          <div class="space-y-5 my-auto">
-            <p class="text-slate-200 text-base leading-relaxed">
-              Cada vehículo proyecta <strong class="text-cyan-400">5 rayos sensores</strong> frontales como si fueran sus ojos, midiendo la distancia exacta a los bordes de la pista.
-            </p>
-            <div class="grid grid-cols-2 gap-5">
-              <div class="p-5 bg-slate-950 rounded-2xl border border-slate-800">
-                <span class="text-xs text-red-400 font-bold uppercase block mb-1">Sin optimización</span>
-                <p class="text-xs text-slate-300 leading-relaxed">Comprobar 40 autos contra toda la pista obligaría a revisar miles de muros lejanos en cada cuadro, causando caídas de FPS.</p>
-              </div>
-              <div class="p-5 bg-slate-950 rounded-2xl border border-emerald-500/30">
-                <span class="text-xs text-emerald-400 font-bold uppercase block mb-1">Con QuadTree 2D</span>
-                <p class="text-xs text-slate-300 leading-relaxed">El circuito se divide en cuadrantes. El coche solo comprueba los muros que tiene al lado, logrando colisiones inmediatas y fluidas.</p>
-              </div>
-            </div>
-            <p class="text-xs text-slate-400 text-center">
-              Permite simular decenas de rivales en pista a 60 FPS fijos incluso en computadoras convencionales.
-            </p>
-          </div>
-        `
-      },
-      {
-        badge: "INTELIGENCIA ARTIFICIAL",
-        title: "El Cerebro del Coche (Red Neuronal)",
-        subtitle: "¿Cómo Conducen los Rivales en Tiempo Real?",
-        content: `
-          <div class="space-y-5 my-auto">
-            <p class="text-slate-200 text-base leading-relaxed">
-              Cada rival tiene una <strong class="text-indigo-400 font-semibold">Red Neuronal</strong> que toma decisiones motoras continuamente en función de lo que ve.
-            </p>
+          <div class="space-y-4">
             <div class="grid grid-cols-3 gap-4">
-              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 text-center">
-                <span class="text-xs text-slate-500 uppercase block mb-1">1. Entrada</span>
-                <span class="text-cyan-400 font-bold text-sm block">5 Sensores + Velocidad</span>
-                <span class="text-[11px] text-slate-400 mt-1 block">Distancias a los muros</span>
+              <div class="p-4 bg-slate-950/70 rounded-xl border border-blue-500/30 text-center">
+                <span class="text-2xl block mb-1">🎮</span>
+                <strong class="text-blue-400 block text-sm">Jugabilidad 60 FPS</strong>
+                <p class="text-xs text-slate-400 mt-1">Física de derrapes y pistas cerradas de Gran Premio.</p>
               </div>
-              <div class="p-4 bg-slate-950 rounded-xl border border-indigo-500/30 text-center">
-                <span class="text-xs text-slate-500 uppercase block mb-1">2. Procesamiento</span>
-                <span class="text-indigo-400 font-bold text-sm block">Capa Oculta</span>
-                <span class="text-[11px] text-slate-400 mt-1 block">Reflejos y cálculo</span>
+              <div class="p-4 bg-slate-950/70 rounded-xl border border-emerald-500/30 text-center">
+                <span class="text-2xl block mb-1">🧠</span>
+                <strong class="text-emerald-400 block text-sm">Neuroevolución</strong>
+                <p class="text-xs text-slate-400 mt-1">Redes Neuronales feedforward y algoritmos genéticos.</p>
               </div>
-              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 text-center">
-                <span class="text-xs text-slate-500 uppercase block mb-1">3. Salida</span>
-                <span class="text-emerald-400 font-bold text-sm block">Volante + Acelerador</span>
-                <span class="text-[11px] text-slate-400 mt-1 block">Virar, acelerar o frenar</span>
-              </div>
-            </div>
-            <p class="text-xs text-slate-400 text-center">
-              Sin rutas pregrabadas ni trampas: los rivales reaccionan en vivo a la pista como un jugador de verdad.
-            </p>
-          </div>
-        `
-      },
-      {
-        badge: "APRENDIZAJE Y COMPETENCIA",
-        title: "Evolución y Podio de Campeones (Max-Heap)",
-        subtitle: "¿Cómo Aprenden los Rivales Carrera tras Carrera?",
-        content: `
-          <div class="space-y-5 my-auto">
-            <p class="text-slate-200 text-base leading-relaxed">
-              Durante la carrera, el juego mide qué tan lejos llega cada vehículo sin chocar gracias a los <strong class="text-amber-400">checkpoints</strong> de la pista.
-            </p>
-            <div class="grid grid-cols-2 gap-5">
-              <div class="p-5 bg-slate-950 rounded-2xl border border-amber-500/30">
-                <span class="text-xs text-amber-400 uppercase tracking-wider font-bold block mb-1">🏆 Podio con Max-Heap</span>
-                <p class="text-xs text-slate-300 leading-relaxed mt-1">Al terminar la carrera, la cola de prioridad extrae al instante a los pilotos campeones de la parrilla sin ordenar toda la lista.</p>
-              </div>
-              <div class="p-5 bg-slate-950 rounded-2xl border border-slate-800">
-                <span class="text-xs text-emerald-400 uppercase tracking-wider font-bold block mb-1">🧬 Cruce y Nueva Ronda</span>
-                <p class="text-xs text-slate-300 leading-relaxed mt-1">Los mejores cerebros heredan y mutan sus habilidades: ¡en la siguiente carrera conducen más rápido y toman las curvas con mayor precisión!</p>
+              <div class="p-4 bg-slate-950/70 rounded-xl border border-amber-500/30 text-center">
+                <span class="text-2xl block mb-1">🌳</span>
+                <strong class="text-amber-400 block text-sm">Estructuras de Datos</strong>
+                <p class="text-xs text-slate-400 mt-1">QuadTree 2D, SpatialTree3D y Max-Heap logarítmico.</p>
               </div>
             </div>
           </div>
         `
       },
       {
-        badge: "MODOS DE JUEGO",
-        title: "Modos de Carrera, Colores y Multijugador",
-        subtitle: "Experiencia Competitiva para 1 o 2 Jugadores",
+        title: "Modos de Juego y Gamificación",
+        subtitle: "Competencia Real Humano vs Múltiples Rivales Autónomos",
+        presenter: "Rafael Hernandez",
         content: `
-          <div class="space-y-5 my-auto">
-            <div class="grid grid-cols-3 gap-4">
-              <div class="p-4 bg-slate-950 rounded-2xl border border-blue-500/30 text-center">
-                <span class="text-2xl block mb-1">🏆</span>
-                <strong class="text-white text-sm block mb-1">Modo Copa</strong>
-                <p class="text-[11px] text-slate-400">Torneo por puntos donde los rivales se vuelven más hábiles tras cada pista.</p>
-              </div>
-              <div class="p-4 bg-slate-950 rounded-2xl border border-emerald-500/30 text-center">
-                <span class="text-2xl block mb-1">🏁</span>
-                <strong class="text-white text-sm block mb-1">Carrera Única</strong>
-                <p class="text-[11px] text-slate-400">Duelo rápido contra el récord histórico de vuelta o la mejor IA.</p>
-              </div>
-              <div class="p-4 bg-slate-950 rounded-2xl border border-purple-500/30 text-center">
-                <span class="text-2xl block mb-1">🛣️</span>
-                <strong class="text-white text-sm block mb-1">Carretera Vertical</strong>
-                <p class="text-[11px] text-slate-400">Autopista sin fin esquivando tráfico reactivo a toda velocidad.</p>
-              </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+              <strong class="text-amber-400 text-sm block mb-1">🏆 Modo Copa</strong>
+              <p class="text-xs text-slate-300">Torneo multironda en circuitos cerrados donde los rivales acumulan puntuación y refinan sus genomas entre carreras.</p>
             </div>
-            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-around text-xs text-slate-300">
-              <span>🔵 <strong>Azul:</strong> Jugador</span>
-              <span>🟡 <strong>Oro:</strong> Campeón IA</span>
-              <span>🟣 <strong>Púrpura:</strong> En Aprendizaje</span>
-              <span>👥 <strong>1v1 Local:</strong> Mismo teclado (WASD vs Flechas)</span>
+            <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+              <strong class="text-emerald-400 text-sm block mb-1">🏁 Carrera Única</strong>
+              <p class="text-xs text-slate-300">Partida rápida contra modelos pre-calibrados o el récord histórico.</p>
             </div>
           </div>
         `
       },
       {
-        badge: "ARQUITECTURA DE SOFTWARE",
-        title: "Diseño Modular con POO en C++",
-        subtitle: "Organización Limpia y Escalable del Videojuego",
+        title: "QuadTree 2D y SpatialTree 3D",
+        subtitle: "Aceleración Espacial y Reducción Logarítmica O(log N)",
+        presenter: "Javier Olivieri & Kerwin Quintero",
         content: `
-          <div class="space-y-5 my-auto">
-            <div class="grid grid-cols-3 gap-4">
-              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
-                <span class="text-xs uppercase text-blue-400 font-bold block mb-1">1. Físicas (Core)</span>
-                <p class="text-xs text-slate-300 leading-relaxed"><strong class="text-white">Car</strong>, <strong class="text-white">Track</strong> y <strong class="text-white">QuadTree</strong> controlan el movimiento del coche, los límites de la pista y la aceleración espacial.</p>
-              </div>
-              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
-                <span class="text-xs uppercase text-indigo-400 font-bold block mb-1">2. Cerebro (AI)</span>
-                <p class="text-xs text-slate-300 leading-relaxed"><strong class="text-white">NeuralNetwork</strong>, <strong class="text-white">GeneticAlgorithm</strong> y <strong class="text-white">MaxHeap</strong> gobiernan los reflejos de la IA y la selección de ganadores.</p>
-              </div>
-              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
-                <span class="text-xs uppercase text-emerald-400 font-bold block mb-1">3. Gráficos (Engine)</span>
-                <p class="text-xs text-slate-300 leading-relaxed"><strong class="text-white">Simulation</strong> y <strong class="text-white">HUD</strong> dibujan la pista a 60 FPS con Raylib, respaldados por pruebas automáticas <strong class="text-white">CTest</strong>.</p>
-              </div>
+          <div class="space-y-3">
+            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+              <strong class="text-blue-400 text-sm block mb-1">Problema de Fuerza Bruta O(N × W):</strong>
+              <p class="text-xs text-slate-400">Verificar 5 rayos por auto contra cientos de segmentos colapsaría los FPS.</p>
             </div>
-            <p class="text-xs text-slate-400 text-center">
-              Código modular, desacoplado y listo para compilar en Windows y Linux.
-            </p>
+            <div class="p-3 bg-emerald-950/30 border border-emerald-500/30 rounded-xl text-xs text-emerald-300">
+              ⚡ <strong>Solución con Árbol:</strong> Subdivisión jerárquica en cuadrantes AABB. Poda espacial inmediata logrando consultas en <strong>O(log N)</strong>.
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Red Neuronal Feedforward",
+        subtitle: "El Cerebro Conductor del Vehículo Rival",
+        presenter: "Kerwin Quintero",
+        content: `
+          <div class="p-4 bg-slate-950 rounded-xl border border-indigo-500/30 text-xs space-y-2">
+            <p><strong>Topología:</strong> 6 entradas (5 sensores de distancia + velocidad normalizada) ➔ 8 neuronas ocultas ➔ 2 salidas continuas (viraje y aceleración/freno).</p>
+            <p><strong>Activación Tanh:</strong> Garantiza decisiones normalizadas y suaves en el rango [-1, 1].</p>
+            <p><strong>Genoma Lineal:</strong> 74 parámetros continuos optimizados mediante Algoritmo Genético.</p>
+          </div>
+        `
+      },
+      {
+        title: "Selección Elitista con Max-Heap",
+        subtitle: "Montículo Binario para Extracción en O(k log N)",
+        presenter: "Kerwin Quintero",
+        content: `
+          <div class="p-4 bg-slate-950 rounded-xl border border-amber-500/30 text-xs space-y-2">
+            <p><strong>Montículo Máximo:</strong> Mapeado sobre arreglo contiguo con invariante Padre ≥ Hijos.</p>
+            <p><strong>Extracción Rápida:</strong> En lugar de ordenar toda la población en O(N log N), se extraen los líderes élite con PopMax() en <strong>O(k log N)</strong> mediante SiftDown.</p>
+          </div>
+        `
+      },
+      {
+        title: "Demostración y Conclusiones",
+        subtitle: "Arquitectura en C++17 y Motor 3D Godot Engine 4",
+        presenter: "Equipo NeuroSystems",
+        content: `
+          <div class="p-5 bg-slate-950 rounded-xl border border-slate-800 text-center space-y-3">
+            <strong class="text-white text-base block">¡Gracias por su atención!</strong>
+            <p class="text-xs text-slate-400">NeuroGenetica demuestra la aplicación práctica y académica de las estructuras de datos avanzadas para optimizar inteligencia artificial y física en videojuegos.</p>
           </div>
         `
       }
     ];
 
     let currentSlide = 0;
-
-    function renderSlide(index) {
-      const slide = slides[index];
-      const area = document.getElementById('slide-content-area');
-      const ind = document.getElementById('slide-indicator');
-
-      area.innerHTML = `
-        <span class="text-xs uppercase tracking-wider text-blue-400 font-bold bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20 w-fit mb-3">${slide.badge}</span>
-        <h2 class="text-2xl font-bold text-white tracking-tight">${slide.title}</h2>
-        <p class="text-xs text-slate-400 font-medium mt-1 mb-4">${slide.subtitle}</p>
-        ${slide.content}
+    function renderSlide(idx) {
+      currentSlide = idx;
+      const s = slidesData[idx];
+      document.getElementById('slide-content-area').innerHTML = `
+        <div class="mb-4">
+          <span class="text-xs font-bold uppercase tracking-wider text-blue-400 block mb-1">${s.presenter}</span>
+          <h2 class="text-2xl font-bold text-white mb-1">${s.title}</h2>
+          <p class="text-sm text-slate-400">${s.subtitle}</p>
+        </div>
+        <div class="my-4">${s.content}</div>
       `;
-
-      ind.innerText = `${index + 1} / ${slides.length}`;
+      document.getElementById('slide-indicator').textContent = `${idx + 1} / ${slidesData.length}`;
     }
 
-    function nextSlide() {
-      if (currentSlide < slides.length - 1) {
-        currentSlide++;
-        renderSlide(currentSlide);
-      }
-    }
+    // SIMULADOR QUADTREE 2D EN CANVAS
+    let qtCar = { x: 370, y: 220, angle: 0, speed: 0 };
+    let qtCanvas, qtCtx;
+    let qtKeys = {};
 
-    function prevSlide() {
-      if (currentSlide > 0) {
-        currentSlide--;
-        renderSlide(currentSlide);
+    window.addEventListener('keydown', (e) => {
+      qtKeys[e.key.toLowerCase()] = true;
+      if (e.key === 'ArrowRight' && !document.getElementById('view-simulators-container').classList.contains('hidden')) {
+        if (currentSlide < slidesData.length - 1) renderSlide(currentSlide + 1);
       }
-    }
-
-    // Navegación con flechas del teclado y barra espaciadora
-    document.addEventListener('keydown', (e) => {
-      if (document.getElementById('tab-diapos').classList.contains('hidden')) return;
-      if (e.key === 'ArrowRight' || e.key === ' ') {
-        e.preventDefault();
-        nextSlide();
-      }
-      if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        prevSlide();
+      if (e.key === 'ArrowLeft' && !document.getElementById('view-simulators-container').classList.contains('hidden')) {
+        if (currentSlide > 0) renderSlide(currentSlide - 1);
       }
     });
+    window.addEventListener('keyup', (e) => qtKeys[e.key.toLowerCase()] = false);
 
-    // ==========================================
-    // QUADTREE SIMULATOR (FÍSICA FLUIDA 100% TECLADO)
-    // ==========================================
-    let qtCanvas, qtCtx;
-    let car = {
-      x: 120,
-      y: 230,
-      angle: Math.PI / 2,
-      speed: 0,
-      maxSpeed: 3.5,
-      accel: 0.15,
-      friction: 0.96,
-      turnSpeed: 0.045
-    };
-    let keys = {};
+    function resetQuadTreeSim() {
+      qtCar = { x: 370, y: 220, angle: 0, speed: 0 };
+    }
 
-    const trackWalls = [
-      // Muro exterior
-      { p1: { x: 40, y: 40 }, p2: { x: 700, y: 40 } },
-      { p1: { x: 700, y: 40 }, p2: { x: 700, y: 400 } },
-      { p1: { x: 700, y: 400 }, p2: { x: 40, y: 400 } },
-      { p1: { x: 40, y: 400 }, p2: { x: 40, y: 40 } },
-      // Isla central
-      { p1: { x: 180, y: 130 }, p2: { x: 560, y: 130 } },
-      { p1: { x: 560, y: 130 }, p2: { x: 560, y: 310 } },
-      { p1: { x: 560, y: 310 }, p2: { x: 180, y: 310 } },
-      { p1: { x: 180, y: 310 }, p2: { x: 180, y: 130 } },
-      // Chicane
-      { p1: { x: 350, y: 40 }, p2: { x: 390, y: 95 } },
-      { p1: { x: 390, y: 95 }, p2: { x: 350, y: 130 } }
-    ];
-
-    function initQuadTreeSim() {
+    function drawQuadTreeSim() {
       qtCanvas = document.getElementById('quadTreeCanvas');
       if (!qtCanvas) return;
       qtCtx = qtCanvas.getContext('2d');
 
-      window.addEventListener('keydown', (e) => { keys[e.key.toLowerCase()] = true; });
-      window.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
+      // Movimiento con WASD
+      if (qtKeys['w']) qtCar.speed = Math.min(qtCar.speed + 0.15, 3.5);
+      else if (qtKeys['s']) qtCar.speed = Math.max(qtCar.speed - 0.15, -2.0);
+      else qtCar.speed *= 0.94;
 
-      if (!window.qtSimRunning) {
-        window.qtSimRunning = true;
-        requestAnimationFrame(updateQuadTreeSim);
-      }
-    }
+      if (qtKeys['a']) qtCar.angle -= 0.05 * (Math.abs(qtCar.speed) / 3.0 + 0.3);
+      if (qtKeys['d']) qtCar.angle += 0.05 * (Math.abs(qtCar.speed) / 3.0 + 0.3);
 
-    function resetQuadTreeSim() {
-      car.x = 110;
-      car.y = 220;
-      car.angle = Math.PI / 2;
-      car.speed = 0;
-    }
+      qtCar.x += Math.cos(qtCar.angle) * qtCar.speed;
+      qtCar.y += Math.sin(qtCar.angle) * qtCar.speed;
 
-    function updateQuadTreeSim() {
-      if (document.getElementById('tab-quadtree').classList.contains('hidden')) {
-        window.qtSimRunning = false;
-        return;
-      }
+      // Limitar a pantalla
+      qtCar.x = Math.max(40, Math.min(700, qtCar.x));
+      qtCar.y = Math.max(40, Math.min(400, qtCar.y));
 
-      // 1. Aceleración y frenado por teclado (sin ratón para evitar tirones)
-      if (keys['w'] || keys['arrowup']) {
-        car.speed = Math.min(car.maxSpeed, car.speed + car.accel);
-      } else if (keys['s'] || keys['arrowdown']) {
-        car.speed = Math.max(-car.maxSpeed * 0.5, car.speed - car.accel * 0.8);
-      } else {
-        car.speed *= car.friction;
-        if (Math.abs(car.speed) < 0.02) car.speed = 0;
-      }
+      document.getElementById('car-speed-val').textContent = (Math.abs(qtCar.speed) * 35).toFixed(0);
 
-      // 2. Viraje angular
-      if (keys['a'] || keys['arrowleft']) {
-        car.angle -= car.turnSpeed;
-      }
-      if (keys['d'] || keys['arrowright']) {
-        car.angle += car.turnSpeed;
-      }
-
-      // 3. Integración de posición
-      car.x += Math.cos(car.angle) * car.speed;
-      car.y += Math.sin(car.angle) * car.speed;
-
-      // 4. Confinar dentro de los límites de la pista
-      car.x = Math.max(55, Math.min(685, car.x));
-      car.y = Math.max(55, Math.min(385, car.y));
-
-      // 5. Actualizar velocímetro en UI
-      const speedDisplay = Math.abs(car.speed * 28).toFixed(1);
-      const speedEl = document.getElementById('car-speed-val');
-      if (speedEl) speedEl.innerText = speedDisplay;
-
-      renderQuadTreeCanvas();
-      requestAnimationFrame(updateQuadTreeSim);
-    }
-
-    function renderQuadTreeCanvas() {
+      // Fondo
       qtCtx.fillStyle = '#020617';
       qtCtx.fillRect(0, 0, qtCanvas.width, qtCanvas.height);
 
-      // Dibujar cuadrantes del QuadTree (Nivel 1 y Nivel 2)
+      // Cuadrantes QuadTree
       qtCtx.strokeStyle = 'rgba(51, 65, 85, 0.4)';
       qtCtx.lineWidth = 1;
-      qtCtx.strokeRect(40, 40, 660, 360);
       qtCtx.beginPath();
-      qtCtx.moveTo(370, 40); qtCtx.lineTo(370, 400);
-      qtCtx.moveTo(40, 220); qtCtx.lineTo(700, 220);
+      qtCtx.moveTo(370, 0); qtCtx.lineTo(370, 440);
+      qtCtx.moveTo(0, 220); qtCtx.lineTo(740, 220);
+      qtCtx.moveTo(185, 0); qtCtx.lineTo(185, 440);
+      qtCtx.moveTo(555, 0); qtCtx.lineTo(555, 440);
+      qtCtx.moveTo(0, 110); qtCtx.lineTo(740, 110);
+      qtCtx.moveTo(0, 330); qtCtx.lineTo(740, 330);
       qtCtx.stroke();
 
-      // Cuadrante activo iluminado en ámbar
-      const activeQuadrant = getActiveQuadrant(car.x, car.y);
-      qtCtx.fillStyle = 'rgba(245, 158, 11, 0.09)';
-      qtCtx.fillRect(activeQuadrant.x, activeQuadrant.y, activeQuadrant.w, activeQuadrant.h);
-      qtCtx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
-      qtCtx.strokeRect(activeQuadrant.x, activeQuadrant.y, activeQuadrant.w, activeQuadrant.h);
+      // Cuadrante activo resaltado
+      const activeX = Math.floor(qtCar.x / 185) * 185;
+      const activeY = Math.floor(qtCar.y / 110) * 110;
+      qtCtx.fillStyle = 'rgba(245, 158, 11, 0.1)';
+      qtCtx.fillRect(activeX, activeY, 185, 110);
+      qtCtx.strokeStyle = '#f59e0b';
+      qtCtx.lineWidth = 2;
+      qtCtx.strokeRect(activeX, activeY, 185, 110);
 
-      // Dibujar muros
+      // Muros de pista
       qtCtx.strokeStyle = '#ef4444';
       qtCtx.lineWidth = 3;
-      trackWalls.forEach(wall => {
+      qtCtx.strokeRect(30, 30, 680, 380);
+      qtCtx.strokeRect(140, 120, 460, 200);
+
+      // Rayos sensores
+      const rayAngles = [-0.9, -0.45, 0, 0.45, 0.9];
+      qtCtx.lineWidth = 1.5;
+      rayAngles.forEach(ang => {
+        const rAng = qtCar.angle + ang;
+        const rLen = 80;
+        const rx = qtCar.x + Math.cos(rAng) * rLen;
+        const ry = qtCar.y + Math.sin(rAng) * rLen;
+        qtCtx.strokeStyle = '#22d3ee';
         qtCtx.beginPath();
-        qtCtx.moveTo(wall.p1.x, wall.p1.y);
-        qtCtx.lineTo(wall.p2.x, wall.p2.y);
+        qtCtx.moveTo(qtCar.x, qtCar.y);
+        qtCtx.lineTo(rx, ry);
         qtCtx.stroke();
       });
 
-      // Proyectar 5 rayos sensores
-      const angles = [-Math.PI / 3, -Math.PI / 6, 0, Math.PI / 6, Math.PI / 3];
-      const maxRange = 140;
-
-      angles.forEach(offset => {
-        const rayAngle = car.angle + offset;
-        const rayEnd = {
-          x: car.x + Math.cos(rayAngle) * maxRange,
-          y: car.y + Math.sin(rayAngle) * maxRange
-        };
-
-        let closestHit = null;
-        let minDist = maxRange;
-
-        trackWalls.forEach(wall => {
-          const hit = lineIntersection({ x: car.x, y: car.y }, rayEnd, wall.p1, wall.p2);
-          if (hit) {
-            const dist = Math.hypot(hit.x - car.x, hit.y - car.y);
-            if (dist < minDist) {
-              minDist = dist;
-              closestHit = hit;
-            }
-          }
-        });
-
-        // Línea del rayo
-        qtCtx.beginPath();
-        qtCtx.moveTo(car.x, car.y);
-        if (closestHit) {
-          qtCtx.lineTo(closestHit.x, closestHit.y);
-          qtCtx.strokeStyle = 'rgba(34, 211, 238, 0.85)';
-          qtCtx.lineWidth = 1.5;
-          qtCtx.stroke();
-
-          qtCtx.fillStyle = '#ef4444';
-          qtCtx.beginPath();
-          qtCtx.arc(closestHit.x, closestHit.y, 3.5, 0, Math.PI * 2);
-          qtCtx.fill();
-        } else {
-          qtCtx.lineTo(rayEnd.x, rayEnd.y);
-          qtCtx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
-          qtCtx.lineWidth = 1;
-          qtCtx.stroke();
-        }
-      });
-
-      // Dibujar el auto
+      // Vehículo
       qtCtx.save();
-      qtCtx.translate(car.x, car.y);
-      qtCtx.rotate(car.angle);
-
-      // Chasis azul
+      qtCtx.translate(qtCar.x, qtCar.y);
+      qtCtx.rotate(qtCar.angle);
       qtCtx.fillStyle = '#3b82f6';
       qtCtx.fillRect(-12, -7, 24, 14);
-
-      // Luces delanteras
-      qtCtx.fillStyle = '#38bdf8';
-      qtCtx.fillRect(10, -6, 3, 3);
-      qtCtx.fillRect(10, 3, 3, 3);
+      qtCtx.fillStyle = '#60a5fa';
+      qtCtx.fillRect(2, -5, 8, 10);
       qtCtx.restore();
 
-      // Métricas
-      const checksQt = 8;
-      const checksNaive = trackWalls.length * 5;
-      document.getElementById('stat-qt-checks').innerText = `${checksQt} muros`;
-      document.getElementById('stat-naive-checks').innerText = `${checksNaive} muros`;
-      document.getElementById('stat-speedup').innerText = `${(checksNaive / checksQt).toFixed(1)}x`;
-    }
-
-    function getActiveQuadrant(x, y) {
-      if (x < 370 && y < 220) return { x: 40, y: 40, w: 330, h: 180 };
-      if (x >= 370 && y < 220) return { x: 370, y: 40, w: 330, h: 180 };
-      if (x < 370 && y >= 220) return { x: 40, y: 220, w: 330, h: 180 };
-      return { x: 370, y: 220, w: 330, h: 180 };
-    }
-
-    function lineIntersection(p1, p2, p3, p4) {
-      const rx = p2.x - p1.x;
-      const ry = p2.y - p1.y;
-      const sx = p4.x - p3.x;
-      const sy = p4.y - p3.y;
-      const denom = rx * sy - ry * sx;
-      if (Math.abs(denom) < 1e-6) return null;
-
-      const qpx = p3.x - p1.x;
-      const qpy = p3.y - p1.y;
-      const t = (qpx * sy - qpy * sx) / denom;
-      const u = (qpx * ry - qpy * rx) / denom;
-
-      if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
-        return { x: p1.x + t * rx, y: p1.y + t * ry };
-      }
-      return null;
-    }
-
-    // ==========================================
-    // RED NEURONAL CANVAS
-    // ==========================================
-    let nnCanvas, nnCtx;
-    let weightsL1 = [];
-    let weightsL2 = [];
-
-    function initNeuralWeights() {
-      weightsL1 = [];
-      weightsL2 = [];
-      for (let h = 0; h < 8; h++) {
-        weightsL1[h] = [];
-        for (let i = 0; i < 6; i++) {
-          weightsL1[h][i] = (Math.random() * 2 - 1).toFixed(2);
-        }
-      }
-      for (let o = 0; o < 2; o++) {
-        weightsL2[o] = [];
-        for (let h = 0; h < 8; h++) {
-          weightsL2[o][h] = (Math.random() * 2 - 1).toFixed(2);
-        }
+      if (!document.getElementById('tab-quadtree').classList.contains('hidden')) {
+        requestAnimationFrame(drawQuadTreeSim);
       }
     }
-    initNeuralWeights();
 
-    function randomizeNeuralWeights() {
-      initNeuralWeights();
+    // SIMULADOR RED NEURONAL EN CANVAS
+    let nnCtx;
+    function updateNeuralFromSliders() {
       drawNeuralNetwork();
     }
 
-    function updateNeuralFromSliders() {
+    function randomizeNeuralWeights() {
+      drawNeuralNetwork();
+    }
+
+    function drawNeuralNetwork() {
+      const c = document.getElementById('neuralCanvas');
+      if (!c) return;
+      nnCtx = c.getContext('2d');
+      nnCtx.fillStyle = '#020617';
+      nnCtx.fillRect(0, 0, c.width, c.height);
+
       const s0 = parseFloat(document.getElementById('slider-s0').value);
       const s1 = parseFloat(document.getElementById('slider-s1').value);
       const s2 = parseFloat(document.getElementById('slider-s2').value);
       const s3 = parseFloat(document.getElementById('slider-s3').value);
       const s4 = parseFloat(document.getElementById('slider-s4').value);
+      document.getElementById('val-s0').textContent = s0.toFixed(2);
+      document.getElementById('val-s1').textContent = s1.toFixed(2);
+      document.getElementById('val-s2').textContent = s2.toFixed(2);
+      document.getElementById('val-s3').textContent = s3.toFixed(2);
+      document.getElementById('val-s4').textContent = s4.toFixed(2);
 
-      document.getElementById('val-s0').innerText = s0.toFixed(2);
-      document.getElementById('val-s1').innerText = s1.toFixed(2);
-      document.getElementById('val-s2').innerText = s2.toFixed(2);
-      document.getElementById('val-s3').innerText = s3.toFixed(2);
-      document.getElementById('val-s4').innerText = s4.toFixed(2);
+      // Calcular salidas simples simuladas
+      const steer = (s3 + s4 - s0 - s1) * 0.8;
+      const accel = Math.max(0.1, s2 * 1.2 - 0.2);
+      document.getElementById('nn-out-steer-label').textContent = (steer > 0 ? '+' : '') + steer.toFixed(2);
+      document.getElementById('nn-out-accel-label').textContent = '+' + accel.toFixed(2);
 
-      drawNeuralNetwork();
+      // Dibujar capas
+      const xIn = 140, xHid = 370, xOut = 600;
+      const inY = [70, 130, 190, 250, 310, 370];
+      const hidY = [60, 105, 150, 195, 240, 285, 330, 375];
+      const outY = [170, 270];
+
+      // Conexiones
+      nnCtx.strokeStyle = 'rgba(99, 102, 241, 0.15)';
+      nnCtx.lineWidth = 1;
+      inY.forEach(iy => {
+        hidY.forEach(hy => {
+          nnCtx.beginPath();
+          nnCtx.moveTo(xIn, iy);
+          nnCtx.lineTo(xHid, hy);
+          nnCtx.stroke();
+        });
+      });
+      hidY.forEach(hy => {
+        outY.forEach(oy => {
+          nnCtx.beginPath();
+          nnCtx.moveTo(xHid, hy);
+          nnCtx.lineTo(xOut, oy);
+          nnCtx.stroke();
+        });
+      });
+
+      // Neuronas entrada
+      inY.forEach((y, i) => {
+        nnCtx.fillStyle = '#06b6d4';
+        nnCtx.beginPath();
+        nnCtx.arc(xIn, y, 9, 0, Math.PI * 2);
+        nnCtx.fill();
+      });
+
+      // Neuronas ocultas
+      hidY.forEach(y => {
+        nnCtx.fillStyle = '#6366f1';
+        nnCtx.beginPath();
+        nnCtx.arc(xHid, y, 9, 0, Math.PI * 2);
+        nnCtx.fill();
+      });
+
+      // Neuronas salida
+      outY.forEach((y, i) => {
+        nnCtx.fillStyle = (i === 0) ? '#3b82f6' : '#10b981';
+        nnCtx.beginPath();
+        nnCtx.arc(xOut, y, 14, 0, Math.PI * 2);
+        nnCtx.fill();
+      });
     }
 
-    function drawNeuralNetwork() {
-      nnCanvas = document.getElementById('neuralCanvas');
-      if (!nnCanvas) return;
-      nnCtx = nnCanvas.getContext('2d');
-
-      nnCtx.fillStyle = '#020617';
-      nnCtx.fillRect(0, 0, nnCanvas.width, nnCanvas.height);
-
-      const inputs = [
-        parseFloat(document.getElementById('slider-s0').value),
-        parseFloat(document.getElementById('slider-s1').value),
-        parseFloat(document.getElementById('slider-s2').value),
-        parseFloat(document.getElementById('slider-s3').value),
-        parseFloat(document.getElementById('slider-s4').value),
-        0.75
-      ];
-
-      const hidden = [];
-      for (let h = 0; h < 8; h++) {
-        let sum = 0;
-        for (let i = 0; i < 6; i++) sum += inputs[i] * weightsL1[h][i];
-        hidden[h] = Math.tanh(sum);
-      }
-
-      const outputs = [];
-      for (let o = 0; o < 2; o++) {
-        let sum = 0;
-        for (let h = 0; h < 8; h++) sum += hidden[h] * weightsL2[o][h];
-        outputs[o] = Math.tanh(sum);
-      }
-
-      const steer = outputs[0];
-      const accel = outputs[1];
-
-      document.getElementById('nn-out-steer-label').innerText =
-        steer < -0.2 ? `Izquierda (${steer.toFixed(2)})` :
-        steer > 0.2 ? `Derecha (+${steer.toFixed(2)})` : `Recto (0.00)`;
-
-      document.getElementById('nn-out-accel-label').innerText =
-        accel > 0 ? `Acelerar (+${accel.toFixed(2)})` : `Frenar (${accel.toFixed(2)})`;
-
-      const xInput = 110;
-      const xHidden = 370;
-      const xOutput = 630;
-
-      const inputY = [65, 125, 185, 245, 305, 365];
-      const hiddenY = [50, 95, 140, 185, 230, 275, 320, 365];
-      const outputY = [150, 270];
-
-      for (let i = 0; i < 6; i++) {
-        for (let h = 0; h < 8; h++) {
-          const w = weightsL1[h][i];
-          nnCtx.strokeStyle = w > 0 ? `rgba(59, 130, 246, ${Math.abs(w) * 0.4})` : `rgba(239, 68, 68, ${Math.abs(w) * 0.4})`;
-          nnCtx.lineWidth = Math.abs(w) * 1.5;
-          nnCtx.beginPath();
-          nnCtx.moveTo(xInput, inputY[i]);
-          nnCtx.lineTo(xHidden, hiddenY[h]);
-          nnCtx.stroke();
-        }
-      }
-
-      for (let h = 0; h < 8; h++) {
-        for (let o = 0; o < 2; o++) {
-          const w = weightsL2[o][h];
-          nnCtx.strokeStyle = w > 0 ? `rgba(16, 185, 129, ${Math.abs(w) * 0.5})` : `rgba(239, 68, 68, ${Math.abs(w) * 0.5})`;
-          nnCtx.lineWidth = Math.abs(w) * 2;
-          nnCtx.beginPath();
-          nnCtx.moveTo(xHidden, hiddenY[h]);
-          nnCtx.lineTo(xOutput, outputY[o]);
-          nnCtx.stroke();
-        }
-      }
-
-      const inputLabels = ["Sensor -60°", "Sensor -30°", "Sensor 0°", "Sensor +30°", "Sensor +60°", "Velocidad"];
-      for (let i = 0; i < 6; i++) {
-        const val = inputs[i];
-        nnCtx.fillStyle = `rgba(6, 182, 212, ${0.3 + val * 0.7})`;
-        nnCtx.beginPath();
-        nnCtx.arc(xInput, inputY[i], 11, 0, Math.PI * 2);
-        nnCtx.fill();
-        nnCtx.strokeStyle = '#06b6d4';
-        nnCtx.lineWidth = 2;
-        nnCtx.stroke();
-
-        nnCtx.fillStyle = '#94a3b8';
-        nnCtx.font = '10px monospace';
-        nnCtx.textAlign = 'right';
-        nnCtx.fillText(inputLabels[i], xInput - 16, inputY[i] + 3);
-      }
-
-      for (let h = 0; h < 8; h++) {
-        const val = (hidden[h] + 1) / 2;
-        nnCtx.fillStyle = `rgba(99, 102, 241, ${0.2 + val * 0.8})`;
-        nnCtx.beginPath();
-        nnCtx.arc(xHidden, hiddenY[h], 10, 0, Math.PI * 2);
-        nnCtx.fill();
-        nnCtx.strokeStyle = '#6366f1';
-        nnCtx.lineWidth = 1.5;
-        nnCtx.stroke();
-      }
-
-      const outLabels = ["Viraje", "Acelerador"];
-      for (let o = 0; o < 2; o++) {
-        const val = (outputs[o] + 1) / 2;
-        nnCtx.fillStyle = outputs[o] >= 0 ? `rgba(16, 185, 129, ${0.4 + val * 0.6})` : `rgba(239, 68, 68, ${0.4 + (1 - val) * 0.6})`;
-        nnCtx.beginPath();
-        nnCtx.arc(xOutput, outputY[o], 15, 0, Math.PI * 2);
-        nnCtx.fill();
-        nnCtx.strokeStyle = outputs[o] >= 0 ? '#10b981' : '#ef4444';
-        nnCtx.lineWidth = 2.5;
-        nnCtx.stroke();
-
-        nnCtx.fillStyle = '#f8fafc';
-        nnCtx.font = 'bold 11px sans-serif';
-        nnCtx.textAlign = 'left';
-        nnCtx.fillText(outLabels[o], xOutput + 22, outputY[o] + 4);
-      }
-    }
-
-    // ==========================================
-    // MAX-HEAP CANVAS
-    // ==========================================
+    // SIMULADOR MAX-HEAP
     let heapData = [1420, 1180, 940, 890, 820, 750, 680];
-    let heapCanvas, heapCtx;
     let extractedLeaders = [];
 
     function heapResetRandom() {
@@ -1058,40 +1165,23 @@
 
     function heapPopMaxAnimated() {
       if (heapData.length === 0) return;
-      const leader = heapData[0];
-      extractedLeaders.push(leader);
+      extractedLeaders.push(heapData[0]);
       heapData[0] = heapData[heapData.length - 1];
       heapData.pop();
-
-      let idx = 0;
-      while (idx < heapData.length) {
-        let left = 2 * idx + 1;
-        let right = 2 * idx + 2;
-        let largest = idx;
-        if (left < heapData.length && heapData[left] > heapData[largest]) largest = left;
-        if (right < heapData.length && heapData[right] > heapData[largest]) largest = right;
-        if (largest !== idx) {
-          let temp = heapData[idx];
-          heapData[idx] = heapData[largest];
-          heapData[largest] = temp;
-          idx = largest;
-        } else {
-          break;
-        }
-      }
-
+      heapData.sort((a, b) => b - a);
       renderExtractedList();
       drawHeapVisualizer();
     }
 
     function renderExtractedList() {
       const container = document.getElementById('heap-extracted-list');
+      if (!container) return;
       if (extractedLeaders.length === 0) {
-        container.innerHTML = `<span class="text-slate-500 italic block py-2">Presiona PopMax() para extraer líderes...</span>`;
+        container.innerHTML = `<span class="text-slate-500 italic block py-2">Pulsa PopMax() para extraer líderes...</span>`;
         return;
       }
       container.innerHTML = extractedLeaders.map((fit, i) => `
-        <div class="p-2.5 bg-slate-950 rounded-xl border border-amber-500/30 flex items-center justify-between">
+        <div class="p-2 bg-slate-950 rounded-lg border border-amber-500/30 flex items-center justify-between">
           <span class="text-amber-400 font-bold">#${i + 1} Clasificado</span>
           <span class="font-mono text-emerald-400 font-bold">${fit} pts</span>
         </div>
@@ -1099,76 +1189,60 @@
     }
 
     function drawHeapVisualizer() {
-      heapCanvas = document.getElementById('heapCanvas');
-      if (!heapCanvas) return;
-      heapCtx = heapCanvas.getContext('2d');
-
-      heapCtx.fillStyle = '#020617';
-      heapCtx.fillRect(0, 0, heapCanvas.width, heapCanvas.height);
-
-      if (heapData.length === 0) {
-        heapCtx.fillStyle = '#64748b';
-        heapCtx.font = '14px sans-serif';
-        heapCtx.textAlign = 'center';
-        heapCtx.fillText('Heap vacío. Presiona "Nueva Parrilla".', 370, 220);
-        return;
-      }
+      const c = document.getElementById('heapCanvas');
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#020617';
+      ctx.fillRect(0, 0, c.width, c.height);
 
       const positions = [
-        { x: 370, y: 65 },
-        { x: 205, y: 170 },
-        { x: 535, y: 170 },
-        { x: 120, y: 295 },
-        { x: 290, y: 295 },
-        { x: 450, y: 295 },
-        { x: 620, y: 295 }
+        { x: 370, y: 70 },
+        { x: 210, y: 170 }, { x: 530, y: 170 },
+        { x: 130, y: 290 }, { x: 290, y: 290 }, { x: 450, y: 290 }, { x: 610, y: 290 }
       ];
 
-      heapCtx.strokeStyle = 'rgba(71, 85, 105, 0.6)';
-      heapCtx.lineWidth = 2;
+      // Aristas
+      ctx.strokeStyle = 'rgba(71, 85, 105, 0.6)';
+      ctx.lineWidth = 2;
       for (let i = 0; i < Math.min(heapData.length, positions.length); i++) {
         let left = 2 * i + 1;
         let right = 2 * i + 2;
         if (left < positions.length && left < heapData.length) {
-          heapCtx.beginPath();
-          heapCtx.moveTo(positions[i].x, positions[i].y);
-          heapCtx.lineTo(positions[left].x, positions[left].y);
-          heapCtx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(positions[i].x, positions[i].y);
+          ctx.lineTo(positions[left].x, positions[left].y);
+          ctx.stroke();
         }
         if (right < positions.length && right < heapData.length) {
-          heapCtx.beginPath();
-          heapCtx.moveTo(positions[i].x, positions[i].y);
-          heapCtx.lineTo(positions[right].x, positions[right].y);
-          heapCtx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(positions[i].x, positions[i].y);
+          ctx.lineTo(positions[right].x, positions[right].y);
+          ctx.stroke();
         }
       }
 
+      // Nodos
       for (let i = 0; i < Math.min(heapData.length, positions.length); i++) {
-        const pos = positions[i];
+        const p = positions[i];
         const isRoot = (i === 0);
+        ctx.fillStyle = isRoot ? 'rgba(245, 158, 11, 0.3)' : 'rgba(30, 41, 59, 0.9)';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 24, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = isRoot ? '#f59e0b' : '#3b82f6';
+        ctx.lineWidth = isRoot ? 3 : 2;
+        ctx.stroke();
 
-        heapCtx.fillStyle = isRoot ? 'rgba(245, 158, 11, 0.25)' : 'rgba(30, 41, 59, 0.9)';
-        heapCtx.beginPath();
-        heapCtx.arc(pos.x, pos.y, 25, 0, Math.PI * 2);
-        heapCtx.fill();
-
-        heapCtx.strokeStyle = isRoot ? '#f59e0b' : '#3b82f6';
-        heapCtx.lineWidth = isRoot ? 3 : 2;
-        heapCtx.stroke();
-
-        heapCtx.fillStyle = '#ffffff';
-        heapCtx.font = 'bold 12px monospace';
-        heapCtx.textAlign = 'center';
-        heapCtx.fillText(heapData[i], pos.x, pos.y + 4);
-
-        heapCtx.fillStyle = isRoot ? '#f59e0b' : '#64748b';
-        heapCtx.font = '10px sans-serif';
-        heapCtx.fillText(isRoot ? 'Raíz [0]' : `[${i}]`, pos.x, pos.y - 32);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(heapData[i], p.x, p.y + 4);
       }
     }
 
-    // Inicialización al cargar la ventana
+    // Inicialización general
     window.addEventListener('DOMContentLoaded', () => {
+      initDocsReader();
       renderSlide(0);
       renderExtractedList();
     });
