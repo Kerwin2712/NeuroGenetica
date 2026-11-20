@@ -252,25 +252,60 @@ ctest --test-dir build --output-on-failure
 
 ---
 
-## 👥 Equipo de Desarrollo y Créditos
+## 👥 Equipo de Desarrollo y Estado del Proyecto
 
 Proyecto desarrollado para la materia **Programación 3**:
 
-### 🏎️ Integrantes del Equipo
+### 🏎️ Integrantes y Aportes Realizados (Según Commits)
+
 - **Javier Olivieri**:
-  - Cinemática del vehículo (`Car`), física y dinámica de viraje.
-  - Estructura de partición espacial **QuadTree** 2D y consultas optimizadas.
-  - Sistema de sensores por **Raycasting** e intersecciones geométricas.
-  - Suite de pruebas: `test_quadtree.cpp`.
+  - Implementación del sistema de cámara dinámica vehicular en Raylib (`feature/camara`).
+  - Posicionamiento ergonómico del HUD en modo de conducción manual.
+  - Calibración de la física cinemática de viraje y sistema de colisiones 2D.
+  - Pruebas unitarias de partición espacial: `test_quadtree.cpp`.
+
 - **Kerwin Quintero**:
-  - Red Neuronal Feedforward (`NeuralNetwork`), capas densas y activación Tanh.
-  - Estructura de datos **Max-Heap** para selección elitista de fitness en $O(k \log n)$.
-  - **Algoritmo Genético**: operadores de cruce uniforme y mutación continua.
-  - Suites de pruebas: `test_neural_network.cpp` y `test_genetic_algorithm.cpp`.
+  - Implementación de la Red Neuronal Feedforward (`NeuralNetwork`), capas densas y activación $\tanh$.
+  - Estructura de datos avanzada **Max-Heap** (Cola de Prioridad) en C++ y GDScript para ranking y selección de élite en tiempo $O(k \log n)$.
+  - Motor de neuroevolución continua con cruce uniforme y mutación gaussiana.
+  - Integración del motor 3D en **Godot 4** mediante librería **GDExtension C++** (`GodotBrain`).
+  - Estructura de datos avanzada **`SpatialTree3D`** (árbol espacial AABB 3D) con consultas logarítmicas $O(\log P)$ y visualización de cuadrantes (`Tecla Q`).
+  - Optimización matemática de sensores: distancias al cuadrado ($d^2$), eliminación de raíces cuadradas intermedias y multiplicación por recíproco.
+  - Lógica del juego 3D: menú de inicio, semáforo de largada countdown, podio de Copa, escuderías rivales y telemetría en tiempo real.
+  - Desarrollo del portal web interactivo oficial de documentación técnica y corrección integral de especificaciones Markdown.
+
 - **Rafael Hernandez**:
-  - Motor gráfico y ventana interactiva con **Raylib**.
-  - Trazado de circuito de Gran Premio con splines Catmull-Rom, pianos bicolores y checkpoints secuenciales anti-trampas.
-  - Interfaz de telemetría y HUD en tiempo real con estadísticas y modos de simulación.
+  - Diseño conceptual de la experiencia de carreras, gamificación y propuesta de modos competitivos (Modo Copa, Carrera Única, Carretera Vertical).
+  - Trazado de circuitos de Gran Premio con splines cúbicos Catmull-Rom, pianos bicolores y secuencia estricta de 69 checkpoints anti-trampas.
+  - Interfaz de telemetría y HUD central en el infield para monitoreo a 60 FPS.
+  - Estructuración del guion y cronograma de defensa técnica del proyecto.
+
+---
+
+### 📋 Tareas para Terminar Esta Semana
+
+1. 🎬 **Grabación y Montaje del Video de Defensa (5 a 7 min)**:
+   - Seguir las intervenciones cronometradas por integrante en [`docs/GUION_VIDEO.md`](docs/GUION_VIDEO.md).
+   - Capturar demostraciones en vivo de la simulación 2D en Raylib, la simulación 3D en Godot y la terminal de CTest.
+2. 🧪 **Validación Final de Pruebas Unitarias**:
+   - Comprobar que el 100% de las suites de prueba (`QuadTreeTests`, `NeuralNetworkTests`, `GeneticAlgorithmTests`) pasen con éxito con CTest.
+3. 🏁 **Sincronización y Cierre de Ramas**:
+   - Fusionar la rama de trabajo `feature/optimizacion-sensores-estructuras-3d` en `development` y finalmente consolidar la versión final en `main`.
+
+---
+
+### 💡 Ideas Adicionales y Mejoras Futuras (Opcionales)
+
+- 🔊 **Efectos de Audio y Sonido del Motor**:
+  - Incorporar efectos de sonido reactivos a las RPM del motor, derrapes en curvas y pitidos del semáforo de salida.
+- 💾 **Exportación / Importación de Cerebros en JSON**:
+  - Permitir a los jugadores guardar y cargar archivos de cerebros entrenados para compartir modelos de IA entre compañeros.
+- 📈 **Gráfico de Evolución de Fitness en Pantalla**:
+  - Dibujar una gráfica en tiempo real que muestre la curva de aprendizaje de las mejores IAs a través de las generaciones.
+- 🌧️ **Condiciones Climáticas Dinámicas (Lluvia y Asfalto Mojado)**:
+  - Variar el coeficiente de fricción ($\mu$) dinámicamente durante la carrera para evaluar la adaptabilidad de las redes neuronales ante pérdida de adherencia.
+
+---
 
 ### 🎓 Reconocimientos Académicos
 - **Docente**: Prof. Alejandro Mujica
@@ -288,23 +323,6 @@ feature/nueva-funcionalidad  ──► (merge) ──┐
                                       development ──► (merge cuando es estable) ──► main (versión final)
 ```
 
-1. **`main`**: Rama protegida que contiene únicamente versiones estables, compilables y listas para entrega o release. No se realizan commits directos sobre ella.
+1. **`main`**: Rama protegida que contiene únicamente versiones estables, compilables y listas para entrega. No se realizan commits directos sobre ella.
 2. **`development`**: Rama integradora donde convergen todas las características probadas.
-3. **`feature/*`**: Ramas de trabajo individuales para cada componente o corrección antes de ser integradas a `development`.
-
----
-
-## 📦 Generación de Release (Opcional)
-
-Para generar una entrega empaquetada lista para distribuir a usuarios sin requerir compilación:
-
-1. Compilar el proyecto en modo optimizado:
-   ```bash
-   cmake -B build -DCMAKE_BUILD_TYPE=Release
-   cmake --build build --config Release
-   ```
-2. Crear un archivo comprimido (`.zip` o `.tar.gz`) con:
-   - El ejecutable `NeuroGenetica.exe` (o binario `NeuroGenetica`).
-   - La carpeta `assets/` (si contiene texturas/fuentes externas).
-   - El archivo `README.md`.
-3. En GitHub, navegar a **Releases** $\to$ **Draft a new release**, asignar la etiqueta `v1.0.0` y adjuntar el archivo comprimido.
+3. **`feature/*`**: Ramas de trabajo individuales para cada componente antes de ser integradas a `development`.
