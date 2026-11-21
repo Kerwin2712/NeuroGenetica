@@ -37,7 +37,7 @@
 
 ---
 
-## ⚙️ Arquitectura del Sistema Actual (Godot 4 3D + C++17 GDExtension)
+## ⚙️ Arquitectura del Sistema (Godot 4 3D + C++17 GDExtension)
 
 El proyecto opera bajo una **arquitectura híbrida**: Godot Engine 4 gestiona la simulación física 3D, las cámaras y la interfaz, mientras que el núcleo compilado en C++17 ejecuta la inferencia de las redes neuronales mediante **GDExtension**:
 
@@ -106,7 +106,7 @@ El proyecto opera bajo una **arquitectura híbrida**: Godot Engine 4 gestiona la
 
 ---
 
-## 🚀 Ejecución del Juego 3D (Recomendado)
+## 🚀 Ejecución del Juego 3D
 
 ### Requisitos para Jugar
 - **Godot Engine 4** (versión 4.3 o superior). En Windows puedes instalarlo en 1 minuto desde PowerShell:

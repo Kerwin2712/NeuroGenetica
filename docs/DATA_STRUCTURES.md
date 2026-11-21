@@ -1,4 +1,4 @@
-# 🌳 Estructuras de Datos Avanzadas (Programación 3)
+# 🌳 Estructuras de Datos
 
 Este documento detalla los fundamentos teóricos, la implementación en C++ y el análisis de complejidad asintótica de las estructuras de datos avanzadas desarrolladas para **NeuroGenetica**.
 

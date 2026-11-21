@@ -16,7 +16,7 @@ Versión **Tridimensional** de **NeuroGenetica** con física 3D, pistas de 4 car
    * **Parrilla de largada ordenada**: 10 autos colocados en 4 carriles (formación 4-4-2) con arranque limpio sin amontonamiento inicial.
 
 3. **Cámaras Multi-Perspectiva (Tecla `V`)**:
-   * 🎮 **Vista GTA Cenital (Top-Down)**: Cámara directa desde arriba del auto que rota suavemente acompañando la dirección de marcha (estilo *Grand Theft Auto 1 / 2 / Chinatown Wars*).
+   * 🎮 **Vista Cenital (Top-Down)**: Cámara directa desde arriba del auto que rota suavemente acompañando la dirección de marcha.
    * 📐 **Vista Isométrica de Coche**: Perspectiva a 45° siguiendo al vehículo (estilo *Circuit Superstars* / *Micro Machines*).
    * 🏎️ **Vista Tercera Persona (Chase)**: Trasera dinámica a ras de asfalto.
    * 🌐 **Vista Panorámica General**: Vista aérea de todo el circuito.
